@@ -34,6 +34,9 @@ class RolePermissionSeeder extends Seeder
             // Fees & Invoices
             'view fees', 'create fees', 'edit fees', 'delete fees',
             'view invoices', 'create invoices', 'edit invoices', 'delete invoices',
+
+            //settings permissions
+            'view academic years', 'edit academic years', 'create academic years', 'delete academic years'
         ];
 
         // Create permissions

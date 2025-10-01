@@ -21,24 +21,24 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/select/1.6.0/css/select.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/jquery-datatables-checkboxes@1.3.0/css/dataTables.checkboxes.min.css" rel="stylesheet">
     <!-- Layout JS -->
-    <script src="assets/js/layout/layout-default.js"></script>
+    <script src="{{asset('assets/js/layout/layout-default.js')}}"></script>
 
-    <script src="assets/js/layout/layout.js"></script>
+    <script src="{{asset('assets/js/layout/layout.js')}}"></script>
 
     <!-- Choice Css -->
-    <link rel="stylesheet" href="assets/libs/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="{{asset('assets/libs/choices.js/public/assets/styles/choices.min.css')}}">
     <!-- Simplebar Css -->
-    <link href="assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
+    <link href="{{asset('assets/libs/simplebar/simplebar.min.css')}}" rel="stylesheet">
     <!--icons css-->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets/css/icons.min.css')}}" rel="stylesheet" type="text/css">
     <!-- Sweet Alert -->
-    <link href="assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets/libs/sweetalert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css">
     <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets/css/bootstrap.min.css')}}" id="bootstrap-style" rel="stylesheet" type="text/css">
     <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets/css/app.min.css')}}" id="app-style" rel="stylesheet" type="text/css">
 
-    <link href="assets/css/custom.min.css" id="custom-style" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets/css/custom.min.css')}}" id="custom-style" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-datatables-checkboxes@1.3.0/css/dataTables.checkboxes.min.css">
 
