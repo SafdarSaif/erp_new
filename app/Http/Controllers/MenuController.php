@@ -40,7 +40,7 @@ class MenuController extends Controller
                     return $menu->is_active ? 1 : 0;
                 })
                 ->addColumn('action', function ($menu) {
-                    return ''; // Action buttons handled in JS
+                    return '';
                 })
                 ->rawColumns(['icon'])
                 ->make(true);
@@ -291,18 +291,22 @@ class MenuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Menu $menu)
-    {
-        //
+     public function destroy($menuId)
+    { {
+            try {
+                $menu = Menu::destroy($menuId);
+                return ['status' => 'success', 'message' => 'Menu deleted successfully!'];
+            } catch (\Throwable $e) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+        }
     }
-
-
       public function status($id)
     {
         try {
             $menu = Menu::findOrFail($id);
             if ($menu) {
-                $menu->status = $menu->status == 1 ? 0 : 1;
+                $menu->is_active = $menu->is_active == 1 ? 0 : 1;
                 $menu->save();
                 return response()->json([
                     'status' => 'success',
