@@ -65,6 +65,49 @@
                     </li>
                 </ul>
             </li>
+
+            {{-- <li class="slide">
+                <a href="#!" class="side-menu__item" role="menuitem">
+                    <span class="side_menu_icon"><i class="ri-layout-line"></i></span>
+                    <span class="side-menu__label" data-lang="hr-layout">Theme Setting</span>
+                    <i class="ri-arrow-down-s-line side-menu__angle"></i>
+                </a>
+                <ul class="slide-menu" role="menu">
+                    <li class="slide">
+                        <a href="{{ route('menu.index') }}"  class="side-menu__item" role="menuitem"
+                            data-lang="hr-layout-horizontal">Menu Setting</a>
+                    </li>
+                    <li class="slide">
+                        <a href="demo-layout-two-column.html" target="_blank" class="side-menu__item" role="menuitem"
+                            data-lang="hr-layout-two-column">Two Column</a>
+                    </li>
+
+                </ul>
+            </li> --}}
+
+            <li class="slide {{ Route::is('menu.*') ? 'active' : '' }}">
+                <a href="#!" class="side-menu__item" role="menuitem">
+                    <span class="side_menu_icon"><i class="ri-layout-line"></i></span>
+                    <span class="side-menu__label" data-lang="hr-layout">Theme Setting</span>
+                    <i class="ri-arrow-down-s-line side-menu__angle"></i>
+                </a>
+
+                <ul class="slide-menu" role="menu">
+                    <li class="slide {{ Route::is('menu.index') ? 'active' : '' }}">
+                        <a href="{{ route('menu.index') }}" class="side-menu__item" role="menuitem"
+                            data-lang="menu-setting">
+                            Menu
+                        </a>
+                    </li>
+                    <li class="slide {{ Route::is('theme.index') ? 'active' : '' }}">
+                        <a href="{{ route('theme.index') }}" class="side-menu__item" role="menuitem"
+                            data-lang="two-column">
+                            Theme
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="menu-title" role="presentation" data-lang="hr-title-applications">Applications</li>
             <li class="slide">
                 <a href="#!" class="side-menu__item" role="menuitem">
