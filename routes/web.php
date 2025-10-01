@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\AcademicYearController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Menu;
 use App\Http\Controllers\MenuController;
@@ -56,6 +57,15 @@ Route::get('/menus/data', function () {
 });
 
 
+Route::prefix('settings')->group(function(){
+    Route::get('/academicyears',[AcademicYearController::class,'index'])->name('academicyears');
+    Route::post('/academicyears',[AcademicYearController::class,'store'])->name('academicyears');
+    Route::put('/academicyears/{id}',[AcademicYearController::class,'update'])->name('academicyears.update');
+    Route::get('/academicyears/create',[AcademicYearController::class,'create'])->name('academicyears.create');
+    Route::get('/academicyears/edit/{id}',[AcademicYearController::class,'edit'])->name('academicyears.edit');
+    Route::get('/academicyears/status/{id}', [AcademicYearController::class, 'status'])->name('academicyears.status');
+    Route::delete('/academicyears/delete/{id}', [AcademicYearController::class, 'delete'])->name('academicyears.delete');
+});
 
 
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
