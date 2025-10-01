@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Menu;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ThemeController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -26,20 +29,50 @@ Route::middleware([
 });
 
 
-Route::get('/datatable/data', function () {
-    return response()->json([
-        [
-            "id" => 1,
-            "full_name" => "John Doe",
-            "designation" => "Developer",
-            "email" => "john@example.com",
-            "start_date" => "2024-01-01",
-            "salary" => "50000",
-            "age" => 28,
-            "avatar_image" => "https://via.placeholder.com/40"
-        ]
-    ]);
+
+
+
+Route::get('menu', function () {
+    return view('menu.index');
 });
+Route::get('/menus/data', function () {
+    $menus = Menu::with('parent')->get();
+
+    $data = $menus->map(function ($menu) {
+        return [
+            "id"         => $menu->id,
+            "name"       => $menu->name,
+            "url"        => $menu->url,
+            "icon"       => $menu->icon,
+            "position"   => $menu->position,
+            "parent"     => $menu->parent?->name ?? '--',
+            "is_active"  => $menu->is_active ? "Active" : "Inactive",
+            "is_searchable" => $menu->is_searchable ? "Yes" : "No",
+            "created_at" => $menu->created_at->format('Y-m-d'),
+        ];
+    });
+
+    return response()->json($data);
+});
+
+
+
+
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+    Route::get('/menu/create', [MenuController::class, 'create'])->name('menu.create');
+    Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
+    Route::get('/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
+    Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
+    Route::delete('/menu/destroy/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+    Route::get('menu/status/{id}', [MenuController::class, 'status'])->name('menu.status');
+
+    Route::get('/theme', [ThemeController::class, 'index'])->name('theme.index');
+    Route::get('/theme/create', [ThemeController::class, 'create'])->name('theme.create');
+    Route::post('/theme/store', [ThemeController::class, 'store'])->name('theme.store');
+    Route::get('/theme/edit/{id}', [ThemeController::class, 'edit'])->name('theme.edit');
+    Route::post('/theme/update/{id}', [ThemeController::class, 'update'])->name('theme.update');
+    Route::delete('/theme/destroy/{id}', [ThemeController::class, 'destroy'])->name('theme.destroy');
+    Route::get('theme/status/{id}', [ThemeController::class, 'status'])->name('theme.status');
 
 
 
