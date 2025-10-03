@@ -101,7 +101,7 @@
                 render: function(data, type, full) {
                    return (
                     '<div class="hstack gap-2 fs-15">' +
-                    '<button class="btn btn-sm btn-light-primary" onclick="edit(' + full['id'] + ')">' +
+                    '<button class="btn btn-sm btn-light-primary" onclick="edit(\'/menu/edit/' + full['id'] + '\', \'modal-lg\')">' +
                    '<i class="ri-pencil-line"></i>' +
                    '</button>' +
                   '<button class="btn icon-btn-sm btn-light-danger delete-item" onclick="destry(\'/menu/destroy/' + full['id'] + '\', \'menu-table\')">' +

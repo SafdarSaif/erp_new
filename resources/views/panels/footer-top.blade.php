@@ -56,6 +56,8 @@
     <script src="{{asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
     <!-- jquery cdn -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+
 
     <!-- Datatable js -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -79,4 +81,7 @@
 
      <!-- Toastr JS -->
 <script src="{{asset('assets/libs/toastr/toastr.js')}}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 

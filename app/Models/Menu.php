@@ -21,15 +21,16 @@ use HasFactory;
         'is_searchable',
     ];
 
-    // Parent menu
+
+    public function children()
+    {
+        return $this->hasMany(Menu::class, 'parent_id')
+                    ->where('is_active', 1)
+                    ->orderBy('position', 'asc');
+    }
+
     public function parent()
     {
         return $this->belongsTo(Menu::class, 'parent_id');
-    }
-
-    // Child menus
-    public function children()
-    {
-        return $this->hasMany(Menu::class, 'parent_id');
     }
 }
