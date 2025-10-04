@@ -97,19 +97,24 @@
                             <h6 class="fw-normal mb-0 text-muted">Total 4 users</h6>
                             <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
                                 <li data-bs-toggle="tooltip" title="User 1" class="avatar avatar-sm pull-up">
-                                    <img class="rounded-circle" src="https://i.pravatar.cc/40?img=50" alt="Avatar">
+                                    <img class="rounded-circle" src="{{ asset('assets/images/avatar/avatar-1.jpg') }}"
+                                        alt="Avatar" width="40" height="40">
                                 </li>
                                 <li data-bs-toggle="tooltip" title="User 2" class="avatar avatar-sm pull-up">
-                                    <img class="rounded-circle" src="https://i.pravatar.cc/40?img=51" alt="Avatar">
+                                    <img class="rounded-circle" src="{{ asset('assets/images/avatar/avatar-2.jpg') }}"
+                                        alt="Avatar" width="40" height="40">
                                 </li>
                                 <li data-bs-toggle="tooltip" title="User 3" class="avatar avatar-sm pull-up">
-                                    <img class="rounded-circle" src="https://i.pravatar.cc/40?img=52" alt="Avatar">
+                                    <img class="rounded-circle" src="{{ asset('assets/images/avatar/avatar-3.jpg') }}"
+                                        alt="Avatar" width="40" height="40">
                                 </li>
                                 <li data-bs-toggle="tooltip" title="User 4" class="avatar avatar-sm pull-up">
-                                    <img class="rounded-circle" src="https://i.pravatar.cc/40?img=53" alt="Avatar">
+                                    <img class="rounded-circle" src="{{ asset('assets/images/avatar/avatar-4.jpg') }}"
+                                        alt="Avatar" width="40" height="40">
                                 </li>
                                 <li data-bs-toggle="tooltip" title="User 5" class="avatar avatar-sm pull-up">
-                                    <img class="rounded-circle" src="https://i.pravatar.cc/40?img=54" alt="Avatar">
+                                     <img class="rounded-circle" src="{{ asset('assets/images/avatar/avatar-5.jpg') }}"
+                                        alt="Avatar" width="40" height="40">
                                 </li>
                             </ul>
                         </div>
@@ -134,7 +139,7 @@
                 <div class="card h-100">
                     <div class="row h-100 g-0">
                         <div class="col-sm-5 d-flex align-items-center justify-content-center">
-                            <img src="https://i.ibb.co/FxY0fV6/add-new-roles.png" class="img-fluid" alt="add-new-role"
+                            <img src="{{ asset('assets/images/avatar/avatar-5.jpg') }}" class="img-fluid" alt="add-new-role"
                                 width="83">
                         </div>
                         <div class="col-sm-7 d-flex align-items-center">

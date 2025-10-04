@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Permission\Models\Permission;
 
 class MenuController extends Controller
 {
@@ -62,9 +63,10 @@ class MenuController extends Controller
     {
 
         $parents = Menu::where('is_active', 1)->get();
-        // dd($parents);
+        $permission = Permission::pluck('id', 'name');
+        // dd($permission);
 
-        return view('menu.create', compact('parents'));
+        return view('menu.create', compact('parents', 'permission'));
     }
 
 
@@ -280,9 +282,11 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($menuId);
         $parents = Menu::where('is_active', 1)->get();
+        $permission = Permission::pluck('id', 'name');
 
 
-        return view('menu.edit', compact('menu', 'parents'));
+
+        return view('menu.edit', compact('menu', 'parents', 'permission'));
     }
 
     /**

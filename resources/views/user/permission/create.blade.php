@@ -5,6 +5,7 @@
     </div>
 
     <form id="addPermissionForm" action="{{ url('users/permissions') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+         @csrf
         <div class="col-md-12">
             <label for="name" class="form-label">Permission Name <span class="text-danger">*</span></label>
             <input type="text" id="name" name="name" class="form-control" placeholder="ex: view academic year" required>
@@ -17,7 +18,7 @@
     </form>
 </div>
 
-<script>
+{{-- <script>
   $("#addPermissionForm").validate({
     rules: {
       name: {
@@ -62,4 +63,40 @@
     }
   })
 
+</script> --}}
+
+
+<script>
+$(function() {
+    $("#addPermissionForm").submit(function(e) {
+        e.preventDefault();
+
+        $(':input[type="submit"]').prop('disabled', true);
+        var formData = new FormData(this);
+        formData.append("_token", "{{ csrf_token() }}"); // CSRF token
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false);
+                if (response.status === 'success') {
+                    toastr.success(response.message); // show success toast
+                    $(".modal").modal('hide');
+                    $('#permissions-table').DataTable().ajax.reload();
+                } else {
+                    toastr.error(response.message); // show error toast
+                }
+            },
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false);
+                toastr.error(xhr.responseJSON?.message || 'Something went wrong!');
+            }
+        });
+    });
+});
 </script>

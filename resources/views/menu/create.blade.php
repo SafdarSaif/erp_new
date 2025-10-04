@@ -44,10 +44,24 @@
         </div>
 
         <!-- Permission -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="permission" class="form-label">Permission</label>
             <input type="text" name="permission" id="permission" class="form-control" placeholder="Optional permission">
+        </div> --}}
+
+
+        <!-- Permission Dropdown -->
+        <div class="col-md-6">
+            <label for="permission" class="form-label">Permission</label>
+            <select name="permission" id="permission" class="form-select">
+                <option value="">-- Select Permission --</option>
+                @foreach($permission as $name => $id)
+                <option value="{{ $name }}">{{ ucfirst($name) }}</option>
+                @endforeach
+            </select>
+            <small class="text-muted">Choose which permission controls this menu (optional)</small>
         </div>
+
 
         <!-- Checkboxes -->
         {{-- <div class="col-md-3 form-check mt-4">
