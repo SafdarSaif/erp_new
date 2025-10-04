@@ -99,16 +99,18 @@
              {
                 targets: 7, // Action buttons
                 render: function(data, type, full) {
-                    return `
-                        <div class="hstack gap-2 fs-15">
-                            <a href="#!" onclick="editMenu(${full.id})" class="btn icon-btn-sm btn-light-primary">
-                                <i class="ri-pencil-line"></i>
-                            </a>
-                            <a href="#!" onclick="deleteMenu(${full.id})" class="btn icon-btn-sm btn-light-danger delete-item">
-                                <i class="ri-delete-bin-line"></i>
-                            </a>
-                        </div>
-                    `;
+                   return (
+                    '<div class="hstack gap-2 fs-15">' +
+                    '<button class="btn btn-sm btn-light-primary" onclick="edit(\'/menu/edit/' + full['id'] + '\', \'modal-lg\')">' +
+                   '<i class="ri-pencil-line"></i>' +
+                   '</button>' +
+                  '<button class="btn icon-btn-sm btn-light-danger delete-item" onclick="destry(\'/menu/destroy/' + full['id'] + '\', \'menu-table\')">' +
+                    '<i class="ri-delete-bin-line"></i>' +
+                '</button>' +
+                   '</div>'
+);
+
+
                 }
             }
         ],

@@ -13,6 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 class AcademicYearController extends Controller
 {
     public function index(){
+
         if(Auth::user()->hasPermissionTo('view academic years')){
             try{
                 if(request()->ajax()){

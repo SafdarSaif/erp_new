@@ -74,48 +74,7 @@
 
 </div>
 
-<!-- jQuery Validation & AJAX with Toastr -->
-{{-- <script>
-    $(document).ready(function() {
-    $("#menu-form").validate({
-        rules: {
-            name: { required: true, maxlength: 255 },
-            position: { required: true, number: true }
-        },
-        messages: {
-            name: { required: "Please enter menu name", maxlength: "Maximum 255 characters allowed" },
-            position: { required: "Please enter position", number: "Position must be a number" }
-        },
-        submitHandler: function(form) {
-            $(':input[type="submit"]').prop('disabled', true);
-            var formData = new FormData(form);
 
-            $.ajax({
-                url: $(form).attr('action'),
-                type: $(form).attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                success: function(response) {
-                    $(':input[type="submit"]').prop('disabled', false);
-                    if (response.status === 'success') {
-                        toastr.success(response.message);
-                        $(".modal").modal('hide');
-                        $('#data-table').DataTable().ajax.reload();
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(response) {
-                    $(':input[type="submit"]').prop('disabled', false);
-                    toastr.error(response.responseJSON?.message || 'Something went wrong!');
-                }
-            });
-        }
-    });
-});
-</script> --}}
 
 
 <script>
