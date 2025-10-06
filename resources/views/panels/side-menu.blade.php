@@ -3,8 +3,9 @@
     <!-- START BRAND LOGO -->
     <div class="app-sidebar-logo px-6 justify-content-center align-items-center">
         <a href="/dashboard">
-            <img height="35" class="app-sidebar-logo-default" alt="Logo" src="assets/images/light-logo.png">
-            <img height="40" class="app-sidebar-logo-minimize" alt="Logo" src="assets/images/Favicon.png">
+           <img height="35" class="app-sidebar-logo-default" alt="Logo" src="{{ asset('assets/images/light-logo.png') }}">
+<img height="40" class="app-sidebar-logo-minimize" alt="Logo" src="{{ asset('assets/images/Favicon.png') }}">
+
         </a>
     </div>
     <!-- END BRAND LOGO -->

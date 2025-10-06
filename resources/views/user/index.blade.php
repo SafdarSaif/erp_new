@@ -18,16 +18,16 @@
 
         <!-- Users Table -->
         <div class="card">
-            <div class="card-header border-bottom">
+            {{-- <div class="card-header border-bottom">
                 <h5 class="card-title mb-3">Search Filter</h5>
                 <div class="d-flex justify-content-between align-items-center row pb-2 gap-3 gap-md-0">
                     <div class="col-md-4 user_role"></div>
                     <div class="col-md-4 user_plan"></div>
                     <div class="col-md-4 user_status"></div>
                 </div>
-            </div>
-            <div class="card-datatable table-responsive">
-                <table id="users-datatable" class="table table-hover align-middle table-nowrap w-100">
+            </div> --}}
+            <div class="card-datatable table-responsive px-2 py-3">
+                <table id="users-datatable" class="table table-hover align-middle table-nowrap w-100 ">
                     <thead class="border-top">
                         <tr>
                             <th></th>
@@ -163,22 +163,22 @@
              't' +
              '<"row mx-2"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
         buttons: [addButton],
-        initComplete: function() {
-            // Role filter
-            this.api().columns(2).every(function() {
-                var column = this;
-                var select = $('<select class="form-select text-capitalize"><option value="">Select Role</option></select>')
-                    .appendTo('.user_role')
-                    .on('change', function() {
-                        var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                        column.search(val ? '^'+val+'$' : '', true, false).draw();
-                    });
-                column.data().unique().sort().each(function(d){
-                    var role = JSON.parse(d)[0];
-                    select.append('<option value="'+role+'">'+role+'</option>');
-                });
-            });
-        }
+        // initComplete: function() {
+        //     // Role filter
+        //     this.api().columns(2).every(function() {
+        //         var column = this;
+        //         var select = $('<select class="form-select text-capitalize"><option value="">Select Role</option></select>')
+        //             .appendTo('.user_role')
+        //             .on('change', function() {
+        //                 var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        //                 column.search(val ? '^'+val+'$' : '', true, false).draw();
+        //             });
+        //         column.data().unique().sort().each(function(d){
+        //             var role = JSON.parse(d)[0];
+        //             select.append('<option value="'+role+'">'+role+'</option>');
+        //         });
+        //     });
+        // }
     });
 });
 </script>

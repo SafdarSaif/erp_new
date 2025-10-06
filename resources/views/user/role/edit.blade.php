@@ -50,7 +50,7 @@
   <!--/ Add role form -->
 </div>
 
-<script>
+{{-- <script>
   $(function() {
     $('#selectAll').click(function() {
       if ($(this).prop("checked")) {
@@ -117,4 +117,52 @@
       });
     }
   })
+</script> --}}
+
+<script>
+$(function() {
+  // Select/Deselect all permissions
+  $('#selectAll').on('change', function() {
+    $('.permission-checkboxes').prop('checked', this.checked);
+  });
+
+  // Toggle "Select All" checkbox based on individual selections
+  $('.permission-checkboxes').on('change', function() {
+    $('#selectAll').prop($('.permission-checkboxes:checked').length === $('.permission-checkboxes').length);
+  });
+
+  // AJAX form submission without validation
+  $("#editRoleForm").submit(function(e) {
+    e.preventDefault();
+
+    $(':input[type="submit"]').prop('disabled', true);
+    var formData = new FormData(this);
+    formData.append("_token", "{{ csrf_token() }}");
+    formData.append("id", "{{ $role->id }}");
+
+    $.ajax({
+      url: $(this).attr('action'),
+      type: $(this).attr('method'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(response) {
+        $(':input[type="submit"]').prop('disabled', false);
+        if (response.status === 'success') {
+          toastr.success(response.message);
+          $(".modal").modal('hide');
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          toastr.error(response.message);
+        }
+      },
+      error: function(xhr) {
+        $(':input[type="submit"]').prop('disabled', false);
+        toastr.error(xhr.responseJSON?.message || 'Something went wrong!');
+      }
+    });
+  });
+});
 </script>
+

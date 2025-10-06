@@ -63,7 +63,7 @@
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
             order: [[1, 'asc']],
-            responsive: true,
+            // responsive: true,
             pageLength: 10,
             dom: '<"d-flex justify-content-between mb-2"<"dataTables_filter"f><"add_button"B>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
             buttons: [addButton],
