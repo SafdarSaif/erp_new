@@ -8,6 +8,11 @@ use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\PermissionController;
 use App\Http\Controllers\User\RoleController;
+use App\Http\Controllers\UniversityController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\SubCourseController;
+use App\Http\Controllers\SubjectController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -39,25 +44,7 @@ Route::middleware([
 Route::get('menu', function () {
     return view('menu.index');
 });
-Route::get('/menus/data', function () {
-    $menus = Menu::with('parent')->get();
 
-    $data = $menus->map(function ($menu) {
-        return [
-            "id"         => $menu->id,
-            "name"       => $menu->name,
-            "url"        => $menu->url,
-            "icon"       => $menu->icon,
-            "position"   => $menu->position,
-            "parent"     => $menu->parent?->name ?? '--',
-            "is_active"  => $menu->is_active ? "Active" : "Inactive",
-            "is_searchable" => $menu->is_searchable ? "Yes" : "No",
-            "created_at" => $menu->created_at->format('Y-m-d'),
-        ];
-    });
-
-    return response()->json($data);
-});
 
 
 Route::prefix('settings')->group(function () {
@@ -114,4 +101,49 @@ Route::post('/users/roles/update', [RoleController::class, 'update'])->name('use
 
 
 
+Route::prefix('academics')->group(function () {
+    // Universities
+    Route::get('/university', [UniversityController::class, 'index'])->name('university.index');
+    Route::get('/university/create', [UniversityController::class, 'create'])->name('university.create');
+    Route::post('/university/store', [UniversityController::class, 'store'])->name('university.store');
+    Route::get('/university/edit/{id}', [UniversityController::class, 'edit'])->name('university.edit');
+    Route::post('/university/update/{id}', [UniversityController::class, 'update'])->name('university.update');
+    Route::delete('/university/destroy/{id}', [UniversityController::class, 'destroy'])->name('university.destroy');
+    Route::get('/university/status/{id}', [UniversityController::class, 'status'])->name('university.status');
 
+    // Departments
+    Route::get('/department', [DepartmentController::class, 'index'])->name('department.index');
+    Route::get('/department/create', [DepartmentController::class, 'create'])->name('department.create');
+    Route::post('/department/store', [DepartmentController::class, 'store'])->name('department.store');
+    Route::get('/department/edit/{id}', [DepartmentController::class, 'edit'])->name('department.edit');
+    Route::post('/department/update/{id}', [DepartmentController::class, 'update'])->name('department.update');
+    Route::delete('/department/destroy/{id}', [DepartmentController::class, 'destroy'])->name('department.destroy');
+    Route::get('/department/status/{id}', [DepartmentController::class, 'status'])->name('department.status');
+
+    // Courses
+    Route::get('/course', [CourseController::class, 'index'])->name('course.index');
+    Route::get('/course/create', [CourseController::class, 'create'])->name('course.create');
+    Route::post('/course/store', [CourseController::class, 'store'])->name('course.store');
+    Route::get('/course/edit/{id}', [CourseController::class, 'edit'])->name('course.edit');
+    Route::post('/course/update/{id}', [CourseController::class, 'update'])->name('course.update');
+    Route::delete('/course/destroy/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
+    Route::get('/course/status/{id}', [CourseController::class, 'status'])->name('course.status');
+
+
+    // Sub Courses
+    Route::get('/subcourse', [SubCourseController::class, 'index'])->name('subcourse.index');
+    Route::get('/subcourse/create', [SubCourseController::class, 'create'])->name('subcourse.create');
+    Route::post('/subcourse/store', [SubCourseController::class, 'store'])->name('subcourse.store');
+    Route::get('/subcourse/edit/{id}', [SubCourseController::class, 'edit'])->name('subcourse.edit');
+    Route::post('/subcourse/update/{id}', [SubCourseController::class, 'update'])->name('subcourse.update');
+    Route::delete('/subcourse/destroy/{id}', [SubCourseController::class, 'destroy'])->name('subcourse.destroy');
+    Route::get('/subcourse/status/{id}', [SubCourseController::class, 'status'])->name('subcourse.status');
+    // Subjects
+    Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+    Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
+    Route::post('/subjects/store', [SubjectController::class, 'store'])->name('subjects.store');
+    Route::get('/subjects/edit/{id}', [SubjectController::class, 'edit'])->name('subjects.edit');
+    Route::post('/subjects/update/{id}', [SubjectController::class, 'update'])->name('subjects.update');
+    Route::delete('/subjects/destroy/{id}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+    Route::get('/subjects/status/{id}', [SubjectController::class, 'status'])->name('subjects.status');
+});
