@@ -13,6 +13,12 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubCourseController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\Settings\CourseTypeController;
+use App\Http\Controllers\Settings\AdmissionModeController;
+use App\Http\Controllers\Settings\CourseModeController;
+use App\Http\Controllers\Settings\LanguageController;
+use App\Http\Controllers\Settings\BloodGroupController;
+use App\Http\Controllers\Settings\CategoryController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -55,6 +61,62 @@ Route::prefix('settings')->group(function () {
     Route::get('/academicyears/edit/{id}', [AcademicYearController::class, 'edit'])->name('academicyears.edit');
     Route::get('/academicyears/status/{id}', [AcademicYearController::class, 'status'])->name('academicyears.status');
     Route::delete('/academicyears/delete/{id}', [AcademicYearController::class, 'delete'])->name('academicyears.delete');
+
+
+    // Course Types
+    Route::get('/coursetypes', [CourseTypeController::class, 'index'])->name('coursetypes');
+    Route::post('/coursetypes', [CourseTypeController::class, 'store'])->name('coursetypes.store');
+    // Route::post('/coursetypes/{id}', [CourseTypeController::class, 'update'])->name('coursetypes.update');
+    Route::get('/coursetypes/create', [CourseTypeController::class, 'create'])->name('coursetypes.create');
+    Route::get('/coursetypes/edit/{id}', [CourseTypeController::class, 'edit'])->name('coursetypes.edit');
+    Route::post('/coursetypes/update/{id}', [CourseTypeController::class, 'update'])->name('coursetypes.update');
+    Route::get('/coursetypes/status/{id}', [CourseTypeController::class, 'status'])->name('coursetypes.status');
+    Route::delete('/coursetypes/delete/{id}', [CourseTypeController::class, 'destroy'])->name('coursetypes.delete');
+
+    // admission mode
+    Route::get('/admissionmodes', [AdmissionModeController::class, 'index'])->name('admissionmodes');
+    Route::post('/admissionmodes', [AdmissionModeController::class, 'store'])->name('admissionmodes.store');
+    Route::get('/admissionmodes/create', [AdmissionModeController::class, 'create'])->name('admissionmodes.create');
+    Route::get('/admissionmodes/edit/{id}', [AdmissionModeController::class, 'edit'])->name('admissionmodes.edit');
+    Route::post('/admissionmodes/update/{id}', [AdmissionModeController::class, 'update'])->name('admissionmodes.update');
+    Route::get('/admissionmodes/status/{id}', [AdmissionModeController::class, 'status'])->name('admissionmodes.status');
+    Route::delete('/admissionmodes/delete/{id}', [AdmissionModeController::class, 'destroy'])->name('admissionmodes.delete');
+
+    // course mode
+    Route::get('coursemodes', [CourseModeController::class, 'index'])->name('coursemodes');
+    Route::get('coursemodes/create', [CourseModeController::class, 'create'])->name('coursemodes.create');
+    Route::post('coursemodes/store', [CourseModeController::class, 'store'])->name('coursemodes.store');
+    Route::get('coursemodes/edit/{id}', [CourseModeController::class, 'edit'])->name('coursemodes.edit');
+    Route::post('coursemodes/update/{id}', [CourseModeController::class, 'update'])->name('coursemodes.update');
+    Route::delete('coursemodes/delete/{id}', [CourseModeController::class, 'destroy'])->name('coursemodes.delete');
+    Route::get('coursemodes/status/{id}', [CourseModeController::class, 'status'])->name('coursemodes.status');
+
+    //Languages
+    Route::get('languages', [LanguageController::class, 'index'])->name('languages.index');
+    Route::get('languages/create', [LanguageController::class, 'create'])->name('languages.create');
+    Route::post('languages/store', [LanguageController::class, 'store'])->name('languages.store');
+    Route::get('languages/edit/{id}', [LanguageController::class, 'edit'])->name('languages.edit');
+    Route::post('languages/update/{id}', [LanguageController::class, 'update'])->name('languages.update');
+    Route::delete('languages/delete/{id}', [LanguageController::class, 'destroy'])->name('languages.delete');
+    Route::get('languages/status/{id}', [LanguageController::class, 'status'])->name('languages.status');
+
+    // Blood Groups
+    Route::get('bloodgroups', [BloodGroupController::class, 'index'])->name('bloodgroups.index');
+    Route::get('bloodgroups/create', [BloodGroupController::class, 'create'])->name('bloodgroups.create');
+    Route::post('bloodgroups/store', [BloodGroupController::class, 'store'])->name('bloodgroups.store');
+    Route::get('bloodgroups/edit/{id}', [BloodGroupController::class, 'edit'])->name('bloodgroups.edit');
+    Route::post('bloodgroups/update/{id}', [BloodGroupController::class, 'update'])->name('bloodgroups.update');
+    Route::delete('bloodgroups/delete/{id}', [BloodGroupController::class, 'destroy'])->name('bloodgroups.delete');
+    Route::get('bloodgroups/status/{id}', [BloodGroupController::class, 'status'])->name('bloodgroups.status');
+    
+    // Categories
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('categories/store', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('categories/edit/{id}', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::post('categories/update/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('categories/delete/{id}', [CategoryController::class, 'destroy'])->name('categories.delete');
+    Route::get('categories/status/{id}', [CategoryController::class, 'status'])->name('categories.status');
 });
 
 
