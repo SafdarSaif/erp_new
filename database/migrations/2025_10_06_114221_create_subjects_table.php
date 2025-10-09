@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('subjects', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('subcourse_id');
+            $table->string('name', 100);
+            $table->string('code', 50)->nullable();
+            $table->boolean('status')->default(1);// 1 for active, 0 for inactive
+            $table->foreign('subcourse_id')->references('id')->on('sub_courses')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('subjects');
+    }
+};
