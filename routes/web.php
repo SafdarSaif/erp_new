@@ -19,6 +19,10 @@ use App\Http\Controllers\Settings\CourseModeController;
 use App\Http\Controllers\Settings\LanguageController;
 use App\Http\Controllers\Settings\BloodGroupController;
 use App\Http\Controllers\Settings\CategoryController;
+use App\Http\Controllers\Settings\ReligionController;
+use App\Http\Controllers\StudentController;
+
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -108,7 +112,7 @@ Route::prefix('settings')->group(function () {
     Route::post('bloodgroups/update/{id}', [BloodGroupController::class, 'update'])->name('bloodgroups.update');
     Route::delete('bloodgroups/delete/{id}', [BloodGroupController::class, 'destroy'])->name('bloodgroups.delete');
     Route::get('bloodgroups/status/{id}', [BloodGroupController::class, 'status'])->name('bloodgroups.status');
-    
+
     // Categories
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
@@ -117,6 +121,15 @@ Route::prefix('settings')->group(function () {
     Route::post('categories/update/{id}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('categories/delete/{id}', [CategoryController::class, 'destroy'])->name('categories.delete');
     Route::get('categories/status/{id}', [CategoryController::class, 'status'])->name('categories.status');
+
+    // Religions
+    Route::get('religions', [ReligionController::class, 'index'])->name('religions.index');
+    Route::get('religions/create', [ReligionController::class, 'create'])->name('religions.create');
+    Route::post('religions/store', [ReligionController::class, 'store'])->name('religions.store');
+    Route::get('religions/edit/{id}', [ReligionController::class, 'edit'])->name('religions.edit');
+    Route::post('religions/update/{id}', [ReligionController::class, 'update'])->name('religions.update');
+    Route::delete('religions/delete/{id}', [ReligionController::class, 'destroy'])->name('religions.delete');
+    Route::get('religions/status/{id}', [ReligionController::class, 'status'])->name('religions.status');
 });
 
 
@@ -208,4 +221,19 @@ Route::prefix('academics')->group(function () {
     Route::post('/subjects/update/{id}', [SubjectController::class, 'update'])->name('subjects.update');
     Route::delete('/subjects/destroy/{id}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
     Route::get('/subjects/status/{id}', [SubjectController::class, 'status'])->name('subjects.status');
+});
+
+
+
+// Students CRUD routes (outside the academics group)
+Route::prefix('students')->group(function () {
+    Route::get('/', [StudentController::class, 'index'])->name('students.index');           // List all students
+    Route::get('/create', [StudentController::class, 'create'])->name('students.create');   // Show form
+    Route::post('/store', [StudentController::class, 'store'])->name('students.store');     // Save new student
+    Route::get('/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');    // Edit student
+    Route::put('/update/{id}', [StudentController::class, 'update'])->name('students.update'); // Update
+    Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
+    Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
+    Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
+
 });
