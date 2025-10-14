@@ -11,6 +11,7 @@ use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\UniversityController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubCourseController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\Settings\CourseTypeController;
@@ -236,4 +237,11 @@ Route::prefix('students')->group(function () {
     Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
 
+});
+
+
+Route::prefix('reports')->name('reports.')->group(function(){
+    Route::get('students',[ReportController::class,'studentReport'])->name('students');
+    Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
+    Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
 });
