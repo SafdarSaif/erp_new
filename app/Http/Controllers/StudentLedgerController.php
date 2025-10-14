@@ -21,12 +21,67 @@ class StudentLedgerController extends Controller
      * Display a listing of the resource.
      */
 
+    // public function ledger($studentId)
+    // {
+    //     // 1️⃣ Fetch Student with Relations
+    //     $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
+
+    //     // 2️⃣ Fetch Fee Structure & Ledger Data
+    //     $feeStructures = StudentFeeStructure::where('student_id', $studentId)
+    //         ->orderBy('id')
+    //         ->get();
+
+    //     $ledgerEntries = StudentLedger::where('student_id', $studentId)
+    //         ->orderBy('id')
+    //         ->get();
+
+    //     // 3️⃣ Calculate Summary
+    //     $totalFee = $student->total_fee ?? 0;
+    //     $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
+    //     $balance = $totalFee - $totalPaid;
+
+    //     // 4️⃣ Course Details
+    //     $subCourse = $student->subCourse;
+    //     $courseName = $subCourse->name ?? '-';
+    //     $mode = $subCourse->courseMode->name ?? 'Semesters';
+    //     $duration = $subCourse->duration ?? 0;
+
+    //     // 🔹 Static semester fee calculation (like getStudentFeeInfo)
+    //     $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
+
+    //     // Generate static semester-wise array (no ledger dependency)
+    //     $semesterWiseFees = [];
+    //     for ($i = 1; $i <= $duration; $i++) {
+    //         $semesterWiseFees[] = [
+    //             'semester' => ($mode === 'Yearly') ? "Year $i" : "Semester $i",
+    //             'amount'   => $feePerSem,
+    //         ];
+    //     }
+
+    //     // 5️⃣ Fetch Invoices (optional)
+    //     $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
+
+    //     // 6️⃣ Pass to View
+    //     return view('accounts.fee.ledger', compact(
+    //         'student',
+    //         'feeStructures',
+    //         'ledgerEntries',
+    //         'invoices',
+    //         'totalFee',
+    //         'totalPaid',
+    //         'balance',
+    //         'courseName',
+    //         'mode',
+    //         'duration',
+    //         'feePerSem',
+    //         'semesterWiseFees'
+    //     ));
+    // }
+
     public function ledger($studentId)
     {
-        // 1️⃣ Fetch Student with Relations
         $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
 
-        // 2️⃣ Fetch Fee Structure & Ledger Data
         $feeStructures = StudentFeeStructure::where('student_id', $studentId)
             ->orderBy('id')
             ->get();
@@ -35,33 +90,27 @@ class StudentLedgerController extends Controller
             ->orderBy('id')
             ->get();
 
-        // 3️⃣ Calculate Summary
-        $totalFee = $student->total_fee ?? 0;
+        $totalFee  = $student->total_fee ?? 0;
         $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
-        $balance = $totalFee - $totalPaid;
+        $balance   = $totalFee - $totalPaid;
 
-        // 4️⃣ Course Details
         $subCourse = $student->subCourse;
         $courseName = $subCourse->name ?? '-';
-        $mode = $subCourse->courseMode->name ?? 'Semesters';
-        $duration = $subCourse->duration ?? 0;
+        $mode       = $subCourse->courseMode->name ?? 'Semesters';
+        $duration   = $subCourse->duration ?? 0;
+        $feePerSem  = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
 
-        // 🔹 Static semester fee calculation (like getStudentFeeInfo)
-        $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
-
-        // Generate static semester-wise array (no ledger dependency)
         $semesterWiseFees = [];
         for ($i = 1; $i <= $duration; $i++) {
             $semesterWiseFees[] = [
+                'id'       => $feeStructures[$i - 1]->id ?? null, // store DB id if exists
                 'semester' => ($mode === 'Yearly') ? "Year $i" : "Semester $i",
                 'amount'   => $feePerSem,
             ];
         }
 
-        // 5️⃣ Fetch Invoices (optional)
         $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
 
-        // 6️⃣ Pass to View
         return view('accounts.fee.ledger', compact(
             'student',
             'feeStructures',
@@ -77,6 +126,7 @@ class StudentLedgerController extends Controller
             'semesterWiseFees'
         ));
     }
+
 
 
 
