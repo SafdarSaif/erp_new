@@ -24,60 +24,6 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $student = Student::orderBy('id', 'desc')->get();
-
-    //         return DataTables::of($student)
-    //             ->addIndexColumn()
-    //             ->editColumn('status', fn($row) => $row->status ? 1 : 0)
-    //             ->addColumn('action', fn($row) => '')
-    //             ->make(true);
-    //     }
-
-    //     return view('students.index');
-    // }
-
-    // public function index(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         // Fetch students with related data
-    //         $students = Student::with([
-    //             'academicYear',
-    //             'university',
-    //             'courseType',
-    //             'course',
-    //             'subCourse',
-    //             'mode',
-    //             'courseMode',
-    //             'language',
-    //             'bloodGroup',
-    //             'religion',
-    //             'category'
-    //         ])->orderBy('id', 'desc');
-
-    //         return DataTables::of($students)
-    //             ->addIndexColumn()
-    //             ->addColumn('academic_year', fn($row) => $row->academicYear ? $row->academicYear->name : '-')
-    //             ->addColumn('university', fn($row) => $row->university ? $row->university->name : '-')
-    //             ->addColumn('course_type', fn($row) => $row->courseType ? $row->courseType->name : '-')
-    //             ->addColumn('course', fn($row) => $row->course ? $row->course->name : '-')
-    //             ->addColumn('sub_course', fn($row) => $row->subCourse ? $row->subCourse->name : '-')
-    //             ->addColumn('mode', fn($row) => $row->mode ? $row->mode->name : '-')
-    //             ->addColumn('course_mode', fn($row) => $row->courseMode ? $row->courseMode->name : '-')
-    //             ->addColumn('language', fn($row) => $row->language ? $row->language->name : '-')
-    //             ->addColumn('blood_group', fn($row) => $row->bloodGroup ? $row->bloodGroup->name : '-')
-    //             ->addColumn('religion', fn($row) => $row->religion ? $row->religion->name : '-')
-    //             ->addColumn('category', fn($row) => $row->category ? $row->category->name : '-')
-    //             ->editColumn('status', fn($row) => $row->status ? '1' : '0')
-    //             ->addColumn('action', fn($row) => '')
-
-    //             ->make(true);
-    //     }
-
-    //     return view('students.index');
-    // }
 
 
 
@@ -255,72 +201,7 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     // Validate incoming request
-    //     $validatedData = $request->validate([
-    //         'full_name'         => 'required|string|max:255',
-    //         'father_name'       => 'nullable|string|max:255',
-    //         'mother_name'       => 'nullable|string|max:255',
-    //         'aadhaar_no'        => 'nullable|string|max:20',
-    //         'email'             => 'nullable|email|max:255|unique:students,email',
-    //         'mobile'            => 'nullable|string|max:20',
-    //         'dob'               => 'nullable|date',
-    //         'gender'            => 'nullable|in:Male,Female,Other',
-    //         'academic_year_id'  => 'required|exists:academic_years,id',
-    //         'university_id'     => 'required|exists:universities,id',
-    //         'course_type_id'    => 'required|exists:course_types,id',
-    //         'course_id'         => 'required|exists:courses,id',
-    //         'sub_course_id'     => 'required|exists:sub_courses,id',
-    //         'mode_id'           => 'required|exists:admission_modes,id',
-    //         'course_mode_id'    => 'required|exists:course_modes,id',
-    //         'semester'          => 'nullable|string|max:50',
-    //         'course_duration'   => 'nullable|string|max:50',
-    //         'language_id'       => 'nullable|exists:languages,id',
-    //         'blood_group_id'    => 'nullable|exists:blood_groups,id',
-    //         'religion_id'       => 'nullable|exists:religions,id',
-    //         'category_id'       => 'nullable|exists:categories,id',
-    //         'income'            => 'nullable|numeric|min:0',
-    //         'total_fee'         => 'nullable|numeric|min:0',
-    //         'permanent_address' => 'nullable|string|max:500',
-    //         'current_address'   => 'nullable|string|max:500',
-    //         'status'            => 'nullable|boolean',
-    //     ]);
 
-    //     // Create student record
-    //     $student = Student::create([
-    //         'full_name'         => $validatedData['full_name'],
-    //         'father_name'       => $validatedData['father_name'] ?? null,
-    //         'mother_name'       => $validatedData['mother_name'] ?? null,
-    //         'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
-    //         'email'             => $validatedData['email'] ?? null,
-    //         'mobile'            => $validatedData['mobile'] ?? null,
-    //         'dob'               => $validatedData['dob'] ?? null,
-    //         'gender'            => $validatedData['gender'] ?? null,
-    //         'academic_year_id'  => $validatedData['academic_year_id'],
-    //         'university_id'     => $validatedData['university_id'],
-    //         'course_type_id'    => $validatedData['course_type_id'],
-    //         'course_id'         => $validatedData['course_id'],
-    //         'sub_course_id'     => $validatedData['sub_course_id'],
-    //         'admissionmode_id'  => $validatedData['mode_id'],
-    //         'course_mode_id'    => $validatedData['course_mode_id'],
-    //         'semester'          => $validatedData['semester'] ?? null,
-    //         'course_duration'   => $validatedData['course_duration'] ?? null,
-    //         'language_id'       => $validatedData['language_id'] ?? null,
-    //         'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
-    //         'religion_id'       => $validatedData['religion_id'] ?? null,
-    //         'category_id'       => $validatedData['category_id'] ?? null,
-    //         'income'            => $validatedData['income'] ?? null,
-    //         'total_fee'         => $validatedData['total_fee'] ?? null,
-    //         'permanent_address' => $validatedData['permanent_address'] ?? null,
-    //         'current_address'   => $validatedData['current_address'] ?? null,
-    //         'status'            => $validatedData['status'] ?? 1,
-    //     ]);
-
-    //     // Redirect with success message
-    //     return redirect()->route('students.index')
-    //         ->with('success', 'Student has been added successfully.');
-    // }
 
     public function store(Request $request)
     {

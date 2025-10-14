@@ -22,6 +22,8 @@ use App\Http\Controllers\Settings\BloodGroupController;
 use App\Http\Controllers\Settings\CategoryController;
 use App\Http\Controllers\Settings\ReligionController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\Accounts\StudentFeeStructureController;
+use App\Http\Controllers\StudentLedgerController;
 
 
 
@@ -236,6 +238,43 @@ Route::prefix('students')->group(function () {
     Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
     Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
+});
+
+
+// =========================
+//  Accounts Module Routes
+// =========================
+Route::prefix('accounts')->group(function () {
+
+    // Student Fee Management
+    Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
+    Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');
+    Route::post('/fees/store', [StudentFeeStructureController::class, 'store'])->name('fees.store');
+    Route::get('/fees/edit/{id}', [StudentFeeStructureController::class, 'edit'])->name('fees.edit');
+    Route::post('/fees/update/{id}', [StudentFeeStructureController::class, 'update'])->name('fees.update');
+    Route::delete('/fees/destroy/{id}', [StudentFeeStructureController::class, 'destroy'])->name('fees.destroy');
+
+
+    Route::get('/student-fee-info/{id}', [StudentFeeStructureController::class, 'getStudentFeeInfo'])->name('fees.info');
+
+    // Additional routes for invoices and payments can be added here
+
+    Route::get('/studentindex', [StudentFeeStructureController::class, 'studentindex'])->name('fees.studentindex');
+    Route::get('/fees/add', [StudentFeeStructureController::class, 'add'])->name('fees.add');
+    Route::get('/ledger/{studentId}', [StudentLedgerController::class, 'ledger'])
+    ->name('accounts.ledger');
+
+    Route::post('/student/save-payment', [StudentLedgerController::class, 'savePayment'])
+    ->name('student.savePayment');
+
+    Route::get('/students/{studentId}/payment-modal', [StudentLedgerController::class, 'loadPaymentModal'])
+    ->name('student.paymentModal');
+
+    Route::post('/students/fee/confirm', [StudentLedgerController::class, 'confirmFeeStructure'])
+    ->name('student.fee.confirm');
+
+
+
 
 });
 

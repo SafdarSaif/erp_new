@@ -18,6 +18,24 @@
             </select>
         </div>
 
+
+        <!-- Course Mode -->
+        <div class="col-md-6">
+            <label for="mode_id" class="form-label">Course Mode <span class="text-danger">*</span></label>
+            <select name="mode_id" id="mode_id" class="form-select" required>
+                <option value="">-- Select Mode --</option>
+                @foreach($courseModes as $mode)
+                    <option value="{{ $mode->id }}">{{ $mode->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
+            <input type="text" name="duration" id="duration" class="form-control" placeholder="e.g. 3 Years, 6 Months" required>
+        </div>
+
         <!-- Sub Course Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course Name <span class="text-danger">*</span></label>
