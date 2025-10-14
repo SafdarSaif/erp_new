@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
 use Illuminate\Http\Request;
+use App\Models\Settings\CourseMode;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,20 +19,34 @@ class SubCourseController extends Controller
     {
         if ($request->ajax()) {
             // Load related department and course type
-            $courses = SubCourse::with(['course'])->orderBy('id', 'desc')->get();
+            $courses = SubCourse::with(['course', 'courseMode'])->orderBy('id', 'desc')->get();
+
+
+            // dd($courses);
+
+            // return DataTables::of($courses)
+            //     ->addIndexColumn()
+            //     ->addColumn('course', function ($course) {
+            //         return $course->course->name ?? '-';
+            //     })
+            //     ->addColumn('courseMode', function($course){
+            //         return $course->courseMode->name ?? '-';
+            //     })
+
+            //     ->editColumn('status', function ($course) {
+            //         return $course->status ? 1 : 0;
+            //     })
+            //     ->addColumn('action', function ($course) {
+            //         return '';
+            //     })
+            //     ->make(true);
 
             return DataTables::of($courses)
                 ->addIndexColumn()
-                ->addColumn('course', function ($course) {
-                    return $course->course->name ?? '-';
-                })
-
-                ->editColumn('status', function ($course) {
-                    return $course->status ? 1 : 0;
-                })
-                ->addColumn('action', function ($course) {
-                    return '';
-                })
+                ->addColumn('course', fn($course) => $course->course->name ?? '-')
+                ->addColumn('mode', fn($course) => $course->courseMode->name ?? '-') // key = mode
+                ->editColumn('status', fn($course) => $course->status ? 1 : 0)
+                ->addColumn('action', fn($course) => '')
                 ->make(true);
         }
 
@@ -44,51 +59,56 @@ class SubCourseController extends Controller
     public function create()
     {
         $courses  = Course::where('status', 1)->get();
-        return view('academics.subcourse.create', compact('courses'));
+        $courseModes  = CourseMode::where('status', 1)->get();
+        return view('academics.subcourse.create', compact('courses', 'courseModes'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'course_id' => 'required|exists:courses,id',
-        'name' => 'required|string|max:100',
-        'short_name' => 'required|string|max:50',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    ]);
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|exists:courses,id',
+            'mode_id'   => 'required|exists:course_modes,id',
+            'name' => 'required|string|max:100',
+            'short_name' => 'required|string|max:50',
+            'duration'  => 'required|string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
 
-    if ($validator->fails()) {
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $data = [
+            'course_id' => $request->course_id,
+            'mode_id'   => $request->mode_id,
+            'name' => $request->name,
+            'short_name' => $request->short_name,
+            'duration'  => $request->duration,
+            'status' => $request->input('status', 1),
+        ];
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
+            $image->move(public_path('uploads/subcourses'), $imageName);
+            $data['image'] = 'uploads/subcourses/' . $imageName;
+        }
+
+        $subCourse = SubCourse::create($data);
+
         return response()->json([
-            'status' => 'error',
-            'message' => $validator->errors()->first()
-        ], 422);
+            'status' => 'success',
+            'message' => 'Sub Course added successfully!',
+            'data' => $subCourse
+        ]);
     }
-
-    $data = [
-        'course_id' => $request->course_id,
-        'name' => $request->name,
-        'short_name' => $request->short_name,
-        'status' => $request->input('status', 1),
-    ];
-
-    // Handle image upload
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
-        $image->move(public_path('uploads/subcourses'), $imageName);
-        $data['image'] = 'uploads/subcourses/' . $imageName;
-    }
-
-    $subCourse = SubCourse::create($data);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Sub Course added successfully!',
-        'data' => $subCourse
-    ]);
-}
 
 
     /**
@@ -106,58 +126,65 @@ class SubCourseController extends Controller
     {
         $subcourse  = SubCourse::findOrFail($subCourseID);
         $courses  = Course::where('status', 1)->get();
-        return view('academics.subcourse.edit', compact('subcourse', 'courses'));
+        $courseModes = CourseMode::where('status', 1)->get(); // Pass course modes to view
+        return view('academics.subcourse.edit', compact('subcourse', 'courses', 'courseModes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-   public function update(Request $request, $id)
-{
-    $subcourse = SubCourse::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $subcourse = SubCourse::findOrFail($id);
 
-    $validator = Validator::make($request->all(), [
-        'course_id' => 'required|exists:courses,id',
-        'name' => 'required|string|max:100',
-        'short_name' => 'required|string|max:50',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    ]);
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|exists:courses,id',
+            'mode_id'   => 'required|exists:course_modes,id', // Validate mode
+            'name' => 'required|string|max:100',
+            'short_name' => 'required|string|max:50',
+            'duration'  => 'required|string|max:100',         // Validate duration
 
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $validator->errors()->first()
-        ], 422);
-    }
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
 
-    $subcourse->course_id = $request->course_id;
-    $subcourse->name = $request->name;
-    $subcourse->short_name = $request->short_name;
-
-    // Handle new image
-    if ($request->hasFile('image')) {
-        if ($subcourse->image && file_exists(public_path($subcourse->image))) {
-            unlink(public_path($subcourse->image));
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
         }
-        $image = $request->file('image');
-        $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
-        $image->move(public_path('uploads/subcourses'), $imageName);
-        $subcourse->image = 'uploads/subcourses/' . $imageName;
+
+        $subcourse->course_id = $request->course_id;
+        $subcourse->mode_id    = $request->mode_id;    // Save mode
+        $subcourse->name = $request->name;
+        $subcourse->short_name = $request->short_name;
+        $subcourse->duration   = $request->duration;  // Save duration
+
+
+        // Handle new image
+        if ($request->hasFile('image')) {
+            if ($subcourse->image && file_exists(public_path($subcourse->image))) {
+                unlink(public_path($subcourse->image));
+            }
+            $image = $request->file('image');
+            $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
+            $image->move(public_path('uploads/subcourses'), $imageName);
+            $subcourse->image = 'uploads/subcourses/' . $imageName;
+        }
+
+        $subcourse->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sub Course updated successfully!',
+            'data' => $subcourse
+        ]);
     }
-
-    $subcourse->save();
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Sub Course updated successfully!',
-        'data' => $subcourse
-    ]);
-}
 
     /**
      * Remove the specified resource from storage.
      */
-     public function destroy($subCourseID)
+    public function destroy($subCourseID)
     { {
             try {
                 $subcourse = SubCourse::destroy($subCourseID);

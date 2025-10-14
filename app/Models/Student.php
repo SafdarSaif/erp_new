@@ -13,6 +13,7 @@ use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
 use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
+use App\Models\Accounts\StudentFeeStructure;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,5 +41,17 @@ class Student extends Model
     public function bloodGroup() { return $this->belongsTo(BloodGroup::class, 'blood_group_id'); }
     public function religion() { return $this->belongsTo(Religion::class, 'religion_id'); }
     public function category() { return $this->belongsTo(Category::class, 'category_id'); }
+
+
+    // In Student.php
+public function fees()
+{
+    return $this->hasMany(StudentFeeStructure::class);
+}
+
+public function ledger()
+{
+    return $this->hasMany(StudentLedger::class);
+}
 
 }

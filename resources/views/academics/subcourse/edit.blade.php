@@ -4,7 +4,8 @@
         <p class="text-muted">Update the sub course details below</p>
     </div>
 
-    <form id="subcourse-edit-form" action="{{ route('subcourse.update', $subcourse->id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    <form id="subcourse-edit-form" action="{{ route('subcourse.update', $subcourse->id) }}" method="POST"
+        enctype="multipart/form-data" class="row g-3">
         @csrf
 
         <!-- Hidden ID -->
@@ -16,9 +17,22 @@
             <select name="course_id" id="course_id" class="form-select" required>
                 <option value="">-- Select Course --</option>
                 @foreach($courses as $course)
-                    <option value="{{ $course->id }}" {{ $course->id == $subcourse->course_id ? 'selected' : '' }}>
-                        {{ $course->name }}
-                    </option>
+                <option value="{{ $course->id }}" {{ $course->id == $subcourse->course_id ? 'selected' : '' }}>
+                    {{ $course->name }}
+                </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Course Mode Select -->
+        <div class="col-md-6">
+            <label for="mode_id" class="form-label">Course Mode <span class="text-danger">*</span></label>
+            <select name="mode_id" id="mode_id" class="form-select" required>
+                <option value="">-- Select Mode --</option>
+                @foreach($courseModes as $mode)
+                <option value="{{ $mode->id }}" {{ $mode->id == $subcourse->mode_id ? 'selected' : '' }}>
+                    {{ $mode->name }}
+                </option>
                 @endforeach
             </select>
         </div>
@@ -26,15 +40,22 @@
         <!-- Sub Course Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" value="{{ $subcourse->name }}" class="form-control" placeholder="Enter sub course name" required>
+            <input type="text" name="name" id="name" value="{{ $subcourse->name }}" class="form-control"
+                placeholder="Enter sub course name" required>
         </div>
 
         <!-- Short Name -->
         <div class="col-md-6">
             <label for="short_name" class="form-label">Short Name <span class="text-danger">*</span></label>
-            <input type="text" name="short_name" id="short_name" value="{{ $subcourse->short_name }}" class="form-control" placeholder="Enter short name" required>
+            <input type="text" name="short_name" id="short_name" value="{{ $subcourse->short_name }}"
+                class="form-control" placeholder="Enter short name" required>
         </div>
-
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
+            <input type="text" name="duration" id="duration" value="{{ $subcourse->duration }}" class="form-control"
+                placeholder="Enter duration" required>
+        </div>
 
         <!-- Logo Upload -->
         <div class="col-md-6">
@@ -59,7 +80,7 @@
 </div>
 
 <script>
-$(function() {
+    $(function() {
     $("#subcourse-edit-form").submit(function(e) {
         e.preventDefault();
         $(':input[type="submit"]').prop('disabled', true);

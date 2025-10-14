@@ -6,6 +6,7 @@ use App\Models\Academics\Subject;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Academics\SubCourse;
+use App\Models\Settings\CourseMode; 
 use Illuminate\Support\Facades\Validator;
 use Exception;
 
@@ -45,7 +46,8 @@ class SubjectController extends Controller
     public function create()
     {
         $subcourses  = SubCourse::where('status', 1)->get();
-        return view('academics.subjects.create', compact('subcourses'));
+        $coursemode = CourseMode::where('status', 1)->get();
+        return view('academics.subjects.create', compact('subcourses', 'coursemode'));
     }
 
     /**

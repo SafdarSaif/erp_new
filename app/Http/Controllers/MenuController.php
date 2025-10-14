@@ -205,6 +205,7 @@ class MenuController extends Controller
 
 
     public function store(Request $request)
+    
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
