@@ -53,6 +53,9 @@ class SubCourseController extends Controller
         return view('academics.subcourse.index');
     }
 
+
+
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -73,6 +76,7 @@ class SubCourseController extends Controller
             'mode_id'   => 'required|exists:course_modes,id',
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
+            'university_fee' => 'nullable|string|max:50',
             'duration'  => 'required|string|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
@@ -90,6 +94,7 @@ class SubCourseController extends Controller
             'name' => $request->name,
             'short_name' => $request->short_name,
             'duration'  => $request->duration,
+            'university_fee'=> $request->university_fee,
             'status' => $request->input('status', 1),
         ];
 
@@ -143,7 +148,7 @@ class SubCourseController extends Controller
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
             'duration'  => 'required|string|max:100',         // Validate duration
-
+            'university_fee' => 'nullable|string|max:50',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -158,6 +163,7 @@ class SubCourseController extends Controller
         $subcourse->mode_id    = $request->mode_id;    // Save mode
         $subcourse->name = $request->name;
         $subcourse->short_name = $request->short_name;
+        $subcourse->university_fee = $request->university_fee;
         $subcourse->duration   = $request->duration;  // Save duration
 
 

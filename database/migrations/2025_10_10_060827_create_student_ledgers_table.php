@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->dateTime('transaction_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('payment_mode', 50)->nullable();
-            $table->string('utr_no', 100)->nullable();
+            $table->string('utr_no', 100)->nullable();//transaction_id for this table 
             $table->json('gateway_response')->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();

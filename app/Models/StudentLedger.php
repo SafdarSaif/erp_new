@@ -33,4 +33,10 @@ class StudentLedger extends Model
     {
         return $this->hasOne(StudentInvoice::class, 'ledger_id');
     }
+
+
+     public function feeStructure()
+    {
+        return $this->belongsTo(StudentFeeStructure::class, 'student_fee_id');
+    }
 }

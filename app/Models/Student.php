@@ -54,4 +54,10 @@ public function ledger()
     return $this->hasMany(StudentLedger::class);
 }
 
+public function feeStructures()
+{
+    return $this->hasMany(StudentFeeStructure::class, 'student_id');
+}
+
+
 }

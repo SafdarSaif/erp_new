@@ -24,8 +24,7 @@ use App\Http\Controllers\Settings\ReligionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Accounts\StudentFeeStructureController;
 use App\Http\Controllers\StudentLedgerController;
-
-
+use App\Http\Controllers\UniversityFeesController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -246,6 +245,11 @@ Route::prefix('students')->group(function () {
 // =========================
 Route::prefix('accounts')->group(function () {
 
+    Route::resource('university-fee', UniversityFeesController::class);
+    Route::get('/university-fee/{studentId}', [UniversityFeesController::class, 'show'])->name('university-fee.show');
+    Route::post('/university-fee/update-fee/{studentId}', [UniversityFeesController::class, 'updateFee'])->name('university-fee.updateFee');
+    Route::get('/university-payments', [UniversityFeesController::class, 'UnversityFeeTransactionHistory'])
+    ->name('university-payments.index');
     // Student Fee Management
     Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
     Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');
@@ -262,20 +266,25 @@ Route::prefix('accounts')->group(function () {
     Route::get('/studentindex', [StudentFeeStructureController::class, 'studentindex'])->name('fees.studentindex');
     Route::get('/fees/add', [StudentFeeStructureController::class, 'add'])->name('fees.add');
     Route::get('/ledger/{studentId}', [StudentLedgerController::class, 'ledger'])
-    ->name('accounts.ledger');
+        ->name('accounts.ledger');
 
     Route::post('/student/save-payment', [StudentLedgerController::class, 'savePayment'])
-    ->name('student.savePayment');
+        ->name('student.savePayment');
 
     Route::get('/students/{studentId}/payment-modal', [StudentLedgerController::class, 'loadPaymentModal'])
-    ->name('student.paymentModal');
+        ->name('student.paymentModal');
 
     Route::post('/students/fee/confirm', [StudentLedgerController::class, 'confirmFeeStructure'])
-    ->name('student.fee.confirm');
+        ->name('student.fee.confirm');
 
 
+    Route::get('/student/{id}/semester-balance', [StudentLedgerController::class, 'getSemesterBalance'])
+        ->name('student.semester.balance');
 
-
+    Route::get('/student/payment/{id}/edit', [StudentLedgerController::class, 'editPayment'])->name('student.editPayment');
+    Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
+    Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
+        ->name('student.updatePayment');
 });
 
 

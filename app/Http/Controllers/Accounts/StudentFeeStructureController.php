@@ -17,6 +17,10 @@ use Exception;
 
 
 
+
+
+
+
 class StudentFeeStructureController extends Controller
 {
     /**
@@ -27,37 +31,68 @@ class StudentFeeStructureController extends Controller
 
 
 
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $fees = StudentFeeStructure::with('student')
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         // dd($fees);
+
+    //         return DataTables::of($fees)
+    //             ->addIndexColumn()
+    //             ->addColumn('student_name', function ($fee) {
+    //                 return $fee->student->full_name ?? '-';
+    //             })
+    //             ->editColumn('amount', function ($fee) {
+    //                 return number_format($fee->amount, 2);
+    //             })
+    //             ->editColumn('created_at', function ($fee) {
+    //                 return $fee->created_at ? $fee->created_at->format('d M Y') : '-';
+    //             })
+    //             ->editColumn('updated_at', function ($fee) {
+    //                 return $fee->updated_at ? $fee->updated_at->format('d M Y') : '-';
+    //             })
+    //             ->addColumn('action', function ($fee) {
+    //                 return '';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('accounts.fee.index');
+    // }
+
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $fees = StudentFeeStructure::with('student')
+            $ledgers = StudentLedger::with(['student', 'feeStructure'])
                 ->orderBy('id', 'desc')
                 ->get();
 
-            // dd($fees);
-
-            return DataTables::of($fees)
+            return DataTables::of($ledgers)
                 ->addIndexColumn()
-                ->addColumn('student_name', function ($fee) {
-                    return $fee->student->full_name ?? '-';
+                ->addColumn('student_name', fn($l) => $l->student->full_name ?? '-')
+                ->addColumn('semester', fn($l) => $l->feeStructure->semester ?? '-')
+                ->editColumn('amount', fn($l) => number_format($l->amount, 2))
+                ->editColumn('created_at', fn($l) => $l->created_at ? $l->created_at->format('d M Y') : '-')
+                ->addColumn('action', function ($l) {
+                    $receiptUrl = route('student.downloadReceipt', $l->id);
+                    return '
+                    <div class="hstack gap-2 fs-15">
+                        <button class="btn btn-sm btn-light-success" onclick="window.open(\'' . $receiptUrl . '\', \'_blank\')">
+                            <i class="bi bi-download"></i> Receipt
+                        </button>
+                    </div>';
                 })
-                ->editColumn('amount', function ($fee) {
-                    return number_format($fee->amount, 2);
-                })
-                ->editColumn('created_at', function ($fee) {
-                    return $fee->created_at ? $fee->created_at->format('d M Y') : '-';
-                })
-                ->editColumn('updated_at', function ($fee) {
-                    return $fee->updated_at ? $fee->updated_at->format('d M Y') : '-';
-                })
-                ->addColumn('action', function ($fee) {
-                    return '';
-                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
         return view('accounts.fee.index');
     }
+
 
 
 

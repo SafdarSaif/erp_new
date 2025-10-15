@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>E-Commerce Dashboard | Herozi - Bootstrap Admin & Dashboard Template</title>
+    <title>ERP Dashboard | DSMS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Herozi is the top-selling Bootstrap 5 admin dashboard template. With Dark Mode, multi-demo options, RTL support, and lifetime updates, it's perfect for web developers.">
@@ -14,7 +14,7 @@
 
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Herozi - Bootstrap Admin & Dashboard Template">
+    <meta property="og:title" content="DSMS">
     <meta property="og:description"
         content="Herozi is the top-selling Bootstrap 5 admin dashboard template. With Dark Mode, multi-demo options, RTL support, and lifetime updates, it's perfect for web developers.">
     <meta property="og:url" content="https://themeforest.net/user/srbthemes/portfolio">
