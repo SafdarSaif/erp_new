@@ -23,8 +23,7 @@ use App\Http\Controllers\Settings\ReligionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Accounts\StudentFeeStructureController;
 use App\Http\Controllers\StudentLedgerController;
-
-
+use App\Http\Controllers\UniversityFeesController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -245,6 +244,11 @@ Route::prefix('students')->group(function () {
 // =========================
 Route::prefix('accounts')->group(function () {
 
+    Route::resource('university-fee', UniversityFeesController::class);
+    Route::get('/university-fee/{studentId}', [UniversityFeesController::class, 'show'])->name('university-fee.show');
+    Route::post('/university-fee/update-fee/{studentId}', [UniversityFeesController::class, 'updateFee'])->name('university-fee.updateFee');
+    Route::get('/university-payments', [UniversityFeesController::class, 'UnversityFeeTransactionHistory'])
+    ->name('university-payments.index');
     // Student Fee Management
     Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
     Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');
