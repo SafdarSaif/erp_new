@@ -16,10 +16,10 @@
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
             <select name="course_id" id="course_id" class="form-select" required>
                 <option value="">-- Select Course --</option>
-                @foreach($courses as $course)
-                <option value="{{ $course->id }}" {{ $course->id == $subcourse->course_id ? 'selected' : '' }}>
-                    {{ $course->name }}
-                </option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" {{ $course->id == $subcourse->course_id ? 'selected' : '' }}>
+                        {{ $course->name }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -29,10 +29,10 @@
             <label for="mode_id" class="form-label">Course Mode <span class="text-danger">*</span></label>
             <select name="mode_id" id="mode_id" class="form-select" required>
                 <option value="">-- Select Mode --</option>
-                @foreach($courseModes as $mode)
-                <option value="{{ $mode->id }}" {{ $mode->id == $subcourse->mode_id ? 'selected' : '' }}>
-                    {{ $mode->name }}
-                </option>
+                @foreach ($courseModes as $mode)
+                    <option value="{{ $mode->id }}" {{ $mode->id == $subcourse->mode_id ? 'selected' : '' }}>
+                        {{ $mode->name }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -50,11 +50,16 @@
             <input type="text" name="short_name" id="short_name" value="{{ $subcourse->short_name }}"
                 class="form-control" placeholder="Enter short name" required>
         </div>
+        <div class="col-md-6">
+            <label for="university_fee" class="form-label">University Fees <span class="text-danger">*</span></label>
+            <input type="text" name="university_fee" id="university_fee" class="form-control" value="{{ $subcourse->university_fee }}"
+                placeholder="Enter University Fees">
+        </div>
         <!-- Duration -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
-            <input type="text" name="duration" id="duration" value="{{ $subcourse->duration }}" class="form-control"
-                placeholder="Enter duration" required>
+            <input type="text" name="duration" id="duration" value="{{ $subcourse->duration }}"
+                class="form-control" placeholder="Enter duration" required>
         </div>
 
         <!-- Logo Upload -->
@@ -63,10 +68,10 @@
             <input type="file" name="logo" id="logo" class="form-control" accept="image/*">
             <small class="text-muted">Upload a logo (PNG, JPG, JPEG, SVG)</small>
 
-            @if(!empty($subcourse->image))
-            <div class="mt-2">
-                <img src="{{ asset($subcourse->image) }}" alt="Course Logo" width="80" class="rounded">
-            </div>
+            @if (!empty($subcourse->image))
+                <div class="mt-2">
+                    <img src="{{ asset($subcourse->image) }}" alt="Course Logo" width="80" class="rounded">
+                </div>
             @endif
         </div>
 
@@ -81,34 +86,34 @@
 
 <script>
     $(function() {
-    $("#subcourse-edit-form").submit(function(e) {
-        e.preventDefault();
-        $(':input[type="submit"]').prop('disabled', true);
+        $("#subcourse-edit-form").submit(function(e) {
+            e.preventDefault();
+            $(':input[type="submit"]').prop('disabled', true);
 
-        var formData = new FormData(this);
+            var formData = new FormData(this);
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                $(':input[type="submit"]').prop('disabled', false);
-                if (response.status === 'success') {
-                    toastr.success(response.message);
-                    $(".modal").modal('hide');
-                    $('#subcourse-table').DataTable().ajax.reload();
-                } else {
-                    toastr.error(response.message);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    $(':input[type="submit"]').prop('disabled', false);
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        $(".modal").modal('hide');
+                        $('#subcourse-table').DataTable().ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $(':input[type="submit"]').prop('disabled', false);
+                    toastr.error(xhr.responseJSON?.message || 'Something went wrong!');
                 }
-            },
-            error: function(xhr) {
-                $(':input[type="submit"]').prop('disabled', false);
-                toastr.error(xhr.responseJSON?.message || 'Something went wrong!');
-            }
+            });
         });
     });
-});
 </script>
