@@ -53,6 +53,9 @@ class SubCourseController extends Controller
         return view('academics.subcourse.index');
     }
 
+
+
+    
     /**
      * Show the form for creating a new resource.
      */
