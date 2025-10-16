@@ -9,74 +9,31 @@ use App\Models\Academics\Department;
 use App\Models\Academics\SubCourse;
 use App\Models\Academics\Subject;
 use App\Models\StudentLedger;
+use App\Models\UniversityFees;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    // public function index()
-    // {
-    //     $totalStudents        = Student::count();
-    //     $newStudentsThisMonth = Student::whereMonth('created_at', now()->month)->count();
-
-    //     $totalCourses       = Course::count();
-    //     $activeCourses      = Course::where('status', true)->count();
-    //     $totalSubCourses    = SubCourse::count();
-
-    //     $totalRevenue       = StudentLedger::sum('amount');
-
-
-    //     $monthlyRevenue     = $this->getMonthlyRevenue();
-    //     $revenueGrowth      = $this->getRevenueGrowth();
-
-
-
-    //     $totalUniversities  = University::count();
-    //     $totalDepartments   = Department::count();
-
-    //     $recentStudents     = Student::with(['subCourse', 'academicYear'])
-    //         ->latest()
-    //         ->take(5)
-    //         ->get();
-
-    //     $courseDistribution = $this->getCourseDistribution();
-
-    //     // dd($monthlyRevenue, $courseDistribution);
-
-
-    //     $universities       = University::withCount('departments')->take(4)->get();
-
-    //     return view('content.home', compact(
-    //         'totalStudents',
-    //         'newStudentsThisMonth',
-    //         'totalCourses',
-    //         'activeCourses',
-    //         'totalSubCourses',
-    //         'totalRevenue',
-    //         'monthlyRevenue',
-    //         'revenueGrowth',
-    //         'totalUniversities',
-    //         'totalDepartments',
-    //         'recentStudents',
-    //         'courseDistribution',
-    //         'universities'
-    //     ));
-    // }
-
     public function index()
     {
-        $totalStudents        = Student::count();
-        $newStudentsThisMonth = Student::whereMonth('created_at', now()->month)->count();
-        $totalCourses         = Course::count();
-        $activeCourses        = Course::where('status', true)->count();
-        $totalSubCourses      = SubCourse::count();
-        $totalRevenue         = StudentLedger::sum('amount');
-        $monthlyRevenue       = $this->getMonthlyRevenue();
-        $revenueGrowth        = $this->getRevenueGrowth();
-        $totalUniversities    = University::count();
-        $totalDepartments     = Department::count();
-        $recentStudents       = Student::with(['subCourse', 'academicYear'])->latest()->take(5)->get();
-        $courseDistribution   = $this->getCourseDistribution();
-        $universities         = University::withCount('departments')->take(4)->get();
+        $totalStudents          = Student::count();
+        $newStudentsThisMonth   = Student::whereMonth('created_at', now()->month)->count();
+        $totalCourses           = Course::count();
+        $activeCourses          = Course::where('status', true)->count();
+        $totalSubCourses        = SubCourse::count();
+        $totalSubjects          = Subject::count();
+        $totalRevenue           = StudentLedger::sum('amount');
+        $monthlyRevenue         = $this->getMonthlyRevenue();
+        $monthlyUniversityFees  = $this->getMonthlyUniversityFees();
+        $revenueGrowth          = $this->getRevenueGrowth();
+        $totalUniversities      = University::count();
+        $totalDepartments       = Department::count();
+        $recentStudents         = Student::with(['subCourse', 'academicYear'])
+                                        ->latest()
+                                        ->take(5)
+                                        ->get();
+        $courseDistribution     = $this->getCourseDistribution();
+        $universities           = University::withCount('departments')->take(4)->get();
 
         return view('content.home', compact(
             'totalStudents',
@@ -84,8 +41,10 @@ class DashboardController extends Controller
             'totalCourses',
             'activeCourses',
             'totalSubCourses',
+            'totalSubjects',
             'totalRevenue',
             'monthlyRevenue',
+            'monthlyUniversityFees',
             'revenueGrowth',
             'totalUniversities',
             'totalDepartments',
@@ -94,7 +53,6 @@ class DashboardController extends Controller
             'universities'
         ));
     }
-
 
     private function getMonthlyRevenue()
     {
@@ -106,12 +64,27 @@ class DashboardController extends Controller
 
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[] = isset($rows[$m]) ? (float)$rows[$m] : 0;
+            $months[] = $rows[$m] ?? 0;
         }
-        return $months;
 
-        // $monthlyRevenue = $this->getMonthlyRevenue();
-        // dd($monthlyRevenue);
+        return $months;
+    }
+
+    private function getMonthlyUniversityFees()
+    {
+        $rows = UniversityFees::selectRaw('MONTH(date) as month, SUM(amount) as total')
+            ->whereYear('date', now()->year)
+            ->where('status', 'success')
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $months = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $months[] = $rows[$m] ?? 0;
+        }
+
+        return $months;
     }
 
     private function getRevenueGrowth()

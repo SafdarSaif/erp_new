@@ -31,6 +31,20 @@
         .bg-light-info {
             background-color: rgba(73, 190, 255, 0.1);
         }
+
+        .hover-shadow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card-footer {
+            gap: 10px;
+        }
+
+        .badge {
+            font-size: 0.85rem;
+        }
     </style>
 @endpush
 
@@ -73,7 +87,7 @@
                                             <h6 class="mb-0 fs-13">Total Students</h6>
                                         </div>
                                         <h4 class="fw-semibold fs-5 mb-0">
-                                            {{ App\Models\Student::count() }}
+                                            {{ $totalStudents }}
                                         </h4>
                                         <p class="text-muted mb-0 fs-12">Active students</p>
                                     </div>
@@ -81,7 +95,8 @@
                                         <div class="d-flex align-items-end justify-content-end gap-3">
                                             <span class="text-success">
                                                 <i class="ri-arrow-right-up-line fs-12"></i>
-                                                {{ App\Models\Student::whereDate('created_at', '>=', now()->subDays(30))->count() }}
+                                                {{-- {{ App\Models\Student::whereDate('created_at', '>=', now()->subDays(30))->count() }} --}}
+                                                {{ $newStudentsThisMonth }}
                                             </span>
                                         </div>
                                         <div class="text-muted fs-12">+new this month</div>
@@ -103,7 +118,8 @@
                                             <h6 class="mb-0 fs-13">Total Courses</h6>
                                         </div>
                                         <h4 class="fw-semibold fs-5 mb-0">
-                                            {{ \App\Models\Academics\Course::count() }}
+                                            {{-- {{ \App\Models\Academics\Course::count() }} --}}
+                                            {{ $totalCourses }}
                                         </h4>
                                         <p class="text-muted mb-0 fs-12">Active courses</p>
                                     </div>
@@ -111,7 +127,8 @@
                                         <div class="d-flex align-items-end justify-content-end gap-3">
                                             <span class="text-success">
                                                 <i class="ri-arrow-right-up-line fs-12"></i>
-                                                {{ \App\Models\Academics\SubCourse::count() }}
+                                                {{-- {{ \App\Models\Academics\SubCourse::count() }} --}}
+                                                {{ $activeCourses }}
                                             </span>
                                         </div>
                                         <div class="text-muted fs-12">Sub-courses</div>
@@ -207,13 +224,13 @@
                                     <h5 class="mb-1">Revenue Analytics</h5>
                                     <p class="mb-0 card-subtitle">Monthly revenue trends</p>
                                 </div>
-                                <div class="flex-shrink-0">
+                                {{-- <div class="flex-shrink-0">
                                     <select class="form-select form-select-sm" id="revenue-period">
                                         <option value="1M">1 Month</option>
                                         <option value="6M">6 Months</option>
                                         <option value="1Y">1 Year</option>
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="card-body">
                                 <div id="revenue-analytics-chart" style="min-height: 300px;"></div>
@@ -341,33 +358,104 @@
                 </div>
 
                 <!-- University and Department Overview -->
+
+                @php
+                    $universities = \App\Models\Academics\University::with([
+                        'departments' => function ($q) {
+                            $q->withCount('courses');
+                            $q->with([
+                                'courses' => function ($q2) {
+                                    $q2->withCount('subCourses');
+                                    $q2->with([
+                                        'subCourses' => function ($q3) {
+                                            $q3->withCount('subjects');
+                                            // Count students in each subcourse
+                                            $q3->withCount('students');
+                                        },
+                                    ]);
+                                },
+                            ]);
+                        },
+                    ])
+                        ->take(4)
+                        ->get();
+                @endphp
+
+                {{-- @dd($universities) --}}
+
                 <div class="row g-4 mt-4">
-                    <div class="col-lg-12">
-                        <div class="card">
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">University Overview</h5>
                                 <a href="{{ route('university.index') }}" class="btn btn-sm btn-outline-primary">Manage
                                     Universities</a>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    @php
-                                        $universities = \App\Models\Academics\University::withCount('departments')
-                                            ->take(4)
-                                            ->get();
-                                    @endphp
+                                <div class="row g-4">
                                     @foreach ($universities as $university)
-                                        <div class="col-lg-3 col-md-6">
-                                            <div class="card bg-light border-0">
-                                                <div class="card-body text-center">
-                                                    <div
-                                                        class="avatar avatar-lg bg-primary-subtle text-primary rounded-circle mb-3 mx-auto">
-                                                        <i class="ri-building-2-line fs-24"></i>
+                                        @php
+                                            $universityStudentCount = $university->departments->sum(function (
+                                                $department,
+                                            ) {
+                                                return $department->courses->sum(function ($course) {
+                                                    return $course->subCourses->sum('students_count');
+                                                });
+                                            });
+                                        @endphp
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card shadow-sm border-0 hover-shadow h-100">
+                                                <div class="card-body p-4">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h5 class="fw-semibold text-primary mb-0">{{ $university->name }}
+                                                        </h5>
+                                                        <span class="badge bg-info">{{ $university->departments_count }}
+                                                            Departments</span>
                                                     </div>
-                                                    <h6 class="fw-semibold">{{ $university->name }}</h6>
-                                                    <p class="text-muted mb-2">{{ $university->departments_count }}
-                                                        Departments</p>
+
+                                                    <div class="row g-2">
+                                                        @foreach ($university->departments as $department)
+                                                            @php
+                                                                $departmentStudentCount = $department->courses->sum(
+                                                                    function ($course) {
+                                                                        return $course->subCourses->sum(
+                                                                            'students_count',
+                                                                        );
+                                                                    },
+                                                                );
+                                                            @endphp
+                                                            <div class="col-12 col-md-12">
+                                                                <div
+                                                                    class="p-3 bg-light-subtle rounded d-flex flex-column">
+                                                                    <strong
+                                                                        class="text-primary">{{ $department->name }}</strong>
+                                                                    <div class="mt-1 d-flex flex-wrap gap-1">
+                                                                        <span
+                                                                            class="badge bg-warning">{{ $department->courses_count ?? 0 }}
+                                                                            Courses</span>
+                                                                        <span
+                                                                            class="badge bg-success">{{ $department->courses->sum('sub_courses_count') ?? 0 }}
+                                                                            Subcourses</span>
+                                                                        <span
+                                                                            class="badge bg-secondary">{{ $department->courses->sum(fn($c) => $c->subCourses->sum('subjects_count')) ?? 0 }}
+                                                                            Subjects</span>
+                                                                        <span
+                                                                            class="badge bg-dark">{{ $departmentStudentCount }}
+                                                                            Students</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="card-footer text-end bg-light d-flex justify-content-between align-items-center">
                                                     <span class="badge bg-success">Active</span>
+                                                    <span class="badge bg-primary">{{ $universityStudentCount }}
+                                                        Students</span>
+                                                    <a href="{{ route('university.index') }}"
+                                                        class="btn btn-sm btn-outline-primary">Manage</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -377,270 +465,210 @@
                         </div>
                     </div>
                 </div>
+
+
+
             </div>
         </div>
     </main>
 @endsection
 
-{{-- @push('scripts')
-    <script>
-        // Revenue Analytics Chart
-        document.addEventListener('DOMContentLoaded', function() {
-            // Revenue Chart
-            var revenueOptions = {
-                series: [{
-                    name: 'Revenue',
-                    data: [{
-                        {!! \App\Models\StudentLedger::selectRaw('MONTH(created_at) as month, SUM(amount) as total')->whereYear('created_at', now()->year)->groupBy('month')->orderBy('month')->get()->map(function ($item) {
-                                return $item->total;
-                            })->toJson() !!}
-                    }]
-                }],
-                chart: {
-                    height: 350,
-                    type: 'area',
-                    toolbar: {
-                        show: false
-                    }
-                },
-                colors: ['#5D87FF'],
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov',
-                        'Dec'
-                    ]
-                },
-                tooltip: {
-                    x: {
-                        format: 'MMM'
-                    }
-                }
-            };
-
-            var revenueChart = new ApexCharts(document.querySelector("#revenue-analytics-chart"), revenueOptions);
-            revenueChart.render();
-
-            // Course Distribution Chart
-            var courseOptions = {
-                series: [{
-                    {!! \App\Models\Student::selectRaw('sub_course_id, COUNT(*) as count')->with('subCourse')->groupBy('sub_course_id')->get()->map(function ($item) {
-                            return $item->count;
-                        })->toJson() !!}
-                }],
-                chart: {
-                    type: 'donut',
-                    height: 350
-                },
-                labels: {
-                    {!! \App\Models\Student::selectRaw('sub_courses.name as course_name')->join('sub_courses', 'students.sub_course_id', '=', 'sub_courses.id')->groupBy('sub_courses.name')->pluck('course_name')->toJson() !!}
-                },
-                colors: ['#5D87FF', '#49BEFF', '#13DEB9', '#FFAE1F', '#FA896B'],
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }]
-            };
-
-            var courseChart = new ApexCharts(document.querySelector("#course-distribution-chart"), courseOptions);
-            courseChart.render();
-        });
-    </script>
-@endpush --}}
 
 
-{{-- @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Make sure ApexCharts library is available
-    if (typeof ApexCharts === 'undefined') {
-        console.error('ApexCharts is not loaded. Include ApexCharts JS before this script.');
-        return;
-    }
-
-    // Data pulled from Laravel controller (already formatted)
-    var monthlyRevenue = {!! json_encode($monthlyRevenue) !!}; // array of 12 numbers
-    var courseLabels = {!! json_encode($courseDistribution['labels'] ?? []) !!}; // array of names
-    var courseCounts = {!! json_encode($courseDistribution['counts'] ?? []) !!}; // array of numbers
-
-    // Revenue Chart
-    var revenueOptions = {
-        series: [{
-            name: 'Revenue',
-            data: monthlyRevenue
-        }],
-        chart: {
-            height: 350,
-            type: 'area',
-            toolbar: { show: false }
-        },
-        dataLabels: { enabled: false },
-        stroke: { curve: 'smooth' },
-        xaxis: {
-            categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    // Format value as rupee with comma (simple)
-                    return '₹' + Number(val).toLocaleString();
-                }
-            }
-        }
-    };
-
-    var revenueChartEl = document.querySelector("#revenue-analytics-chart");
-    if (revenueChartEl) {
-        var revenueChart = new ApexCharts(revenueChartEl, revenueOptions);
-        revenueChart.render();
-    }
-
-    // Course Distribution Chart (donut)
-    var courseOptions = {
-        series: courseCounts,
-        chart: {
-            type: 'donut',
-            height: 350
-        },
-        labels: courseLabels,
-        legend: { position: 'bottom' },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: { width: 200 },
-                legend: { position: 'bottom' }
-            }
-        }]
-    };
-
-    var courseChartEl = document.querySelector("#course-distribution-chart");
-    if (courseChartEl) {
-        var courseChart = new ApexCharts(courseChartEl, courseOptions);
-        courseChart.render();
-    }
-});
-</script>
-@endpush --}}
 
 
-<!-- 1) load ApexCharts (ensure this appears before the chart init) -->
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        // 2) Ensure we have PHP variables (fallback to computing them in the view)
-        @php
-            // Monthly revenue fallback (12 months array)
-            if (!isset($monthlyRevenue) || !is_array($monthlyRevenue)) {
-                $rows = \App\Models\StudentLedger::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
-                    ->whereYear('created_at', now()->year)
-                    ->groupBy('month')
-                    ->pluck('total','month')
-                    ->toArray();
-                $tmp = [];
-                for ($m = 1; $m <= 12; $m++) {
-                    $tmp[] = isset($rows[$m]) ? (float) $rows[$m] : 0;
-                }
-                $monthlyRevenue = $tmp;
-            }
-
-            // Course distribution fallback
-            if (!isset($courseDistribution) || !is_array($courseDistribution)) {
-                $rows = \App\Models\Student::selectRaw('sub_courses.name as course_name, COUNT(*) as count')
-                    ->join('sub_courses', 'students.sub_course_id', '=', 'sub_courses.id')
-                    ->groupBy('sub_courses.name')
-                    ->orderByDesc('count')
-                    ->get();
-
-                $labels = $rows->pluck('course_name')->toArray();
-                $counts = $rows->pluck('count')->map(function($v){ return (int)$v; })->toArray();
-
-                $courseDistribution = [
-                    'labels' => $labels,
-                    'counts' => $counts,
-                ];
-            }
-        @endphp
-
-        // 3) Pass PHP arrays to JS safely (guaranteed arrays now)
-        var monthlyRevenue = {!! json_encode($monthlyRevenue ?? array_fill(0,12,0)) !!};
-        var courseLabels     = {!! json_encode($courseDistribution['labels'] ?? []) !!};
-        var courseCounts     = {!! json_encode($courseDistribution['counts'] ?? []) !!};
-
-        // Debug logs — open browser console (F12) to inspect
-        console.log('monthlyRevenue:', monthlyRevenue);
-        console.log('courseLabels:', courseLabels);
-        console.log('courseCounts:', courseCounts);
-
-        // 4) Verify ApexCharts is available
-        if (typeof ApexCharts === 'undefined') {
-            console.error('ApexCharts not loaded. Chart will not render.');
-            return;
-        }
-
-        // 5) Revenue Area Chart
-        var revenueChartEl = document.querySelector("#revenue-analytics-chart");
-        if (revenueChartEl) {
-            var revenueOptions = {
-                series: [{ name: 'Revenue', data: monthlyRevenue }],
-                chart: { height: 350, type: 'area', toolbar: { show: false } },
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth' },
-                xaxis: { categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] },
-                tooltip: {
-                    y: {
-                        formatter: function(val) { return '₹' + Number(val).toLocaleString(); }
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            @php
+                // Monthly revenue fallback
+                if (!isset($monthlyRevenue) || !is_array($monthlyRevenue)) {
+                    $rows = \App\Models\StudentLedger::selectRaw('MONTH(created_at) as month, SUM(amount) as total')->whereYear('created_at', now()->year)->groupBy('month')->pluck('total', 'month')->toArray();
+                    $tmp = [];
+                    for ($m = 1; $m <= 12; $m++) {
+                        $tmp[] = isset($rows[$m]) ? (float) $rows[$m] : 0;
                     }
+                    $monthlyRevenue = $tmp;
                 }
-            };
 
-            try {
-                var revenueChart = new ApexCharts(revenueChartEl, revenueOptions);
-                revenueChart.render();
-            } catch (err) {
-                console.error('Revenue chart render error:', err);
+                // Monthly university fees fallback
+                if (!isset($monthlyUniversityFees) || !is_array($monthlyUniversityFees)) {
+                    $rows = \App\Models\UniversityFees::selectRaw('MONTH(date) as month, SUM(amount) as total')->whereYear('date', now()->year)->where('status', 'success')->groupBy('month')->pluck('total', 'month')->toArray();
+                    $tmp = [];
+                    for ($m = 1; $m <= 12; $m++) {
+                        $tmp[] = isset($rows[$m]) ? (float) $rows[$m] : 0;
+                    }
+                    $monthlyUniversityFees = $tmp;
+                }
+
+                // Course distribution fallback
+                if (!isset($courseDistribution) || !is_array($courseDistribution)) {
+                    $rows = \App\Models\Student::selectRaw('sub_courses.name as course_name, COUNT(*) as count')->join('sub_courses', 'students.sub_course_id', '=', 'sub_courses.id')->groupBy('sub_courses.name')->orderByDesc('count')->get();
+
+                    $labels = $rows->pluck('course_name')->toArray();
+                    $counts = $rows->pluck('count')->map(fn($v) => (int) $v)->toArray();
+
+                    $courseDistribution = [
+                        'labels' => $labels,
+                        'counts' => $counts,
+                    ];
+                }
+            @endphp
+
+            var monthlyRevenue = {!! json_encode($monthlyRevenue ?? array_fill(0, 12, 0)) !!};
+            var monthlyUniversityFees = {!! json_encode($monthlyUniversityFees ?? array_fill(0, 12, 0)) !!};
+            var courseLabels = {!! json_encode($courseDistribution['labels'] ?? []) !!};
+            var courseCounts = {!! json_encode($courseDistribution['counts'] ?? []) !!};
+
+            console.log('monthlyRevenue:', monthlyRevenue);
+            console.log('monthlyUniversityFees:', monthlyUniversityFees);
+
+            // // Revenue + University Fee Area Chart
+            // var revenueChartEl = document.querySelector("#revenue-analytics-chart");
+            // if (revenueChartEl) {
+            //     var revenueOptions = {
+            //         series: [{
+            //                 name: 'Revenue',
+            //                 data: monthlyRevenue
+            //             },
+            //             {
+            //                 name: 'University Fee',
+            //                 data: monthlyUniversityFees
+            //             }
+            //         ],
+            //         chart: {
+            //             height: 350,
+            //             type: 'area',
+            //             toolbar: {
+            //                 show: false
+            //             }
+            //         },
+            //         stroke: {
+            //             curve: 'smooth',
+            //             width: [2, 2]
+            //         },
+            //         colors: ['#556ee6', '#ff4d4f'], // Blue and Red
+            //         dataLabels: {
+            //             enabled: false
+            //         },
+            //         xaxis: {
+            //             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+            //                 'Nov', 'Dec'
+            //             ]
+            //         },
+            //         tooltip: {
+            //             y: {
+            //                 formatter: val => '₹' + Number(val).toLocaleString()
+            //             }
+            //         },
+            //         legend: {
+            //             position: 'top'
+            //         }
+            //     };
+
+            //     try {
+            //         new ApexCharts(revenueChartEl, revenueOptions).render();
+            //     } catch (err) {
+            //         console.error('Revenue chart render error:', err);
+            //     }
+            // }
+
+            // Calculate Profit = Revenue - University Fee
+            var profit = monthlyRevenue.map((rev, idx) => rev - monthlyUniversityFees[idx]);
+
+            // Revenue + University Fee + Profit Area Chart
+            var revenueChartEl = document.querySelector("#revenue-analytics-chart");
+            if (revenueChartEl) {
+                var revenueOptions = {
+                    series: [{
+                            name: 'Revenue',
+                            data: monthlyRevenue
+                        },
+                        {
+                            name: 'University Fee',
+                            data: monthlyUniversityFees
+                        },
+                        {
+                            name: 'Profit',
+                            data: profit
+                        } // Add profit series
+                    ],
+                    chart: {
+                        height: 350,
+                        type: 'area',
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        width: [2, 2, 2]
+                    },
+                    colors: ['#556ee6', '#ff4d4f', '#34c38f'], // Blue, Red, Green
+                    dataLabels: {
+                        enabled: false
+                    },
+                    xaxis: {
+                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+                            'Nov', 'Dec'
+                        ]
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: val => '₹' + Number(val).toLocaleString()
+                        }
+                    },
+                    legend: {
+                        position: 'top'
+                    }
+                };
+
+                try {
+                    new ApexCharts(revenueChartEl, revenueOptions).render();
+                } catch (err) {
+                    console.error('Revenue chart render error:', err);
+                }
             }
-        } else {
-            console.warn('#revenue-analytics-chart element not found');
-        }
 
-        // 6) Course Distribution Donut
-        var courseChartEl = document.querySelector("#course-distribution-chart");
-        if (courseChartEl) {
-            var courseOptions = {
-                series: courseCounts,
-                chart: { type: 'donut', height: 350 },
-                labels: courseLabels,
-                legend: { position: 'bottom' },
-                responsive: [{ breakpoint: 480, options: { chart: { width: 200 }, legend: { position: 'bottom' } } }]
-            };
 
-            try {
-                var courseChart = new ApexCharts(courseChartEl, courseOptions);
-                courseChart.render();
-            } catch (err) {
-                console.error('Course distribution chart render error:', err);
+            // Course Distribution Donut
+            var courseChartEl = document.querySelector("#course-distribution-chart");
+            if (courseChartEl) {
+                var courseOptions = {
+                    series: courseCounts,
+                    chart: {
+                        type: 'donut',
+                        height: 350
+                    },
+                    labels: courseLabels,
+                    legend: {
+                        position: 'bottom'
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+
+                try {
+                    new ApexCharts(courseChartEl, courseOptions).render();
+                } catch (err) {
+                    console.error('Course distribution chart render error:', err);
+                }
             }
-        } else {
-            console.warn('#course-distribution-chart element not found');
-        }
 
-    } catch (e) {
-        console.error('Unexpected error initializing charts:', e);
-    }
-});
+        } catch (e) {
+            console.error('Unexpected error initializing charts:', e);
+        }
+    });
 </script>
-
-

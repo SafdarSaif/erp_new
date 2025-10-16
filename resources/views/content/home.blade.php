@@ -215,7 +215,7 @@
                 </div>
 
                 <!-- Charts and Analytics Row -->
-                <div class="row g-4 mb-4">
+                {{-- <div class="row g-4 mb-4">
                     <!-- Revenue Chart -->
                     <div class="col-lg-8">
                         <div class="card">
@@ -224,13 +224,13 @@
                                     <h5 class="mb-1">Revenue Analytics</h5>
                                     <p class="mb-0 card-subtitle">Monthly revenue trends</p>
                                 </div>
-                                {{-- <div class="flex-shrink-0">
+                                <div class="flex-shrink-0">
                                     <select class="form-select form-select-sm" id="revenue-period">
                                         <option value="1M">1 Month</option>
                                         <option value="6M">6 Months</option>
                                         <option value="1Y">1 Year</option>
                                     </select>
-                                </div> --}}
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div id="revenue-analytics-chart" style="min-height: 300px;"></div>
@@ -283,7 +283,122 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- Student Admissions Chart -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">Student Admissions Trend</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="student-admissions-chart" style="min-height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> --}}
+
+                <!-- Charts and Analytics Row -->
+                <div class="row g-4 mb-4">
+                    <!-- Revenue Chart -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">Revenue Analytics</h5>
+                                    <p class="mb-0 card-subtitle">Monthly revenue, university fee & profit trends</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="revenue-analytics-chart" style="min-height: 320px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Admissions Chart -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Student Admissions Trend</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="student-admissions-chart" style="min-height: 320px;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Quick Stats Row -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Quick Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="vstack gap-3">
+                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                        <div>
+                                            <h6 class="mb-0">Pending Fees</h6>
+                                            <small class="text-muted">This month</small>
+                                        </div>
+                                        <span class="badge bg-warning">₹{{ number_format(0) }}</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                        <div>
+                                            <h6 class="mb-0">New Admissions</h6>
+                                            <small class="text-muted">This month</small>
+                                        </div>
+                                        <span class="badge bg-success">
+                                            {{ App\Models\Student::whereMonth('created_at', now()->month)->count() }}
+                                        </span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                        <div>
+                                            <h6 class="mb-0">Active Courses</h6>
+                                            <small class="text-muted">Currently running</small>
+                                        </div>
+                                        <span class="badge bg-info">
+                                            {{ \App\Models\Academics\Course::where('status', true)->count() }}
+                                        </span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                        <div>
+                                            <h6 class="mb-0">Total Subjects</h6>
+                                            <small class="text-muted">Across all courses</small>
+                                        </div>
+                                        <span class="badge bg-primary">
+                                            {{ \App\Models\Academics\Subject::count() }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {{-- //Gender Distribution --}}
+                    {{-- <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Gender Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="gender-distribution-chart" style="min-height: 320px;"></div>
+                            </div>
+                        </div>
+                    </div> --}}
+
+
+                </div>
+
 
                 <!-- Recent Activity and Students Row -->
                 <div class="row g-4">
@@ -667,8 +782,79 @@
                 }
             }
 
+
+            //
+            //Gender Distribution Pie Chart
+            var genderChartEl = document.querySelector("#gender-distribution-chart");
+            if (genderChartEl) {
+                var genderOptions = {
+                    chart: {
+                        type: 'pie',
+                        height: 320
+                    },
+                    series: [{{ $totalMale }}, {{ $totalFemale }}, {{ $totalOther }}],
+                    labels: ['Male', 'Female', 'Other'],
+                    colors: ['#1E90FF', '#FF69B4', '#FFB74D'],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: val => val + ' Students'
+                        }
+                    }
+                };
+
+                try {
+                    new ApexCharts(genderChartEl, genderOptions).render();
+                } catch (err) {
+                    console.error('Gender chart render error:', err);
+                }
+            }
+            //
+
+
+
+
+
         } catch (e) {
             console.error('Unexpected error initializing charts:', e);
         }
+
+        // Student Admissions Line Chart
+        var monthlyAdmissions = {!! json_encode($monthlyAdmissions ?? array_fill(0, 12, 0)) !!};
+        var admissionChartEl = document.querySelector("#student-admissions-chart");
+        if (admissionChartEl) {
+            var admissionOptions = {
+                series: [{
+                    name: 'Admissions',
+                    data: monthlyAdmissions
+                }],
+                chart: {
+                    type: 'line',
+                    height: 350
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                colors: ['#ff9800'],
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+                        'Nov', 'Dec'
+                    ]
+                },
+                tooltip: {
+                    y: {
+                        formatter: val => val + ' Students'
+                    }
+                }
+            };
+            new ApexCharts(admissionChartEl, admissionOptions).render();
+        }
+
     });
 </script>

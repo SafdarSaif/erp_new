@@ -29,11 +29,16 @@ class DashboardController extends Controller
         $totalUniversities      = University::count();
         $totalDepartments       = Department::count();
         $recentStudents         = Student::with(['subCourse', 'academicYear'])
-                                        ->latest()
-                                        ->take(5)
-                                        ->get();
+            ->latest()
+            ->take(5)
+            ->get();
         $courseDistribution     = $this->getCourseDistribution();
         $universities           = University::withCount('departments')->take(4)->get();
+        $monthlyAdmissions = $this->getMonthlyAdmissions();
+        $totalMale   = Student::where('gender', 'Male')->count();
+        $totalFemale = Student::where('gender', 'Female')->count();
+        $totalOther  = Student::where('gender', 'Other')->count();
+
 
         return view('content.home', compact(
             'totalStudents',
@@ -50,7 +55,11 @@ class DashboardController extends Controller
             'totalDepartments',
             'recentStudents',
             'courseDistribution',
-            'universities'
+            'universities',
+            'monthlyAdmissions',
+            'totalMale',
+            'totalFemale',
+            'totalOther' // <-- add these
         ));
     }
 
@@ -106,5 +115,22 @@ class DashboardController extends Controller
             'labels' => $rows->pluck('course_name')->toArray(),
             'counts' => $rows->pluck('count')->map(fn($v) => (int)$v)->toArray(),
         ];
+    }
+
+
+    private function getMonthlyAdmissions()
+    {
+        $rows = Student::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->whereYear('created_at', now()->year)
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $months = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $months[] = $rows[$m] ?? 0;
+        }
+
+        return $months;
     }
 }
