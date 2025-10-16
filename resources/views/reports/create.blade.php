@@ -38,11 +38,23 @@
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Course Type</label>
-            <input type="text" name="course_type_id" id="course_type_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="course_type_id" id="course_type_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="course_type_id" id="course_type_id" class="form-control">
+                <option value=""></option>
+                @foreach ($courseTypes as $courseType)
+                    <option value="{{$courseType->id}}">{{$courseType->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Course</label>
-            <input type="text" name="course_id" id="course_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="course_id" id="course_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="course_id" id="course_id" class="form-control">
+                <option value=""></option>
+                @foreach ($courses as $course)
+                    <option value="{{$course->id}}">{{$course->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course</label>
