@@ -35,4 +35,10 @@ class Course extends Model
     // {
     //     return $this->belongsTo(CourseType::class, 'course_type_id');
     // }
+
+    // SubCourses under this course
+    public function subCourses()
+    {
+        return $this->hasMany(SubCourse::class, 'course_id');
+    }
 }

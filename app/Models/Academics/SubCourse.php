@@ -30,4 +30,16 @@ class SubCourse extends Model
     {
          return $this->belongsTo(CourseMode::class, 'mode_id');
     }
+
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'subcourse_id');
+    }
+
+
+    public function students()
+{
+    return $this->hasMany(\App\Models\Student::class, 'sub_course_id');
+}
 }

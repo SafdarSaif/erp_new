@@ -18,4 +18,11 @@ class University extends Model
         'name',
         'logo'
     ];
+
+
+    public function departments()
+{
+    return $this->hasMany(\App\Models\Academics\Department::class, 'university_id', 'id');
+}
+
 }
