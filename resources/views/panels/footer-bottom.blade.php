@@ -57,23 +57,23 @@
 
 
 
-    function updateActiveStatus(url, table) {
-        $.ajax({
-            url: url,
-            type: "GET",
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function (response) {
+    // function updateActiveStatus(url, table) {
+    //     $.ajax({
+    //         url: url,
+    //         type: "GET",
+    //         processData: false,
+    //         contentType: false,
+    //         dataType: 'json',
+    //         success: function (response) {
 
-                if (response.status == 'success') {
-                    toastr.success(response.message);
-                } else {
-                    window.location.href = url
-                }
-            }
-        });
-    }
+    //             if (response.status == 'success') {
+    //                 toastr.success(response.message);
+    //             } else {
+    //                 window.location.href = url
+    //             }
+    //         }
+    //     });
+    // }
 
 
 
@@ -94,9 +94,7 @@
             url: url,
             type: "GET",
             success: function (response) {
-                if (response.status == 'success' || response.ct_status === 'success' || response
-                    .le_status === 'success' || response.current_status === 'success' || response
-                        .bp_status === 'success') {
+                if (response.status == 'success') {
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message);

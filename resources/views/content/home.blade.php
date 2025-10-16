@@ -33,12 +33,17 @@
                                     <div class="hstack gap-3 mb-3">
                                         <div class="bg-warning-subtle text-warning avatar avatar-item rounded-2">
                                             <!-- <i class="ri-money-dollar-circle-line fs-16 fw-medium"></i> -->
-                                            <i class="bi bi-house-heart-fill fs-16 fw-medium"></i>
+                                            <i class="ri ri-user-2-line fs-18 fw-medium"></i>
                                         </div>
-                                        <h6 class="mb-0 fs-13">Total Sales</h6>
+                                        <h6 class="mb-0 fs-13">Total Student</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        <span data-target="84573" data-duration="5" data-prefix="$">$84573</span>
+                                        <span data-target="84573" data-duration="5" data-prefix="$">
+                                            @php
+                                                $students = App\Models\Student::count();
+                                                echo $students;
+                                            @endphp
+                                        </span>
                                     </h4>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
@@ -59,12 +64,17 @@
                                 <div class="flex-grow-1">
                                     <div class="hstack gap-3 mb-3">
                                         <div class="bg-danger-subtle text-danger avatar avatar-item rounded-2">
-                                            <i class="ri-money-dollar-circle-line fs-16 fw-medium"></i>
+                                            <i class="ri-book-open-fill fs-16 fw-medium"></i>
                                         </div>
-                                        <h6 class="mb-0 fs-13">Total Orders</h6>
+                                        <h6 class="mb-0 fs-13">Total Courses</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        <span data-target="202557" data-duration="5" data-prefix="$">$202557</span>
+                                        <span data-target="202557" data-duration="5" data-prefix="$">
+                                            @php
+                                                $courses = \App\Models\Academics\SubCourse::count();
+                                                echo $courses;
+                                            @endphp
+                                        </span>
                                     </h4>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
@@ -90,7 +100,14 @@
                                         <h6 class="mb-0 fs-13">Total Earnings</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        <span data-target="202557" data-duration="5" data-prefix="$">$202557</span>
+                                        @php
+                                            $earnings = \App\Models\StudentLedger::sum('amount');
+                                        @endphp
+                                        <span data-target="{{$earnings}}" data-duration="5" data-prefix="₹">
+                                            @php
+                                                echo '₹'.$earnings;
+                                            @endphp
+                                            </span>
                                     </h4>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
@@ -111,12 +128,17 @@
                                 <div class="flex-grow-1">
                                     <div class="hstack gap-3 mb-3">
                                         <div class="bg-info-subtle text-info avatar avatar-item rounded-2">
-                                            <i class="ri-truck-line fs-16 fw-medium"></i>
+                                            <i class="ri-money-rupee-circle-fill fs-16 fw-medium"></i>
                                         </div>
-                                        <h6 class="mb-0 fs-13">Total Shipments</h6>
+                                        <h6 class="mb-0 fs-13">Total Expenses</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        <span data-target="17892" data-duration="5" data-prefix="$">$17,892</span>
+                                        <span data-target="17892" data-duration="5" data-prefix="$">
+                                            @php
+                                                $expences = \App\Models\UniversityFees::where('status','success')->sum('amount');
+                                                echo '₹'.$expences;
+                                            @endphp
+                                        </span>
                                     </h4>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
@@ -137,8 +159,8 @@
                     <div class="card mb-0">
                         <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
                             <div class="flex-grow-1">
-                                <h5 class="mb-1">Order Analytics</h5>
-                                <p class="mb-0 card-subtitle">Total 248.5k Visits</p>
+                                <h5 class="mb-1">Revenue Analytics</h5>
+                                {{-- <p class="mb-0 card-subtitle">Total 248.5k Visits</p> --}}
                             </div>
                             <div class="flex-shrink-0">
                                 <button type="button" class="btn btn-outline-primary btn-sm active">1W</button>
@@ -212,31 +234,33 @@
                 <div class="col-lg-3 h-100">
                     <div class="card">
                         <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-                            <h5 class="card-title mb-0">Revenue</h5>
+                            <h5 class="card-title mb-0">Profit & Loss</h5>
                             <div class="dropdown flex-shrink-0">
                                 <a class="text-reset dropdown-toggle" href="#!" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fw-semibold text-uppercase fs-12">Sort by: </span><span class="text-muted">Last Month</span>
                                 </a>
-                                <div class="dropdown-menu">
+                                {{-- <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#!">Today</a>
                                     <a class="dropdown-item" href="#!">Last Week</a>
                                     <a class="dropdown-item" href="#!">Last Month</a>
                                     <a class="dropdown-item" href="#!">Current Year</a>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-body">
                             <h4 class="fw-semibold d-flex align-items-center gap-3 mb-4">
-                                <span>$16520</span>
+                                <span>
+                                    {{ '₹'.$earnings - $expences}}
+                                </span>
                                 <span class="badge text-danger bg-danger-subtle p-1"><i class="ri-arrow-right-down-line fs-12"></i>1.5%</span>
                             </h4>
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+                            {{-- <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
                                 <span class="fs-12 fw-normal text-muted"><strong class="me-1 text-body">$6,500</strong>More to reach Goal</span>
                                 <span class="fw-semibold">75%</span>
                             </div>
                             <div class="progress progress-xs w-100" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
                                 <div class="progress-bar bg-primary w-75"></div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="card mb-0">
