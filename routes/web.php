@@ -248,7 +248,7 @@ Route::prefix('accounts')->group(function () {
     Route::get('/university-fee/{studentId}', [UniversityFeesController::class, 'show'])->name('university-fee.show');
     Route::post('/university-fee/update-fee/{studentId}', [UniversityFeesController::class, 'updateFee'])->name('university-fee.updateFee');
     Route::get('/university-payments', [UniversityFeesController::class, 'UnversityFeeTransactionHistory'])
-    ->name('university-payments.index');
+        ->name('university-payments.index');
     // Student Fee Management
     Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
     Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');

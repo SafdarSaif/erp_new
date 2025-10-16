@@ -132,6 +132,9 @@ class RolePermissionSeeder extends Seeder
             'create subjects',
             'edit subjects',
             'delete subjects',
+
+
+            'view university fee',
         ];
 
         // Create permissions

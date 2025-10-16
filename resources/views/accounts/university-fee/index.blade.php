@@ -206,21 +206,21 @@
         <div class="col-md-6"><p><strong>Sub Course:</strong> ${student.sub_course}</p></div>
         <div class="col-md-6">
             <p class="d-flex flex-row w-100 gap-3 align-items-end">
-                <label style="width:max-content;"><strong>University Fee:</strong></label> 
-                ${student.fee == null || student.fee == 0 
-                    ? `<input type="text" class="form-control" style="width:max-content;" 
-                                              id="universityFeeInput_${student.student_id}"
-                                              onchange="updateUniversityFee(this.value, '${student.student_id}')" />` 
-                    : `<input type="text" class="form-control" style="width:max-content;" 
-                                              id="universityFeeInput_${student.student_id}" 
-                                              value="${student.fee}" disabled />`
+                <label style="width:max-content;"><strong>University Fee:</strong></label>
+                ${student.fee == null || student.fee == 0
+                    ? `<input type="text" class="form-control" style="width:max-content;"
+                                                  id="universityFeeInput_${student.student_id}"
+                                                  onchange="updateUniversityFee(this.value, '${student.student_id}')" />`
+                    : `<input type="text" class="form-control" style="width:max-content;"
+                                                  id="universityFeeInput_${student.student_id}"
+                                                  value="${student.fee}" disabled />`
                 }
             </p>
         </div>
         <div class="col-md-6">
             <p class="d-flex flex-row w-100 gap-3 align-items-end">
-                <label style="width:max-content;"><strong>Pending Fee:</strong></label> 
-                <input type="text" disabled class="form-control" style="width:max-content;" 
+                <label style="width:max-content;"><strong>Pending Fee:</strong></label>
+                <input type="text" disabled class="form-control" style="width:max-content;"
                        value="${student.pending_fee}" id="pendingFee"/>
             </p>
         </div>

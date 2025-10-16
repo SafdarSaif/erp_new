@@ -44,8 +44,8 @@
 
     <link href="{{asset('assets/css/custom.min.css')}}" id="custom-style" rel="stylesheet" type="text/css">
 
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/jquery-datatables-checkboxes@1.3.0/css/dataTables.checkboxes.min.css">
+    {{-- <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/jquery-datatables-checkboxes@1.3.0/css/dataTables.checkboxes.min.css"> --}}
 
     <!-- Toastr CSS -->
         {{-- <link rel="stylesheet" href="assets/libs/toastr/toastr.css" > --}}
