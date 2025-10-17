@@ -214,4 +214,21 @@ class CourseController extends Controller
             ]);
         }
     }
+
+    public function getCourseByUniversityAndCourseType(Request $request){
+        try{
+            $departments = Department::where('university_id',$request->universityId)->pluck('id');
+            $courses = Course::where('course_type_id',$request->courseType)->whereIn('department_id',$departments)->get();
+            return response()->json([
+                'status'=>'success',
+                'message'=>$courses
+            ]);
+            // $courses = Course::where('univer')
+        }catch(\Exception $e){
+            return response()->json([
+                'status'=>'error',
+                'message'=>$e->getMessage()
+            ]);
+        }
+    }
 }

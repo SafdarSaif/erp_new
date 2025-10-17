@@ -232,7 +232,7 @@ class StudentController extends Controller
             'total_fee'         => 'nullable|numeric|min:0',
             'permanent_address' => 'nullable|string|max:500',
             'current_address'   => 'nullable|string|max:500',
-            'status'            => 'nullable|boolean',
+            'status'            => 'nullable',
         ]);
 
         try {
@@ -387,7 +387,7 @@ class StudentController extends Controller
             'total_fee'         => 'nullable|numeric|min:0',
             'permanent_address' => 'nullable|string|max:500',
             'current_address'   => 'nullable|string|max:500',
-            'status'            => 'nullable|boolean',
+            'status'            => 'nullable',
         ]);
 
         try {

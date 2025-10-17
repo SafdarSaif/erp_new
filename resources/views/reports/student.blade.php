@@ -52,7 +52,7 @@
     $(function() {
       var canAdd = "{{ Auth::user()->hasPermissionTo('create reports') ? true : false }}";
       const addButton = canAdd ? {
-        text: 'Add Student Reports',
+        text: 'Generate Student Reports',
         className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
         attr: {
           'onclick': "add('{{ route('reports.students.create') }}', 'modal-lg')"
@@ -72,7 +72,10 @@
             data: 'name'
           },
           {
-            data: 'filter'
+            data: 'filter',
+            render:function(data,type,row){
+              return data.substr(0,150)+'...'
+            }
           },
           {
             data: 'created_at'
@@ -145,6 +148,9 @@
                         <button type="button" class="btn btn-light-danger border-danger icon-btn-sm" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-white" data-bs-placement="top" data-bs-title="Download">
                             <i class="ri-file-download-fill"></i>
                         </button>
+                        <a href="/reports/student/${full.id}" type="button" class="btn btn-light-success border-success icon-btn-sm" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-white" data-bs-placement="top" data-bs-title="Download">
+                            <i class="ri-eye-fill"></i>
+                        </a>
                     </div>`;
             }
           }

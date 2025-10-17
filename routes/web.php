@@ -293,4 +293,8 @@ Route::prefix('reports')->name('reports.')->group(function(){
     Route::get('students',[ReportController::class,'studentReport'])->name('students');
     Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
     Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
+    Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
 });
+
+Route::get('getCourseByUniversityAndCourseType',[CourseController::class,'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
+Route::get('getSubCourseByCourseId',[SubCourseController::class,'getSubCourseByCourseId'])->name('getSubCourseByCourseId');
