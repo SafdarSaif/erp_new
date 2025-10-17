@@ -224,4 +224,19 @@ class SubCourseController extends Controller
             ]);
         }
     }
+
+    public function getSubCourseByCourseId(Request $request){
+        try{
+            $subCourse = SubCourse::where('course_id',$request->courseId)->get();
+            return response()->json([
+                'status'=>'success',
+                'message'=>$subCourse
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status'=>'error',
+                'message'=>$e->getMessage()
+            ]);
+        }
+    }
 }

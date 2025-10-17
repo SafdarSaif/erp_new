@@ -1,6 +1,6 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Create Student Reports</h3>
+        <h3 class="mb-2 text-primary">Generate Student Reports</h3>
         {{-- <p class="text-muted">Fill in the menu details below</p> --}}
     </div>
 
@@ -51,38 +51,74 @@
             {{-- <input type="text" name="course_id" id="course_id" class="form-control" placeholder="ex: January Report"> --}}
             <select name="course_id" id="course_id" class="form-control">
                 <option value=""></option>
-                @foreach ($courses as $course)
-                    <option value="{{$course->id}}">{{$course->name}}</option>
-                @endforeach
             </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course</label>
-            <input type="text" name="sub_course_id" id="sub_course_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="sub_course_id" id="sub_course_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="sub_course_id" id="sub_course_id" class="form-control">
+                <option value=""></option>
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Mode</label>
-            <input type="text" name="admissionmode_id" id="admissionmode_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="admissionmode_id" id="admissionmode_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="admissionmode_id" id="admissionmode_id" class="form-control">
+                <option value=""></option>
+                @foreach ($admissionModes as $addMode)
+                    <option value="{{$addMode->id}}">{{$addMode->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Course Mode</label>
-            <input type="text" name="course_mode_id" id="course_mode_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="course_mode_id" id="course_mode_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="course_mode_id" id="course_mode_id" class="form-control">
+                <option value=""></option>
+                @foreach ($courseModes as $courseMode)
+                    <option value="{{$courseMode->id}}">{{$courseMode->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Language</label>
-            <input type="text" name="language_id" id="language_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="language_id" id="language_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="language_id" id="language_id" class="form-control">
+                <option value=""></option>
+                @foreach ($languages as $language)
+                    <option value="{{$language->id}}">{{$language->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Blood Group</label>
-            <input type="text" name="blood_group_id" id="blood_group_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="blood_group_id" id="blood_group_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="blood_group_id" id="blood_group_id" class="form-control">
+                <option value=""></option>
+                @foreach ($bloodGroups as $bloodGroup)
+                    <option value="{{$bloodGroup->id}}">{{$bloodGroup->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Religion</label>
-            <input type="text" name="religion_id" id="religion_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="religion_id" id="religion_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="religion_id" id="religion_id" class="form-control">
+                <option value=""></option>
+                @foreach ($religions as $religion)
+                    <option value="{{$religion->id}}">{{$religion->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Category</label>
-            <input type="text" name="category_id" id="category_id" class="form-control" placeholder="ex: January Report">
+            {{-- <input type="text" name="category_id" id="category_id" class="form-control" placeholder="ex: January Report"> --}}
+            <select name="category_id" id="category_id" class="form-control">
+                <option value=""></option>
+                @foreach ($categories as $categorie)
+                    <option value="{{$categorie->id}}">{{$categorie->name}}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="name" class="form-label">Semester</label>
@@ -112,6 +148,67 @@
 
 
 <script>
+    $(document).ready(function(){
+        $('#university_id').on('change',function(){
+            var university_id = $(this).val();
+            var courseType = $('#course_type_id').val();
+            $.ajax({
+                url:"{{route('getCourseByUniversityAndCourseType')}}",
+                type:'get',
+                data:{universityId:university_id,courseType:courseType},
+                success:function(res){
+                    if(res.status=="success"){
+                        option = "<option></option>";
+                        $.each(res.message,function(key,val){
+                            option += "<option value="+val.id+">"+val.name+"</option>";
+                        });
+                        $('#course_id').html(option);
+                    }else{
+                        toastr.success(res.message);
+                    }                    
+                }
+            })
+        });
+        $('#course_type_id').on('change',function(){
+            var university_id = $('#university_id').val();
+            var courseType = $(this).val();
+            $.ajax({
+                url:"{{route('getCourseByUniversityAndCourseType')}}",
+                type:'get',
+                data:{universityId:university_id,courseType:courseType},
+                success:function(res){
+                    if(res.status=="success"){
+                        option = "<option></option>";
+                        $.each(res.message,function(key,val){
+                            option += "<option value="+val.id+">"+val.name+"</option>";
+                        });
+                        $('#course_id').html(option);
+                    }else{
+                        toastr.success(res.message);
+                    }
+                }
+            })
+        });
+        $('#course_id').on('change',function(){
+            var courseId = $(this).val();
+            $.ajax({
+                url:"{{route('getSubCourseByCourseId')}}",
+                type:'get',
+                data:{courseId:courseId},
+                success:function(res){
+                    if(res.status=="success"){
+                        option = "<option></option>";
+                        $.each(res.message,function(key,val){
+                            option += "<option value="+val.id+">"+val.name+"</option>";
+                        });
+                        $('#sub_course_id').html(option);
+                    }else{
+                        toastr.success(res.message);
+                    }
+                }
+            })
+        });
+    })
   $(function() {
     $("#addReportFilter").submit(function(e) {
       e.preventDefault();

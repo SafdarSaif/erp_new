@@ -7,7 +7,7 @@
         <!-- Page title -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-semibold mb-0">
-                <i class="bi bi-people me-2"></i> Manage Students
+                <i class="bi bi-people me-2"></i>Students Report 
             </h4>
 
             @if (Auth::user()->hasPermissionTo('create students'))
@@ -189,7 +189,7 @@
     var table = $('#student-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('students.index') }}",
+        ajax: "{{ route('reports.students.view',$id) }}",
         scrollX: true,
         scrollY: "500px",
         scrollCollapse: true,
@@ -224,7 +224,8 @@
                     //         <input class="form-check-input" type="checkbox" ${checked} ${toggle}>
                     //         <label class="form-check-label">${label}</label>
                     //     </div>`;
-                    if(full.status==0){
+
+                     if(full.status==0){
                         label = "Droped Out";
                         bg = "bg-danger";
                     }else if(full.status==1){
@@ -274,7 +275,13 @@
                     }
                 });
             });
-        }
+        },
+         pageLength: 10,
+                dom: '<"d-flex justify-content-between mb-2"<"dataTables_filter"f><"add_button"B>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                language: {
+                    search: "INPUT",
+                    searchPlaceholder: "Search Students..."
+                }
     });
 });
 </script>
