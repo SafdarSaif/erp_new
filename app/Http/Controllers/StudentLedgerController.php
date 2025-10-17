@@ -470,63 +470,62 @@ class StudentLedgerController extends Controller
 
 
     public function savePayment(Request $request)
-{
-    try {
-        $studentId    = $request->student_id;
-        $studentFeeId = $request->student_fee_id;
-        $amount       = $request->amount;
+    {
+        try {
+            $studentId    = $request->student_id;
+            $studentFeeId = $request->student_fee_id;
+            $amount       = $request->amount;
 
-        // ✅ Fetch fee structure for the selected semester
-        $fee = StudentFeeStructure::findOrFail($studentFeeId);
+            // ✅ Fetch fee structure for the selected semester
+            $fee = StudentFeeStructure::findOrFail($studentFeeId);
 
-        // ✅ Calculate total paid so far for this semester
-        $paid = StudentLedger::where('student_id', $studentId)
-            ->where('student_fee_id', $studentFeeId)
-            ->where('transaction_type', 'credit')
-            ->sum('amount');
+            // ✅ Calculate total paid so far for this semester
+            $paid = StudentLedger::where('student_id', $studentId)
+                ->where('student_fee_id', $studentFeeId)
+                ->where('transaction_type', 'credit')
+                ->sum('amount');
 
-        $balance = $fee->amount - $paid;
+            $balance = $fee->amount - $paid;
 
-        // ✅ Check if balance is zero
-        if ($balance <= 0) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'This semester is already fully paid. Cannot add more payment.'
+            // ✅ Check if balance is zero
+            if ($balance <= 0) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'This semester is already fully paid. Cannot add more payment.'
+                ]);
+            }
+
+            // ✅ Check if amount exceeds balance
+            if ($amount > $balance) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Payment amount exceeds the remaining balance for this semester.'
+                ]);
+            }
+
+            // 🔹 Save ledger entry
+            $ledger = StudentLedger::create([
+                'student_id'       => $studentId,
+                'student_fee_id'   => $studentFeeId,
+                'transaction_type' => 'credit',
+                'amount'           => $amount,
+                'transaction_date' => $request->transaction_date,
+                'payment_mode'     => $request->payment_mode,
+                'utr_no'           => $request->utr_no,
+                'remarks'          => $request->remarks,
             ]);
-        }
 
-        // ✅ Check if amount exceeds balance
-        if ($amount > $balance) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Payment amount exceeds the remaining balance for this semester.'
+            // 🔹 Generate invoice
+            StudentInvoice::create([
+                'ledger_id'  => $ledger->id,
+                'invoice_no' => 'INV-' . strtoupper(Str::random(6)),
             ]);
+
+            return response()->json(['status' => 'success', 'message' => 'Payment added successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-
-        // 🔹 Save ledger entry
-        $ledger = StudentLedger::create([
-            'student_id'       => $studentId,
-            'student_fee_id'   => $studentFeeId,
-            'transaction_type' => 'credit',
-            'amount'           => $amount,
-            'transaction_date' => $request->transaction_date,
-            'payment_mode'     => $request->payment_mode,
-            'utr_no'           => $request->utr_no,
-            'remarks'          => $request->remarks,
-        ]);
-
-        // 🔹 Generate invoice
-        StudentInvoice::create([
-            'ledger_id'  => $ledger->id,
-            'invoice_no' => 'INV-' . strtoupper(Str::random(6)),
-        ]);
-
-        return response()->json(['status' => 'success', 'message' => 'Payment added successfully.']);
-
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
     }
-}
 
 
 

@@ -136,21 +136,21 @@ Route::prefix('settings')->group(function () {
 });
 
 
-    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
-    Route::get('/menu/create', [MenuController::class, 'create'])->name('menu.create');
-    Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
-    Route::get('/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
-    Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
-    Route::delete('/menu/destroy/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
-    Route::get('menu/status/{id}', [MenuController::class, 'status'])->name('menu.status');
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+Route::get('/menu/create', [MenuController::class, 'create'])->name('menu.create');
+Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
+Route::get('/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
+Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
+Route::delete('/menu/destroy/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+Route::get('menu/status/{id}', [MenuController::class, 'status'])->name('menu.status');
 
-    Route::get('/theme', [ThemeController::class, 'index'])->name('theme.index');
-    Route::get('/theme/create', [ThemeController::class, 'create'])->name('theme.create');
-    Route::post('/theme/store', [ThemeController::class, 'store'])->name('theme.store');
-    Route::get('/theme/edit/{id}', [ThemeController::class, 'edit'])->name('theme.edit');
-    Route::post('/theme/update/{id}', [ThemeController::class, 'update'])->name('theme.update');
-    Route::delete('/theme/destroy/{id}', [ThemeController::class, 'destroy'])->name('theme.destroy');
-    Route::get('theme/status/{id}', [ThemeController::class, 'status'])->name('theme.status');
+Route::get('/theme', [ThemeController::class, 'index'])->name('theme.index');
+Route::get('/theme/create', [ThemeController::class, 'create'])->name('theme.create');
+Route::post('/theme/store', [ThemeController::class, 'store'])->name('theme.store');
+Route::get('/theme/edit/{id}', [ThemeController::class, 'edit'])->name('theme.edit');
+Route::post('/theme/update/{id}', [ThemeController::class, 'update'])->name('theme.update');
+Route::delete('/theme/destroy/{id}', [ThemeController::class, 'destroy'])->name('theme.destroy');
+Route::get('theme/status/{id}', [ThemeController::class, 'status'])->name('theme.status');
 
 
 
@@ -238,6 +238,9 @@ Route::prefix('students')->group(function () {
     Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
     Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
+    Route::get('/{id}/print', [StudentController::class, 'print'])->name('students.print');
+    Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');
+    Route::get('/{id}/idcard', [StudentController::class, 'idCard'])->name('students.idcard');
 });
 
 
@@ -289,12 +292,12 @@ Route::prefix('accounts')->group(function () {
 });
 
 
-Route::prefix('reports')->name('reports.')->group(function(){
-    Route::get('students',[ReportController::class,'studentReport'])->name('students');
-    Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
-    Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
-    Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
+Route::prefix('reports')->name('reports.')->group(function () {
+    Route::get('students', [ReportController::class, 'studentReport'])->name('students');
+    Route::get('students/create', [ReportController::class, 'createStudentReport'])->name('students.create');
+    Route::post('students/store', [ReportController::class, 'storeStudentReport'])->name('students.store');
+    Route::get('student/{id}', [ReportController::class, 'viewStudentReport'])->name('students.view');
 });
 
-Route::get('getCourseByUniversityAndCourseType',[CourseController::class,'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
-Route::get('getSubCourseByCourseId',[SubCourseController::class,'getSubCourseByCourseId'])->name('getSubCourseByCourseId');
+Route::get('getCourseByUniversityAndCourseType', [CourseController::class, 'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
+Route::get('getSubCourseByCourseId', [SubCourseController::class, 'getSubCourseByCourseId'])->name('getSubCourseByCourseId');

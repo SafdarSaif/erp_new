@@ -18,6 +18,8 @@ use App\Models\Settings\CourseMode;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class StudentController extends Controller
 {
@@ -283,30 +285,79 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show($id)
+    public function show($id)
+    {
+        $student = Student::findOrFail($id);
+
+        // Load related data for select fields
+        $academicYears = AcademicYear::all();
+        $universities = University::all();
+        $courseTypes  = CourseType::all();
+        $courses      = Course::all();
+        $subCourses   = SubCourse::all();
+        $modes        = AdmissionMode::all();
+        $courseModes  = CourseMode::all();
+        $languages    = Language::all();
+        $bloodGroups  = BloodGroup::all();
+        $religions    = Religion::all();
+        $categories   = Category::all();
+
+        return view('students.view', compact(
+            'student',
+            'academicYears',
+            'universities',
+            'courseTypes',
+            'courses',
+            'subCourses',
+            'modes',
+            'courseModes',
+            'languages',
+            'bloodGroups',
+            'religions',
+            'categories'
+        ));
+    }
+
+
+    public function print($id)
+    {
+        $student = Student::findOrFail($id);
+
+        return view('students.print', compact('student'));
+    }
+
+    public function pdf($id)
+    {
+        $student = Student::findOrFail($id);
+
+        $pdf = Pdf::loadView('students.print', compact('student'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download($student->full_name . '_details.pdf');
+    }
+
+
+//     public function idCard($id)
+// {
+//     $student = Student::findOrFail($id);
+
+//     $pdf = Pdf::loadView('students.idcard', compact('student'))
+//               ->setPaper([0, 0, 350, 220], 'landscape'); // small ID card size
+
+//     return $pdf->download($student->full_name . '_IDCard.pdf');
+// }
+
+
+public function idCard($id)
 {
     $student = Student::findOrFail($id);
 
-    // Load related data for select fields
-    $academicYears = AcademicYear::all();
-    $universities = University::all();
-    $courseTypes  = CourseType::all();
-    $courses      = Course::all();
-    $subCourses   = SubCourse::all();
-    $modes        = AdmissionMode::all();
-    $courseModes  = CourseMode::all();
-    $languages    = Language::all();
-    $bloodGroups  = BloodGroup::all();
-    $religions    = Religion::all();
-    $categories   = Category::all();
+    // Set standard ID card size (landscape mode)
+    $pdf = Pdf::loadView('students.idcard', compact('student'))
+              ->setPaper([0, 0, 340, 220], 'landscape'); // Professional card size
 
-    return view('students.view', compact(
-        'student', 'academicYears', 'universities', 'courseTypes',
-        'courses', 'subCourses', 'modes', 'courseModes', 'languages',
-        'bloodGroups', 'religions', 'categories'
-    ));
+    return $pdf->download($student->full_name . '_IDCard.pdf');
 }
-
 
     /**
      * Show the form for editing the specified resource.
