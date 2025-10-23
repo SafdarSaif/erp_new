@@ -145,9 +145,6 @@
                         <button type="button" class="btn btn-light-primary border-primary icon-btn-sm" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-white" data-bs-placement="top" data-bs-title="Edit" onclick="edit(&#39;/settings/academicyears/edit/${dataId}&#39;, &#39;modal-lg&#39;)">
                             <i class="ri-edit-2-line"></i>
                         </button>
-                        <button type="button" class="btn btn-light-danger border-danger icon-btn-sm" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-white" data-bs-placement="top" data-bs-title="Download">
-                            <i class="ri-file-download-fill"></i>
-                        </button>
                         <a href="/reports/student/${full.id}" type="button" class="btn btn-light-success border-success icon-btn-sm" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-white" data-bs-placement="top" data-bs-title="Download">
                             <i class="ri-eye-fill"></i>
                         </a>
