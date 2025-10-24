@@ -229,11 +229,19 @@ class ReportController extends Controller
     }
 
     public function incomeReport(){
-        
-        return view('reports.income');
+        $universities = University::all();
+        return view('reports.income',compact('universities'));
     }
     public function expenceReport(){
 
         return view('reports.expence');
+    }
+
+    public function getIncome(Request $request){
+        $dates = json_decode($request->daterange);
+        $mode = $request->mode;
+        $university = $request->university;
+        $universityUsers = Student::where('university_id',$university)->pluck('id');
+        dd($universityUsers);
     }
 }

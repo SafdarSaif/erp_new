@@ -302,6 +302,7 @@ Route::prefix('reports')->name('reports.')->group(function(){
     Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
     Route::get('income',[ReportController::class,'incomeReport'])->name('income');
     Route::get('expence',[ReportController::class,'expenceReport'])->name('expence');
+    Route::get('getIncome',[ReportController::class,'getIncome'])->name('getIncome');
 });
 
 Route::get('getCourseByUniversityAndCourseType',[CourseController::class,'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
