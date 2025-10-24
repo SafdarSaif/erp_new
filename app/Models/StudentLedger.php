@@ -16,7 +16,7 @@ class StudentLedger extends Model
     protected $fillable = [
         'student_id', 'student_fee_id', 'transaction_type',
         'amount', 'transaction_date', 'payment_mode',
-        'utr_no', 'gateway_response', 'remarks'
+        'utr_no', 'gateway_response', 'remarks','miscellaneous_id'
     ];
 
     public function student()
