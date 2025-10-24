@@ -18,6 +18,10 @@ use App\Models\Settings\CourseMode;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+
 
 class StudentController extends Controller
 {
@@ -283,30 +287,130 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show($id)
-{
-    $student = Student::findOrFail($id);
+    public function show($id)
+    {
+        $student = Student::findOrFail($id);
 
-    // Load related data for select fields
-    $academicYears = AcademicYear::all();
-    $universities = University::all();
-    $courseTypes  = CourseType::all();
-    $courses      = Course::all();
-    $subCourses   = SubCourse::all();
-    $modes        = AdmissionMode::all();
-    $courseModes  = CourseMode::all();
-    $languages    = Language::all();
-    $bloodGroups  = BloodGroup::all();
-    $religions    = Religion::all();
-    $categories   = Category::all();
+        // Load related data for select fields
+        $academicYears = AcademicYear::all();
+        $universities = University::all();
+        $courseTypes  = CourseType::all();
+        $courses      = Course::all();
+        $subCourses   = SubCourse::all();
+        $modes        = AdmissionMode::all();
+        $courseModes  = CourseMode::all();
+        $languages    = Language::all();
+        $bloodGroups  = BloodGroup::all();
+        $religions    = Religion::all();
+        $categories   = Category::all();
 
-    return view('students.view', compact(
-        'student', 'academicYears', 'universities', 'courseTypes',
-        'courses', 'subCourses', 'modes', 'courseModes', 'languages',
-        'bloodGroups', 'religions', 'categories'
-    ));
-}
+        return view('students.view', compact(
+            'student',
+            'academicYears',
+            'universities',
+            'courseTypes',
+            'courses',
+            'subCourses',
+            'modes',
+            'courseModes',
+            'languages',
+            'bloodGroups',
+            'religions',
+            'categories'
+        ));
+    }
 
+
+    public function print($id)
+    {
+        $student = Student::findOrFail($id);
+
+        return view('students.print', compact('student'));
+    }
+
+    public function pdf($id)
+    {
+        $student = Student::findOrFail($id);
+
+        $pdf = Pdf::loadView('students.print', compact('student'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download($student->full_name . '_details.pdf');
+    }
+
+
+
+    public function generateIdCardPDF($id)
+    {
+        $student = Student::with(['course', 'academicYear', 'bloodGroup', 'university'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('students.idcardpdf', compact('student'))
+            ->setPaper([0, 0, 350, 220], 'landscape'); // ID card size
+
+        return $pdf->download($student->full_name . '_IDCard.pdf');
+    }
+
+
+    //     public function idCard($id)
+    // {
+    //     $student = Student::findOrFail($id);
+
+    //     $pdf = Pdf::loadView('students.idcard', compact('student'))
+    //               ->setPaper([0, 0, 350, 220], 'landscape'); // small ID card size
+
+    //     return $pdf->download($student->full_name . '_IDCard.pdf');
+    // }
+
+
+    // public function idCard($id)
+    // {
+    //     $student = Student::findOrFail($id);
+
+    //     // Set standard ID card size (landscape mode)
+    //     $pdf = Pdf::loadView('students.idcard', compact('student'))
+    //               ->setPaper([0, 0, 340, 220], 'landscape'); // Professional card size
+
+    //     return $pdf->download($student->full_name . '_IDCard.pdf');
+    // }
+
+
+    public function idcard($id)
+    {
+        $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+        return view('students.idcard', compact('student'));
+    }
+
+
+    //     public function idcard($id)
+    // {
+    //     $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+
+    //     // Generate QR code with student ID and name (you can customize data)
+    //     $qrCode = base64_encode(QrCode::format('png')
+    //                   ->size(100)
+    //                   ->generate("ID: {$student->id}, Name: {$student->full_name}"));
+
+    //     return view('students.idcard', compact('student', 'qrCode'));
+    // }
+
+    // public function idcard($id)
+    // {
+    //     $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+
+    //     $qrData = [
+    //         'name' => $student->full_name,
+    //         'id' => $student->id,
+    //         'admissionNo' => $student->admission_no,
+    //         'course' => $student->course->name,
+    //         'university' => $student->university->name,
+    //         'email' => $student->email,
+    //         'mobile' => $student->mobile
+    //     ];
+
+    //     $qrCode = QrCode::size(120)->generate(json_encode($qrData));
+
+    //     return view('students.idcard', compact('student', 'qrCode'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -406,7 +510,7 @@ class StudentController extends Controller
                 'course_type_id'    => $validatedData['course_type_id'],
                 'course_id'         => $validatedData['course_id'],
                 'sub_course_id'     => $validatedData['sub_course_id'],
-                'admissionmode_id'           => $validatedData['mode_id'], // ✅ Fixed column name
+                'admissionmode_id'  => $validatedData['mode_id'], // ✅ Fixed column name
                 'course_mode_id'    => $validatedData['course_mode_id'],
                 'semester'          => $validatedData['semester'] ?? null,
                 'course_duration'   => $validatedData['course_duration'] ?? null,

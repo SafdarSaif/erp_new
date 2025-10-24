@@ -8,10 +8,11 @@
             <div class="col-md-4 mb-4">
                 <div class="text-center p-4 shadow rounded bg-light">
                     <img src="{{ $student->image
-                        ? asset($student->image)
-                        : 'https://ui-avatars.com/api/?name=' . urlencode($student->full_name ?? 'N/A') . '&size=140&background=0D8ABC&color=fff&rounded=true' }}"
-                        class="rounded-circle mb-3" width="140" height="140"
-                        alt="{{ $student->full_name ?? 'Profile Image' }}">
+                            ? asset($student->image)
+                            : 'https://ui-avatars.com/api/?name=' .
+                                urlencode($student->full_name ?? 'N/A') .
+                                '&size=140&background=0D8ABC&color=fff&rounded=true' }}" class="rounded-circle mb-3"
+                        width="140" height="140" alt="{{ $student->full_name ?? 'Profile Image' }}">
 
                     <h4 class="fw-bold">{{ $student->full_name ?? 'N/A' }}</h4>
                     <p class="text-muted mb-1">Email: {{ $student->email ?? 'N/A' }}</p>
@@ -25,17 +26,39 @@
                 <!-- Quick Info -->
                 <div class="mt-4 p-3 shadow rounded bg-white">
                     <p><strong>Admission No:</strong> {{ $student->admission_no ?? 'N/A' }}</p>
-                    <p><strong>Course:</strong> {{ $student->course->name ?? 'N/A' }}</p>
-                    <p><strong>Batch:</strong> {{ $student->batch ?? 'N/A' }}</p>
                     <p><strong>University:</strong> {{ $student->university->name ?? 'N/A' }}</p>
+
+                    <p><strong>Course:</strong> {{ $student->course->name ?? 'N/A' }}</p>
+                    {{-- <p><strong>Batch:</strong> {{ $student->batch ?? 'N/A' }}</p> --}}
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="mt-4 d-flex flex-wrap gap-2">
-                    <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
-                    <a href="#" class="btn btn-success btn-sm"><i class="bi bi-printer"></i> Print</a>
-                    <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
-                    <a href="#" class="btn btn-secondary btn-sm"><i class="bi bi-id-card"></i> ID Card</a>
+                    {{-- <a href="/students/edit/${full.id}" class="btn btn-primary btn-sm"><i
+                            class="bi bi-pencil-square"></i> Edit</a> --}}
+                    <a href="{{ url('students/edit/' . $student->id) }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+
+                    {{-- <a href="#" class="btn btn-success btn-sm"><i class="bi bi-printer"></i> Print</a>
+                    <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-file-earmark-pdf"></i> PDF</a> --}}
+                    <a href="{{ route('students.print', $student->id) }}" target="_blank"
+                        class="btn btn-success btn-sm">
+                        <i class="bi bi-printer"></i> Print
+                    </a>
+
+                    <a href="{{ route('students.pdf', $student->id) }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </a>
+                    {{-- <a href="#" class="btn btn-secondary btn-sm"><i class="bi bi-id-card"></i> ID Card</a> --}}
+                    {{-- <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-id-card"></i> ID Card
+                    </a> --}}
+                    <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm" target="_blank">
+    <i class="bi bi-id-card"></i> ID Card
+</a>
+
+
                 </div>
             </div>
 
@@ -53,16 +76,20 @@
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs mb-3" id="studentTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal</button>
+                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab"
+                                data-bs-target="#personal" type="button" role="tab">Personal</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="academic-tab" data-bs-toggle="tab" data-bs-target="#academic" type="button" role="tab">Academic</button>
+                            <button class="nav-link" id="academic-tab" data-bs-toggle="tab" data-bs-target="#academic"
+                                type="button" role="tab">Academic</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="financial-tab" data-bs-toggle="tab" data-bs-target="#financial" type="button" role="tab">Financial</button>
+                            <button class="nav-link" id="financial-tab" data-bs-toggle="tab" data-bs-target="#financial"
+                                type="button" role="tab">Financial</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab">Documents</button>
+                            <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents"
+                                type="button" role="tab">Documents</button>
                         </li>
                     </ul>
 
@@ -73,7 +100,8 @@
                                 <div class="col-md-6">
                                     <p><strong>Father's Name:</strong> {{ $student->father_name ?? 'N/A' }}</p>
                                     <p><strong>Mother's Name:</strong> {{ $student->mother_name ?? 'N/A' }}</p>
-                                    <p><strong>DOB:</strong> {{ $student->dob ? date('d M Y', strtotime($student->dob)) : 'N/A' }}</p>
+                                    <p><strong>DOB:</strong>
+                                        {{ $student->dob ? date('d M Y', strtotime($student->dob)) : 'N/A' }}</p>
                                     <p><strong>Gender:</strong> {{ $student->gender ?? 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
@@ -110,11 +138,13 @@
                                 <div class="col-md-6">
                                     <p><strong>Income:</strong> {{ $student->income ?? 'N/A' }}</p>
                                     <p><strong>Total Fee:</strong> {{ $student->total_fee ?? 'N/A' }}</p>
-                                    <p><strong>Permanent Address:</strong> {{ $student->permanent_address ?? 'N/A' }}</p>
+                                    <p><strong>Permanent Address:</strong> {{ $student->permanent_address ?? 'N/A' }}
+                                    </p>
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Current Address:</strong> {{ $student->current_address ?? 'N/A' }}</p>
-                                    <p><strong>Balance Fee:</strong> <span class="text-danger">{{ $student->balance_fee ?? '0.00' }}</span></p>
+                                    <p><strong>Balance Fee:</strong> <span class="text-danger">{{ $student->balance_fee
+                                            ?? '0.00' }}</span></p>
                                 </div>
                             </div>
                         </div>
@@ -134,13 +164,13 @@
 <!-- Add Bootstrap JS if not already included -->
 <script>
     var triggerTabList = [].slice.call(document.querySelectorAll('#studentTab button'))
-    triggerTabList.forEach(function (triggerEl) {
-      var tabTrigger = new bootstrap.Tab(triggerEl)
+        triggerTabList.forEach(function(triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
 
-      triggerEl.addEventListener('click', function (event) {
-        event.preventDefault()
-        tabTrigger.show()
-      })
-    })
+            triggerEl.addEventListener('click', function(event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
 </script>
 @endsection
