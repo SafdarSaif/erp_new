@@ -51,9 +51,13 @@
                         <i class="bi bi-file-earmark-pdf"></i> PDF
                     </a>
                     {{-- <a href="#" class="btn btn-secondary btn-sm"><i class="bi bi-id-card"></i> ID Card</a> --}}
-                    <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm">
+                    {{-- <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm">
                         <i class="bi bi-id-card"></i> ID Card
-                    </a>
+                    </a> --}}
+                    <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm" target="_blank">
+    <i class="bi bi-id-card"></i> ID Card
+</a>
+
 
                 </div>
             </div>

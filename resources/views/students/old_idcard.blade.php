@@ -50,10 +50,10 @@
             width: 120px;
             height: 120px;
             border-radius: 10px;
-            /* border: 4px solid white; */
+            border: 4px solid white;
             object-fit: cover;
             margin-bottom: 15px;
-            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .id-details {
@@ -194,13 +194,7 @@
                                 </div>
                             </div>
 
-                            {{-- Static QR Code --}}
-                            <div class="mt-3 text-center">
-                                <img src="{{ asset('uploads/qrcode/QR_code.png') }}" alt="QR Code" width="80">
-                                {{-- C:\xampp\htdocs\erp_new\public\uploads\qrcode\QR_code.png --}}
-                            </div>
-
-                            {{-- <div class="barcode w-100"></div> --}}
+                            <div class="barcode w-100"></div>
                             <div class="validity">Valid until: {{ date('M Y', strtotime('+1 year')) }}</div>
 
                             <div class="signature-area">
@@ -219,9 +213,12 @@
                         <button class="btn btn-primary" onclick="window.print()">
                             <i class="bi bi-printer"></i> Print ID
                         </button>
-                        <a href="{{ route('students.idcardpdf', $student->id) }}" class="btn btn-warning">
+                        <a href="{{ route('students.pdf', $student->id) }}" class="btn btn-warning">
                             <i class="bi bi-file-earmark-pdf"></i> Save as PDF
                         </a>
+                        {{-- <a href="{{ route('students.show', $student->id) }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Profile
+                        </a> --}}
                     </div>
                 </div>
             </div>

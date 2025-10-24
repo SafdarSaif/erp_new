@@ -241,6 +241,7 @@ Route::prefix('students')->group(function () {
     Route::get('/{id}/print', [StudentController::class, 'print'])->name('students.print');
     Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');
     Route::get('/{id}/idcard', [StudentController::class, 'idCard'])->name('students.idcard');
+    Route::get('/idcardpdf/{id}', [StudentController::class, 'generateIdCardPDF'])->name('students.idcardpdf');
 });
 
 
