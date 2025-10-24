@@ -26,6 +26,7 @@ use App\Http\Controllers\Accounts\StudentFeeStructureController;
 use App\Http\Controllers\StudentLedgerController;
 use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MiscellaneousFeeController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -290,14 +291,21 @@ Route::prefix('accounts')->group(function () {
     Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
     Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
         ->name('student.updatePayment');
+
+    Route::get('miscellaneous/{student_id}',[MiscellaneousFeeController::class,'create'])->name('accounts.miscellaneous');
+    Route::post('miscellaneous/store',[MiscellaneousFeeController::class,'store'])->name('accounts.saveMiscellaneous');
+    Route::post('miscellaneous/update',[MiscellaneousFeeController::class,'update'])->name('accounts.updateMiscellaneous');
+    Route::get('miscellaneous/edit/{student_id}',[MiscellaneousFeeController::class,'edit'])->name('accounts.editMiscellaneousFee');
 });
 
 
-Route::prefix('reports')->name('reports.')->group(function () {
-    Route::get('students', [ReportController::class, 'studentReport'])->name('students');
-    Route::get('students/create', [ReportController::class, 'createStudentReport'])->name('students.create');
-    Route::post('students/store', [ReportController::class, 'storeStudentReport'])->name('students.store');
-    Route::get('student/{id}', [ReportController::class, 'viewStudentReport'])->name('students.view');
+Route::prefix('reports')->name('reports.')->group(function(){
+    Route::get('students',[ReportController::class,'studentReport'])->name('students');
+    Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
+    Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
+    Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
+    Route::get('income',[ReportController::class,'incomeReport'])->name('income');
+    Route::get('expence',[ReportController::class,'expenceReport'])->name('expence');
 });
 
 Route::get('getCourseByUniversityAndCourseType', [CourseController::class, 'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
