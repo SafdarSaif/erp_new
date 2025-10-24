@@ -227,4 +227,13 @@ class ReportController extends Controller
             ]);
         }
     }
+
+    public function incomeReport(){
+        
+        return view('reports.income');
+    }
+    public function expenceReport(){
+
+        return view('reports.expence');
+    }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Student;
 use App\Models\Accounts\StudentFeeStructure;
+use App\Models\MiscellaneousFee;
 use App\Models\StudentInvoice;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -283,6 +284,9 @@ class StudentLedgerController extends Controller
         //  Fetch invoices (if linked to ledger)
         $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
 
+        //MiscellaneousFee
+        $miscellaneousFee = MiscellaneousFee::where('student_id',$studentId)->get();
+        $totalMiscellaneousFee = MiscellaneousFee::where('student_id',$studentId)->sum('amount');
         return view('accounts.fee.ledger', compact(
             'student',
             'feeStructures',
@@ -294,7 +298,9 @@ class StudentLedgerController extends Controller
             'courseName',
             'mode',
             'duration',
-            'semesterWiseFees'
+            'semesterWiseFees',
+            'miscellaneousFee',
+            'totalMiscellaneousFee'
         ));
     }
 
