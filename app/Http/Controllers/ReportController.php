@@ -16,6 +16,7 @@ use App\Models\Settings\CourseType;
 use App\Models\Settings\Language;
 use App\Models\Settings\Religion;
 use App\Models\Student;
+use App\Models\StudentLedger;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -238,10 +239,38 @@ class ReportController extends Controller
     }
 
     public function getIncome(Request $request){
-        $dates = json_decode($request->daterange);
+        $dates = json_decode($request->daterange, true);  // convert to array
         $mode = $request->mode;
         $university = $request->university;
-        $universityUsers = Student::where('university_id',$university)->pluck('id');
-        dd($universityUsers);
+        $fee_type = $request->fee_type;
+
+        // Only when university is selected, get student IDs once
+        $universityStudent = Student::where('university_id', $university)->pluck('id')->toArray();
+
+        $payments = StudentLedger::with('student');  // query builder
+
+        if (!empty($mode)) {
+            $payments = $payments->where('payment_mode', $mode);
+        }
+
+        if (!empty($university)) {
+            $payments = $payments->whereIn('student_id', $universityStudent);
+        }
+
+        if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
+            $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
+            $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
+            $payments = $payments->whereBetween('created_at', [$start, $end]);
+        }
+
+        if(!empty($fee_type)){
+            if($fee_type=="student_fee"){
+                $payments = $payments->whereNull('miscellaneous_id');
+            }else{
+                $payments = $payments->whereNotNull('miscellaneous_id');
+            }
+        }
+        $data = $payments->get();
+        return response()->json($data);
     }
 }
