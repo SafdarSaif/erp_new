@@ -17,7 +17,7 @@
                         <select name="university" id="university" class="form-select">
                             <option value="">-- All --</option>
                             @foreach ($universities as $university)
-                                <option value="{{ $university->id }}">{{ $university->name }}</option>
+                            <option value="{{ $university->id }}">{{ $university->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -27,7 +27,7 @@
                         <select name="course" id="course" class="form-select">
                             <option value="">-- All --</option>
                             @foreach ($courses as $course)
-                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                            <option value="{{ $course->id }}">{{ $course->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -37,7 +37,7 @@
                         <select name="student" id="student" class="form-select">
                             <option value="">-- All --</option>
                             @foreach ($students as $student)
-                                <option value="{{ $student->id }}">{{ $student->full_name }}</option>
+                            <option value="{{ $student->id }}">{{ $student->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
