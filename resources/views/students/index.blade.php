@@ -224,23 +224,41 @@
                     //         <input class="form-check-input" type="checkbox" ${checked} ${toggle}>
                     //         <label class="form-check-label">${label}</label>
                     //     </div>`;
+                    inactiveselect = "";
+                    dropoutselect = "";
+                    activeselect = "";
+                    completeselect = "";
                     if(full.status==0){
                         label = "Droped Out";
                         bg = "bg-danger";
+                        dropoutselect = "selected";
                     }else if(full.status==1){
                         label = "Active";
-                        bg = "bg-primary"
+                        bg = "bg-primary";
+                        activeselect = "selected";
                     }else if(full.status==2){
                         label = "Completed"
-                        bg = "bg-success"
+                        bg = "bg-success";
+                        completeselect = "selected";
                     }else{
-                        label = "In-Active"
-                        bg = "bg-warning"
+                        label = "In-Active";
+                        bg = "bg-warning";
+                        inactiveselect = "selected";
                     }
+                    // return `
+                    //     <div class="form-check form-switch form-switch-success text-center">
+                    //         <label class="badge ${bg}">${label}</label>
+                    //     </div>
+                    //     `;
+
                     return `
-                        <div class="form-check form-switch form-switch-success text-center">
-                            <label class="badge ${bg}">${label}</label>
-                        </div>`;
+                        <select class="form-select" onchange="updateStudentStatus('/students/status/${full.id}', 'student-table')">
+                            <option value="1" ${activeselect}>Active</option>    
+                            <option value="3" ${inactiveselect}>In-Active</option>    
+                            <option value="2" ${completeselect}>Completed</option>    
+                            <option value="0" ${dropoutselect}>Droped Out</option>    
+                        </select>
+                    `;
                 }
             },
             {
@@ -277,6 +295,23 @@
         }
     });
 });
+
+      function updateStudentStatus(url, table) {
+        debugger;
+        var status = $(this).val();
+        $.ajax({
+            url: url+'/'+status,
+            type: "GET",
+            success: function (response) {
+                if (response.status == 'success') {
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+                $('#' + table).DataTable().ajax.reload();
+            }
+        })
+    }
 </script>
 
 <style>
