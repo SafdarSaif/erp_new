@@ -67,6 +67,40 @@
 
 @section('scripts')
 <script>
+// function loadPendingFees() {
+//     let university = $('#university').val();
+//     let course = $('#course').val();
+//     let student = $('#student').val();
+
+//     $.ajax({
+//         url: "/reports/getpendingFees",
+//         method: "POST",
+//         data: {
+//             _token: "{{ csrf_token() }}",
+//             university,
+//             course,
+//             student
+//         },
+//         success: function(res) {
+//             let html = '';
+//             res.data.forEach((item, index) => {
+//                 let semesterStr = item.semesterBalances.map(s => `${s.semester}: ₹${s.balance}`).join('<br>');
+//                 let miscStr     = item.miscBalances.map(m => `${m.head}: ₹${m.balance}`).join('<br>');
+//                 html += `
+//                     <tr>
+//                         <td>${index + 1}</td>
+//                         <td>${item.student.full_name}</td>
+//                         <td>${semesterStr || '-'}</td>
+//                         <td>${miscStr || '-'}</td>
+//                         <td>₹${item.total_due.toFixed(2)}</td>
+//                     </tr>
+//                 `;
+//             });
+//             $('#pendingFeesBody').html(html);
+//         }
+//     });
+// }
+
 function loadPendingFees() {
     let university = $('#university').val();
     let course = $('#course').val();
@@ -83,22 +117,33 @@ function loadPendingFees() {
         },
         success: function(res) {
             let html = '';
-            res.data.forEach((item, index) => {
-                let semesterStr = item.semesterBalances.map(s => `${s.semester}: ₹${s.balance}`).join('<br>');
-                let miscStr     = item.miscBalances.map(m => `${m.head}: ₹${m.balance}`).join('<br>');
-                html += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.student.full_name}</td>
-                        <td>${semesterStr || '-'}</td>
-                        <td>${miscStr || '-'}</td>
-                        <td>₹${item.total_due.toFixed(2)}</td>
+
+            if (res.data.length > 0) {
+                res.data.forEach((item, index) => {
+                    let semesterStr = item.semesterBalances.map(s => `${s.semester}: ₹${s.balance}`).join('<br>');
+                    let miscStr     = item.miscBalances.map(m => `${m.head}: ₹${m.balance}`).join('<br>');
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.student.full_name}</td>
+                            <td>${semesterStr || '-'}</td>
+                            <td>${miscStr || '-'}</td>
+                            <td>₹${item.total_due.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html = `
+                    <tr style="text-align:center">
+                        <td colspan="5">No Data Available According To Search Criteria</td>
                     </tr>
                 `;
-            });
+            }
+
             $('#pendingFeesBody').html(html);
         }
     });
 }
+
 </script>
 @endsection
