@@ -68,6 +68,14 @@
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="applyFilter()">Generate</button>
                     </div>
+                    <div class="col-md-3 text-end">
+                        <button class="btn btn-primary mt-5" onclick="downloadCSV()">
+                            DownLoad CSV
+                        </button>
+                        <button class="btn btn-primary mt-5" onclick="exportPDF()">
+                            DownLoad PDF
+                        </button>
+                    </div>
                 </div>
 
                 <table id="expense-table" class="table table-hover align-middle table-bordered table-striped w-100">
@@ -98,6 +106,9 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 <script type="text/javascript">
 $(function() {
     var start = moment().subtract(29, 'days');
@@ -173,6 +184,20 @@ function applyFilter() {
             }
         }
     });
+}
+
+function downloadCSV(){
+    let table = document.getElementById("expense-table"); // table ka id
+    let workbook = XLSX.utils.table_to_book(table);
+    XLSX.writeFile(workbook, 'table_data.xlsx');
+}
+
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    var doc = new jsPDF();
+
+    doc.autoTable({ html: '#expense-table' }); // table ka id yaha bhi same
+    doc.save('table_data.pdf');
 }
 </script>
 @endsection
