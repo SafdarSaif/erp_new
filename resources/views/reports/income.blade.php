@@ -7,7 +7,7 @@
         <!-- Page title -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-semibold mb-0">
-                <i class="bi bi-people me-2"></i>Income Report 
+                <i class="bi bi-people me-2"></i>Income Report
             </h4>
         </div>
 
@@ -16,7 +16,8 @@
                 <div class="row mb-3">
                     <div class="col-md-2">
                         <label for="reportrange">Receipt Date</label>
-                        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                        <div id="reportrange"
+                            style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
                             <i class="ri ri-calendar"></i>&nbsp;
                             <span></span> <i class="fa fa-caret-down"></i>
                         </div>
@@ -36,7 +37,7 @@
                         <select name="university" id="university" class="form-select" required="">
                             <option value="">-- Select University --</option>
                             @foreach ($universities as $university)
-                                <option value="{{$university->id}}">{{$university->name}}</option>
+                            <option value="{{$university->id}}">{{$university->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -82,7 +83,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
-$(function() {
+    $(function() {
 
     var start = moment().subtract(29, 'days');
     var end = moment();
@@ -121,7 +122,7 @@ function applyFilter(){
         data:{daterange:daterange,mode:mode,university:university,fee_type:fee_type},
         success:function(res){
             console.log(res.length);
-            
+
             if(res.length>0){
                 html ="";
                 $.each(res,function(key,val){
@@ -131,7 +132,7 @@ function applyFilter(){
                             <td>${val.student.full_name}</td>
                             <td>${val.transaction_date}</td>
                             <td>${val.payment_mode}</td>
-                            <td>${val.miscellaneous_id==''?'Student Fee':'Miscellaneous Fee'}</td>
+                            <td>${!val.miscellaneous_id ? 'Student Fee' : 'Miscellaneous Fee'}</td>
                             <td>${val.amount}</td>
                         </tr>
                     `;

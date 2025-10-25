@@ -135,6 +135,10 @@ class RolePermissionSeeder extends Seeder
 
 
             'view university fee',
+
+            'create reports',
+            'view reports',
+           
         ];
 
         // Create permissions

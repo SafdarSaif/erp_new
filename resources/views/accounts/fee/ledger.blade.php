@@ -36,8 +36,12 @@
                 <div class="card text-center border-primary">
                     <div class="card-body">
                         <h6>Total Fee</h6>
-                        <h3 class="text-primary fw-bold">₹{{ number_format($totalFee, 2) }} +
-                            {{number_format($totalMiscellaneousFee,2)}}</h3>
+                        {{-- <h3 class="text-primary fw-bold">₹{{ number_format($totalFee, 2) }} +
+                            {{number_format($totalMiscellaneousFee,2)}}</h3> --}}
+                        <h3 class="text-primary fw-bold">
+                            ₹{{ number_format($totalFee + $totalMiscellaneousFee, 2) }}
+                        </h3>
+
                     </div>
                 </div>
             </div>
@@ -58,6 +62,9 @@
                 </div>
             </div>
         </div>
+
+
+
 
         <!-- 🔹 Fee Structure Card -->
         <div class="card mb-4 shadow-sm">
@@ -146,7 +153,7 @@
 
 
                 </form>
-                @if ($miscellaneousFee->count()>0)
+                {{-- @if ($miscellaneousFee->count()>0)
                 <h5 class="fw-semibold mb-3 text-dark">📘 Miscellaneous Fee</h5>
                 <table class="table table-bordered text-center align-middle mt-3">
                     <thead class="table-light">
@@ -177,7 +184,48 @@
                         @endforeach
                     </tbody>
                 </table>
+                @endif --}}
+
+                @if ($miscellaneousWithBalance->count() > 0)
+                <h5 class="fw-semibold mb-3 text-dark">📘 Miscellaneous Fee</h5>
+                <table class="table table-bordered text-center align-middle mt-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Semester</th>
+                            <th>Fee Head</th>
+                            <th>Total Amount (₹)</th>
+                            <th>Paid (₹)</th>
+                            <th>Balance (₹)</th>
+                            {{-- <th>Action</th> --}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($miscellaneousWithBalance as $key => $misc)
+                        <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $misc->semester ?? '-' }}</td>
+                            <td>{{ $misc->head ?? '-' }}</td>
+                            <td>{{ number_format($misc->amount, 2) }}</td>
+                            <td class="text-success fw-bold">₹{{ number_format($misc->paid, 2) }}</td>
+                            <td class="fw-bold {{ $misc->balance > 0 ? 'text-danger' : 'text-success' }}">
+                                ₹{{ number_format($misc->balance, 2) }}
+                            </td>
+                            {{-- <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-warning"
+                                        onclick="add('{{ route('accounts.editMiscellaneousFee', $misc->id) }}', 'modal-lg')"
+                                        data-bs-toggle="tooltip" title="Edit Fee">
+                                        <i class="ri-edit-2-line"></i>
+                                    </button>
+                                </div>
+                            </td> --}}
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
                 @endif
+
             </div>
         </div>
 
@@ -211,14 +259,15 @@
                         @forelse($ledgerEntries as $index => $entry)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            {{-- <td>{{ $entry->semester ?? '-' }}</td>  --}}
+                            {{-- <td>{{ $entry->semester ?? '-' }}</td> --}}
                             <td>
-    @if ($entry->miscellaneous_id)
-        <span class="text-primary fw-semibold">{{ $entry->misc_head ?? 'Miscellaneous Fee' }}</span>
-    @else
-        {{ $entry->semester ?? '-' }}
-    @endif
-</td>
+                                @if ($entry->miscellaneous_id)
+                                <span class="text-primary fw-semibold">{{ $entry->misc_head ?? 'Miscellaneous Fee'
+                                    }}</span>
+                                @else
+                                {{ $entry->semester ?? '-' }}
+                                @endif
+                            </td>
                             {{-- <td>
                                 <span
                                     class="badge bg-{{ $entry->transaction_type === 'credit' ? 'success' : 'danger' }}">
@@ -227,12 +276,12 @@
                             </td> --}}
 
                             <td>
-    @if ($entry->miscellaneous_id)
-        <span class="badge bg-info">Miscellaneous</span>
-    @else
-        <span class="badge bg-secondary">Semester Fee</span>
-    @endif
-</td>
+                                @if ($entry->miscellaneous_id)
+                                <span class="badge bg-info">Miscellaneous</span>
+                                @else
+                                <span class="badge bg-secondary">Semester Fee</span>
+                                @endif
+                            </td>
                             <td>{{ number_format($entry->amount, 2) }}</td>
                             <td>{{ $entry->payment_mode }}</td>
                             <td>{{ $entry->utr_no ?? '-' }}</td>
