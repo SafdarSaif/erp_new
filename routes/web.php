@@ -292,26 +292,29 @@ Route::prefix('accounts')->group(function () {
     Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
         ->name('student.updatePayment');
 
-    Route::get('miscellaneous/{student_id}',[MiscellaneousFeeController::class,'create'])->name('accounts.miscellaneous');
-    Route::post('miscellaneous/store',[MiscellaneousFeeController::class,'store'])->name('accounts.saveMiscellaneous');
-    Route::post('miscellaneous/update',[MiscellaneousFeeController::class,'update'])->name('accounts.updateMiscellaneous');
-    Route::get('miscellaneous/edit/{student_id}',[MiscellaneousFeeController::class,'edit'])->name('accounts.editMiscellaneousFee');
+    Route::get('miscellaneous/{student_id}', [MiscellaneousFeeController::class, 'create'])->name('accounts.miscellaneous');
+    Route::post('miscellaneous/store', [MiscellaneousFeeController::class, 'store'])->name('accounts.saveMiscellaneous');
+    Route::post('miscellaneous/update', [MiscellaneousFeeController::class, 'update'])->name('accounts.updateMiscellaneous');
+    Route::get('miscellaneous/edit/{student_id}', [MiscellaneousFeeController::class, 'edit'])->name('accounts.editMiscellaneousFee');
 });
 
 
-Route::prefix('reports')->name('reports.')->group(function(){
-    Route::get('students',[ReportController::class,'studentReport'])->name('students');
-    Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
-    Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
-    Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
-    Route::get('income',[ReportController::class,'incomeReport'])->name('income');
-    Route::get('expence',[ReportController::class,'expenceReport'])->name('expence');
+Route::prefix('reports')->name('reports.')->group(function () {
+    Route::get('students', [ReportController::class, 'studentReport'])->name('students');
+    Route::get('students/create', [ReportController::class, 'createStudentReport'])->name('students.create');
+    Route::post('students/store', [ReportController::class, 'storeStudentReport'])->name('students.store');
+    Route::get('student/{id}', [ReportController::class, 'viewStudentReport'])->name('students.view');
+    Route::get('income', [ReportController::class, 'incomeReport'])->name('income');
+    Route::get('expence', [ReportController::class, 'expenceReport'])->name('expence');
     Route::post('getExpense', [ReportController::class, 'getExpense'])->name('getExpense');
-    Route::get('getIncome',[ReportController::class,'getIncome'])->name('getIncome');
+    Route::get('getIncome', [ReportController::class, 'getIncome'])->name('getIncome');
 
     Route::get('pendingfees', [ReportController::class, 'PendingReport'])->name('pendingfees');
 
     Route::post('getpendingFees', [ReportController::class, 'pendingFeesReport'])->name('getpendingFees');
+
+    Route::get('profit', [ReportController::class, 'profitReport'])->name('profit');
+    Route::post('getProfitReport', [ReportController::class, 'getProfitReport'])->name('getProfitReport');
 });
 
 Route::get('getCourseByUniversityAndCourseType', [CourseController::class, 'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
