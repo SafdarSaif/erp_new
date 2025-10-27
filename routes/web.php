@@ -27,6 +27,7 @@ use App\Http\Controllers\StudentLedgerController;
 use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MiscellaneousFeeController;
+use App\Http\Controllers\Settings\StatusController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -134,6 +135,16 @@ Route::prefix('settings')->group(function () {
     Route::post('religions/update/{id}', [ReligionController::class, 'update'])->name('religions.update');
     Route::delete('religions/delete/{id}', [ReligionController::class, 'destroy'])->name('religions.delete');
     Route::get('religions/status/{id}', [ReligionController::class, 'status'])->name('religions.status');
+
+    // Statuses
+    Route::get('status', [StatusController::class, 'index'])->name('status.index');
+    Route::get('status/create', [StatusController::class, 'create'])->name('status.create');
+    Route::post('status/store', [StatusController::class, 'store'])->name('status.store');
+    Route::get('status/edit/{id}', [StatusController::class, 'edit'])->name('status.edit');
+    Route::post('status/update/{id}', [StatusController::class, 'update'])->name('status.update');
+    Route::delete('status/delete/{id}', [StatusController::class, 'destroy'])->name('status.delete');
+    Route::get('status/status/{id}', [StatusController::class, 'status'])->name('status.status');
+
 });
 
 
@@ -237,7 +248,7 @@ Route::prefix('students')->group(function () {
     Route::get('/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');    // Edit student
     Route::put('/update/{id}', [StudentController::class, 'update'])->name('students.update'); // Update
     Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
-    Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
+    Route::get('/status/{id}', [StudentController::class, 'updateStatus'])->name('students.status');     // Toggle status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
     Route::get('/{id}/print', [StudentController::class, 'print'])->name('students.print');
     Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');

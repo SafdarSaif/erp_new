@@ -14,7 +14,7 @@ use App\Models\Academics\SubCourse;
 use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
 use App\Models\Accounts\StudentFeeStructure;
-
+use App\Models\Settings\Status;
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
@@ -26,7 +26,7 @@ class Student extends Model
         'admissionmode_id', 'course_mode_id', 'semester', 'course_duration', 'full_name', 'father_name',
         'mother_name', 'aadhaar_no', 'email', 'mobile', 'language_id', 'dob', 'gender',
         'blood_group_id', 'religion_id', 'category_id', 'income', 'permanent_address',
-        'current_address', 'total_fee', 'status'
+        'current_address', 'total_fee', 'status','status_id'
     ];
 
     // Relationships
@@ -57,6 +57,11 @@ public function ledger()
 public function feeStructures()
 {
     return $this->hasMany(StudentFeeStructure::class, 'student_id');
+}
+
+public function status()
+{
+    return $this->belongsTo(Status::class, 'status_id');
 }
 
 

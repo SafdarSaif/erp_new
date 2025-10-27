@@ -20,7 +20,8 @@ use App\Models\{
     MiscellaneousFee,
     Report,
     StudentLedger,
-    UniversityFees
+    UniversityFees,
+    Settings\Status,
 };
 use App\Observers\UserDataObserver;
 
@@ -65,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
             Report::class,
             StudentLedger::class,
             UniversityFees::class,
+            Status::class,
         ];
 
         foreach ($models as $model) {
