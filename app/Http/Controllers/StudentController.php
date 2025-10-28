@@ -547,4 +547,8 @@ class StudentController extends Controller
     {
         //
     }
+
+    public function status(){
+        
+    }
 }
