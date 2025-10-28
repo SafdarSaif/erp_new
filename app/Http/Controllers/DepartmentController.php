@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Academics\University;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class DepartmentController extends Controller
 {
@@ -68,6 +72,8 @@ class DepartmentController extends Controller
             'name' => $request->name,
             'university_id' => $request->university_id,
             'status' => $request->input('status', 1),
+            'added_by' => Auth::user()->id,
+
         ]);
 
         return response()->json([

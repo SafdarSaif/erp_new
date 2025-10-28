@@ -162,13 +162,23 @@
                                     @endforeach
                                 </select>
                             </th>
-                            <th>
+                            {{-- <th>
                                 <select class="form-select form-select-sm">
                                     <option value="">All</option>
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
+                            </th> --}}
+                            <th>
+                                <select class="form-select form-select-sm">
+                                    <option value="">All</option>
+                                    @foreach ($statuses as $status)
+                                    <option value="{{ $status->id }}">{{ $status->name }}</option>
+                                    @endforeach
+                                </select>
                             </th>
+
+
                             <th></th>
                         </tr>
 
@@ -211,56 +221,99 @@
             { data: 'blood_group' },
             { data: 'religion' },
             { data: 'category' },
-            {
-                data: 'status',
-                render: function (data, type, full) {
-                    // var checked = full.status == 1 ? 'checked' : '';
-                    // var label = full.status == 1 ? 'Active' : 'Inactive';
-                    // var toggle = canEdit
-                    //     ? `onclick="updateActiveStatus('/students/status/${full.id}', 'student-table')"`
-                    //     : 'onclick="return false;"';
-                    // return `
-                    //     <div class="form-check form-switch form-switch-success text-center">
-                    //         <input class="form-check-input" type="checkbox" ${checked} ${toggle}>
-                    //         <label class="form-check-label">${label}</label>
-                    //     </div>`;
-                    inactiveselect = "";
-                    dropoutselect = "";
-                    activeselect = "";
-                    completeselect = "";
-                    if(full.status==0){
-                        label = "Droped Out";
-                        bg = "bg-danger";
-                        dropoutselect = "selected";
-                    }else if(full.status==1){
-                        label = "Active";
-                        bg = "bg-primary";
-                        activeselect = "selected";
-                    }else if(full.status==2){
-                        label = "Completed"
-                        bg = "bg-success";
-                        completeselect = "selected";
-                    }else{
-                        label = "In-Active";
-                        bg = "bg-warning";
-                        inactiveselect = "selected";
-                    }
-                    // return `
-                    //     <div class="form-check form-switch form-switch-success text-center">
-                    //         <label class="badge ${bg}">${label}</label>
-                    //     </div>
-                    //     `;
+            // {
+            //     data: 'status',
+            //     render: function (data, type, full) {
+            //         // var checked = full.status == 1 ? 'checked' : '';
+            //         // var label = full.status == 1 ? 'Active' : 'Inactive';
+            //         // var toggle = canEdit
+            //         //     ? `onclick="updateActiveStatus('/students/status/${full.id}', 'student-table')"`
+            //         //     : 'onclick="return false;"';
+            //         // return `
+            //         //     <div class="form-check form-switch form-switch-success text-center">
+            //         //         <input class="form-check-input" type="checkbox" ${checked} ${toggle}>
+            //         //         <label class="form-check-label">${label}</label>
+            //         //     </div>`;
+            //         inactiveselect = "";
+            //         dropoutselect = "";
+            //         activeselect = "";
+            //         completeselect = "";
+            //         if(full.status==0){
+            //             label = "Droped Out";
+            //             bg = "bg-danger";
+            //             dropoutselect = "selected";
+            //         }else if(full.status==1){
+            //             label = "Active";
+            //             bg = "bg-primary";
+            //             activeselect = "selected";
+            //         }else if(full.status==2){
+            //             label = "Completed"
+            //             bg = "bg-success";
+            //             completeselect = "selected";
+            //         }else{
+            //             label = "In-Active";
+            //             bg = "bg-warning";
+            //             inactiveselect = "selected";
+            //         }
+            //         // return `
+            //         //     <div class="form-check form-switch form-switch-success text-center">
+            //         //         <label class="badge ${bg}">${label}</label>
+            //         //     </div>
+            //         //     `;
 
-                    return `
-                        <select class="form-select" onchange="updateStudentStatus('/students/status/${full.id}', 'student-table')">
-                            <option value="1" ${activeselect}>Active</option>    
-                            <option value="3" ${inactiveselect}>In-Active</option>    
-                            <option value="2" ${completeselect}>Completed</option>    
-                            <option value="0" ${dropoutselect}>Droped Out</option>    
-                        </select>
-                    `;
-                }
-            },
+            //         return `
+            //             <select class="form-select" onchange="updateStudentStatus('/students/status/${full.id}', 'student-table')">
+            //                 <option value="1" ${activeselect}>Active</option>
+            //                 <option value="3" ${inactiveselect}>In-Active</option>
+            //                 <option value="2" ${completeselect}>Completed</option>
+            //                 <option value="0" ${dropoutselect}>Droped Out</option>
+            //             </select>
+            //         `;
+            //     }
+            // },
+
+//             {
+//     data: 'status_id',
+
+//     render: function (data, type, full) {
+//         let options = `
+//             @foreach($statuses as $status)
+//                 <option value="{{ $status->id }}" ${data && data.id == {{ $status->id }} ? 'selected' : ''}>
+//                     {{ $status->name }}
+//                 </option>
+//             @endforeach
+//         `;
+
+//         return `
+//             <select class="form-select"
+//                     onchange="updateStudentStatus('/students/status/${full.id}', this.value, 'student-table')">
+//                 ${options}
+//             </select>
+//         `;
+//     }
+// },
+
+{
+    data: 'status_id',
+    render: function (data, type, full) {
+        let options = `
+            @foreach($statuses as $status)
+                <option value="{{ $status->id }}" ${data == {{ $status->id }} ? 'selected' : ''}>
+                    {{ $status->name }}
+                </option>
+            @endforeach
+        `;
+
+        return `
+            <select class="form-select"
+                    onchange="updateStudentStatus('/students/status/${full.id}', this.value, 'student-table')">
+                ${options}
+            </select>
+        `;
+    }
+},
+
+
             {
                 data: 'action',
                 orderable: false,
@@ -296,22 +349,45 @@
     });
 });
 
-      function updateStudentStatus(url, table) {
-        debugger;
-        var status = $(this).val();
-        $.ajax({
-            url: url+'/'+status,
-            type: "GET",
-            success: function (response) {
-                if (response.status == 'success') {
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-                $('#' + table).DataTable().ajax.reload();
+    //   function updateStudentStatus(url, table) {
+    //     debugger;
+    //     var status = $(this).val();
+    //     $.ajax({
+    //         url: url+'/'+status,
+    //         type: "GET",
+    //         success: function (response) {
+    //             if (response.status == 'success') {
+    //                 toastr.success(response.message);
+    //             } else {
+    //                 toastr.error(response.message);
+    //             }
+    //             $('#' + table).DataTable().ajax.reload();
+    //         }
+    //     })
+    // }
+
+    function updateStudentStatus(url, status, table) {
+    $.ajax({
+        url: url,
+        type: "GET", // use POST instead of GET for security
+        data: {
+            _token: "{{ csrf_token() }}", // include CSRF token
+            status_id: status
+        },
+        success: function (response) {
+            if (response.status === 'success') {
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
             }
-        })
-    }
+            $('#' + table).DataTable().ajax.reload(null, false);
+        },
+        error: function (xhr) {
+            toastr.error("Failed to update status. Please try again.");
+        }
+    });
+}
+
 </script>
 
 <style>

@@ -466,4 +466,70 @@ class ReportController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
+
+
+
+    public function profitReport()
+    {
+        $universities = University::all();
+        return view('reports.profit', compact('universities'));
+    }
+
+    public function getProfitReport(Request $request)
+    {
+        try {
+            $dates = json_decode($request->daterange, true);
+            $university = $request->university;
+
+            // 🎓 If a specific university is selected, filter students for that
+            $universityIds = !empty($university)
+                ? [$university]
+                : University::pluck('id')->toArray();
+
+            $reportData = [];
+
+            foreach ($universityIds as $uid) {
+                // 🧾 Student count
+                $studentCount = Student::where('university_id', $uid)->count();
+
+                // 💰 Total Income
+                $incomeQuery = StudentLedger::whereHas('student', fn($q) => $q->where('university_id', $uid));
+                // Date filter
+                if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
+                    $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
+                    $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
+                    $incomeQuery->whereBetween('created_at', [$start, $end]);
+                }
+                $income = $incomeQuery->sum('amount');
+
+                // 💸 Total Expense
+                $expenseQuery = UniversityFees::where('university_id', $uid)->where('status', 'success');
+                if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
+                    $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
+                    $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
+                    $expenseQuery->whereBetween('created_at', [$start, $end]);
+                }
+                $expense = $expenseQuery->sum('amount');
+
+                // 📊 Profit Calculation
+                $profit = $income - $expense;
+
+                $reportData[] = [
+                    'university' => University::find($uid)?->name ?? 'Unknown',
+                    'student_count' => $studentCount,
+                    'income' => number_format($income, 2),
+                    'expense' => number_format($expense, 2),
+                    'profit' => number_format($profit, 2)
+                ];
+            }
+
+            return response()->json(['data' => $reportData]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

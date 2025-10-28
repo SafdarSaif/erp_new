@@ -15,6 +15,7 @@ use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
 use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
+use App\Models\Settings\Status;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -46,7 +47,8 @@ class StudentController extends Controller
                 'language',
                 'bloodGroup',
                 'religion',
-                'category'
+                'category',
+                'status'
             ])->orderBy('id', 'desc');
 
             return DataTables::of($students)
@@ -62,7 +64,7 @@ class StudentController extends Controller
                 ->addColumn('blood_group', fn($row) => $row->bloodGroup?->name ?? '-')
                 ->addColumn('religion', fn($row) => $row->religion?->name ?? '-')
                 ->addColumn('category', fn($row) => $row->category?->name ?? '-')
-                ->editColumn('status', fn($row) => $row->status ? 1 : 0)
+                ->addColumn('status', fn($row) => $row->status?->name ?? '-') // ✅ status_id column now used
                 ->filter(function ($query) use ($request) {
 
                     // 🔍 Filter by Full Name
@@ -157,9 +159,13 @@ class StudentController extends Controller
                         });
                     }
 
-                    // 🔍 Filter by Status
-                    if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
-                        $query->where('status', $request->columns[15]['search']['value']);
+                    // // 🔍 Filter by Status
+                    // if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
+                    //     $query->where('status', $request->columns[15]['search']['value']);
+                    // }
+                    // 🔍 Filter by Status (status_id)
+                    if (!empty($request->columns[15]['search']['value'])) {
+                        $query->where('status_id', $request->columns[15]['search']['value']);
                     }
                 })
                 ->make(true);
@@ -177,6 +183,7 @@ class StudentController extends Controller
             'bloodGroups' => BloodGroup::all(),
             'religions' => Religion::all(),
             'categories' => Category::all(),
+            'statuses' => Status::all(),
         ]);
     }
 
@@ -548,7 +555,23 @@ class StudentController extends Controller
         //
     }
 
-    public function status(){
-        
+    public function updateStatus($id, Request $request)
+    {
+        // dd($request->all());
+        try {
+            $student = \App\Models\Student::findOrFail($id);
+            $student->status_id = $request->status_id;
+            $student->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student status updated successfully!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update status: ' . $e->getMessage(),
+            ]);
+        }
     }
 }

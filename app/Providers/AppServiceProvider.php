@@ -7,6 +7,25 @@ use App\Models\Menu;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
+// ✅ Add these imports
+use App\Models\{
+    Academics\University,
+    Academics\Department,
+    Academics\Course,
+    Academics\SubCourse,
+    Academics\Subject,
+    Student,
+    StudentInvoice,
+    Accounts\StudentFeeStructure,
+    MiscellaneousFee,
+    Report,
+    StudentLedger,
+    UniversityFees,
+    Settings\Status,
+};
+use App\Observers\UserDataObserver;
+
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -23,20 +42,37 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-        // $menus = MenuController::getMenuHierarchy(Menu::where('is_active', 1)->get());
 
-        // $view->with('menus', $menus);
-        // //
-          $menus = Menu::whereNull('parent_id')       // top-level menus only
-        ->where('is_active', 1)                 // only active menus
-        ->with('children')                       // eager load active children
-        ->orderBy('position', 'asc')
-        ->get()
-        ->toArray();
-        $view->with('menus', $menus);
-     });
+            $menus = Menu::whereNull('parent_id')
+                ->where('is_active', 1)
+                ->with('children')
+                ->orderBy('position', 'asc')
+                ->get()
+                ->toArray();
+            $view->with('menus', $menus);
+        });
 
 
+        $models = [
+            University::class,
+            Department::class,
+            Course::class,
+            SubCourse::class,
+            Subject::class,
+            Student::class,
+            StudentInvoice::class,
+            StudentFeeStructure::class,
+            MiscellaneousFee::class,
+            Report::class,
+            StudentLedger::class,
+            UniversityFees::class,
+            Status::class,
+        ];
 
+        foreach ($models as $model) {
+            $model::observe(UserDataObserver::class);
+
+            UserDataObserver::addGlobalScope($model);
+        }
     }
 }

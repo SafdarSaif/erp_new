@@ -138,7 +138,15 @@ class RolePermissionSeeder extends Seeder
 
             'create reports',
             'view reports',
-           
+            'edit reports',
+            'delete reports',
+
+            // Settings
+            'create status',
+            'edit status',
+            'delete status',
+            'view status',
+
         ];
 
         // Create permissions
