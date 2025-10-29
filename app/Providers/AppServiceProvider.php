@@ -7,12 +7,12 @@ use App\Models\Menu;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
-// ✅ Add these imports
+//  Add these imports
 use App\Models\{
     Academics\University,
     Academics\Department,
     Academics\Course,
-    Academics\SubCourse,
+    Academics\SubCourse,    
     Academics\Subject,
     Student,
     StudentInvoice,

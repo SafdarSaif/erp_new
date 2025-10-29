@@ -10,6 +10,7 @@ class UserDataObserver
     /**
      * Automatically assign added_by when creating a record.
      */
+
     public function creating($model)
     {
         if (Auth::check() && !$model->added_by) {
@@ -20,6 +21,7 @@ class UserDataObserver
     /**
      * Apply global user-based filtering to all selects.
      */
+
     public static function addGlobalScope($model)
     {
         $model::addGlobalScope('added_by_scope', function (Builder $builder) {
