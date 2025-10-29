@@ -49,7 +49,8 @@ class Student extends Model
         'current_address',
         'total_fee',
         'status',
-        'status_idb'
+        'status_id',
+        'student_unique_id'
     ];
 
     // Relationships

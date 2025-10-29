@@ -147,6 +147,12 @@ class RolePermissionSeeder extends Seeder
             'delete status',
             'view status',
 
+            // query head permissions
+            'create queryhead',
+            'edit queryhead',
+            'delete queryhead',
+            'view queryhead',
+
         ];
 
         // Create permissions

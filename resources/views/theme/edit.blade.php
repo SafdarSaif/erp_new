@@ -110,10 +110,38 @@
 <script>
 $(function() {
     // Prefill custom colors
-    let themeCustomColors = {!! json_encode($theme->custom_colors ?? '{}') !!};
+    // let themeCustomColors = {!! json_encode($theme->custom_colors ?? '{}') !!};
+    let themeCustomColors = {!! $theme->custom_colors ? $theme->custom_colors : '{}' !!};
+try {
+    themeCustomColors = JSON.parse(themeCustomColors);
+} catch (e) {
+    themeCustomColors = {};
+}
+
+
+    // function addCustomColorRow(key = '', value = '#000000') {
+    //     const row = `
+    //     <div class="row align-items-center mb-2 custom-color-row">
+    //         <div class="col-md-5">
+    //             <input type="text" class="form-control color-key" value="${key}" placeholder="Color Name">
+    //         </div>
+    //         <div class="col-md-5 d-flex align-items-center">
+    //             <input type="color" class="form-control form-control-color color-value" value="${value}">
+    //             <span class="ms-2 border rounded-circle" style="width:25px;height:25px;background-color:${value};"></span>
+    //         </div>
+    //         <div class="col-md-2 text-center">
+    //             <button type="button" class="btn btn-danger btn-sm remove-color"><i class="bi bi-trash"></i></button>
+    //         </div>
+    //     </div>`;
+    //     $('#edit-custom-color-fields').append(row);
+    // }
 
     function addCustomColorRow(key = '', value = '#000000') {
-        const row = `
+    // if value invalid (not starting with # or wrong length), fix it
+    if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
+        value = '#000000';
+    }
+    const row = `
         <div class="row align-items-center mb-2 custom-color-row">
             <div class="col-md-5">
                 <input type="text" class="form-control color-key" value="${key}" placeholder="Color Name">
@@ -126,8 +154,9 @@ $(function() {
                 <button type="button" class="btn btn-danger btn-sm remove-color"><i class="bi bi-trash"></i></button>
             </div>
         </div>`;
-        $('#edit-custom-color-fields').append(row);
-    }
+    $('#edit-custom-color-fields').append(row);
+}
+
 
     for(const key in themeCustomColors){
         addCustomColorRow(key, themeCustomColors[key]);

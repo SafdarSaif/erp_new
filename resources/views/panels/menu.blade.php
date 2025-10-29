@@ -534,7 +534,7 @@
               </button>
 
               <div class="dropdown-menu dropdown-menu-end header-language-scrollable" aria-labelledby="accountNavbarDropdown">
-                <div class="dropdown dropstart d-block">
+                {{-- <div class="dropdown dropstart d-block">
                   <a class="dropdown-item d-block w-100 text-start" href="#!" data-bs-toggle="dropdown" aria-expanded="false">
                     Set status
                   </a>
@@ -556,13 +556,13 @@
                       Reset status
                     </li>
                   </ul>
-                </div>
+                </div> --}}
 
-                <a class="dropdown-item" href="../pages-profile-overview.html">Profile</a>
-                <a class="dropdown-item" href="../apps-chat.html">Messages</a>
-                <a class="dropdown-item" href="../apps-todo.html">My Task</a>
+                <a class="dropdown-item" href="/user/profile">Profile</a>
+                {{-- <a class="dropdown-item" href="../apps-chat.html">Messages</a> --}}
+                {{-- <a class="dropdown-item" href="../apps-todo.html">My Task</a> --}}
 
-                <div class="dropdown-divider"></div>
+                {{-- <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#!">
                   <div class="d-flex align-items-center">
@@ -582,7 +582,7 @@
 
                 <a class="dropdown-item" href="../pages-profile-edit-overview.html">Settings</a>
 
-                <div class="dropdown-divider"></div>
+                <div class="dropdown-divider"></div> --}}
 
                 <a class="dropdown-item" href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout_form').submit();">Sign out</a>
               </div>
@@ -599,4 +599,4 @@
 
 
 
-     
+

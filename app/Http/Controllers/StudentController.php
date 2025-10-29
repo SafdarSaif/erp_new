@@ -209,6 +209,32 @@ class StudentController extends Controller
         ]);
     }
 
+
+
+
+
+
+
+
+    /**
+     * Generate a unique Student ID.
+     * Example: DEV2025U00123
+     */
+    private function generateStudentUniqueId($student)
+    {
+        $prefix = 'DEV'; // You can change this to your institute’s code
+        $year   = date('Y');
+
+        // Use university short name or ID if available
+        $universityCode = str_pad($student->university_id, 2, '0', STR_PAD_LEFT);
+
+        // Combine components
+        $uniqueNumber = str_pad($student->id, 5, '0', STR_PAD_LEFT);
+
+        return "{$prefix}{$year}U{$universityCode}{$uniqueNumber}";
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -276,6 +302,10 @@ class StudentController extends Controller
                 'current_address'   => $validatedData['current_address'] ?? null,
                 'status'            => $validatedData['status'] ?? 1,
             ]);
+
+            // ✅ Generate unique Student ID after creation
+    $student->student_unique_id = $this->generateStudentUniqueId($student);
+$student->save();
 
             return response()->json([
                 'status'  => 'success',

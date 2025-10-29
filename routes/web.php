@@ -28,6 +28,10 @@ use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MiscellaneousFeeController;
 use App\Http\Controllers\Settings\StatusController;
+use App\Http\Controllers\Settings\QueryHeadController;
+use App\Http\Controllers\Settings\ThemeSettingsController;
+use App\Http\Controllers\StudentQueryController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -144,6 +148,15 @@ Route::prefix('settings')->group(function () {
     Route::post('status/update/{id}', [StatusController::class, 'update'])->name('status.update');
     Route::delete('status/delete/{id}', [StatusController::class, 'destroy'])->name('status.delete');
     Route::get('status/status/{id}', [StatusController::class, 'status'])->name('status.status');
+
+    //queryhead
+    Route::get('queryhead', [QueryHeadController::class, 'index'])->name('queryhead.index');
+    Route::get('queryhead/create', [QueryHeadController::class, 'create'])->name('queryhead.create');
+    Route::post('queryhead/store', [QueryHeadController::class, 'store'])->name('queryhead.store');
+    Route::get('queryhead/edit/{id}', [QueryHeadController::class, 'edit'])->name('queryhead.edit');
+    Route::post('queryhead/update/{id}', [QueryHeadController::class, 'update'])->name('queryhead.update');
+    Route::delete('queryhead/delete/{id}', [QueryHeadController::class, 'destroy'])->name('queryhead.delete');
+    Route::get('queryhead/status/{id}', [QueryHeadController::class, 'status'])->name('queryhead.status');
 
 });
 
@@ -330,3 +343,15 @@ Route::prefix('reports')->name('reports.')->group(function () {
 
 Route::get('getCourseByUniversityAndCourseType', [CourseController::class, 'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
 Route::get('getSubCourseByCourseId', [SubCourseController::class, 'getSubCourseByCourseId'])->name('getSubCourseByCourseId');
+
+
+
+
+
+
+
+
+Route::get('/students/query', [StudentQueryController::class, 'index'])->name('students.query');
+Route::post('/students/fetch', [StudentQueryController::class, 'fetchStudent'])->name('students.fetch');
+Route::post('/students/query/store', [StudentQueryController::class, 'store'])->name('students.query.store');
+Route::get('/students/query/view/{student_id}', [StudentQueryController::class, 'view'])->name('students.query.view');

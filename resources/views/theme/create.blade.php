@@ -113,60 +113,6 @@
     </form>
 </div>
 
-{{-- <script>
-$(function() {
-    // Add new color row
-    $('#add-color').on('click', function() {
-        const newRow = `
-        <div class="row align-items-center mb-2 custom-color-row">
-            <div class="col-md-5">
-                <input type="text" class="form-control color-key" placeholder="Color Name (e.g. header)">
-            </div>
-            <div class="col-md-5 d-flex align-items-center">
-                <input type="color" class="form-control form-control-color color-value" value="#000000">
-                <span class="ms-2 border rounded-circle" style="width:25px;height:25px;background-color:#000000;"></span>
-            </div>
-            <div class="col-md-2 text-center">
-                <button type="button" class="btn btn-danger btn-sm remove-color"><i class="bi bi-trash"></i></button>
-            </div>
-        </div>`;
-        $('#custom-color-fields').append(newRow);
-    });
-
-    // Remove color row
-    $(document).on('click', '.remove-color', function() {
-        $(this).closest('.custom-color-row').remove();
-        updateCustomColorsJSON();
-    });
-
-    // Update color preview and JSON
-    $(document).on('input change', '.color-key, .color-value', function() {
-        const colorInput = $(this).closest('.custom-color-row').find('.color-value');
-        colorInput.next('span').css('background-color', colorInput.val());
-        updateCustomColorsJSON();
-    });
-
-    function updateCustomColorsJSON() {
-        const colors = {};
-        $('.custom-color-row').each(function() {
-            const key = $(this).find('.color-key').val().trim();
-            const value = $(this).find('.color-value').val();
-            if (key) colors[key] = value;
-        });
-        $('#custom_colors').val(JSON.stringify(colors));
-    }
-
-    // Image previews
-    $('#logo, #favicon').on('change', function() {
-        const target = $(this).attr('id') === 'logo' ? '#preview-logo' : '#preview-favicon';
-        const file = this.files[0];
-        if (file) {
-            $(target).html(`<img src="${URL.createObjectURL(file)}" width="80" height="80" class="rounded border mt-2">`);
-        }
-    });
-});
-</script> --}}
-
 
 <script>
 $(function() {

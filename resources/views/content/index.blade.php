@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Academic ERP system for managing universities, departments, courses, students, and faculty. Secure and scalable ERP for education.">
-    <meta name="author" content="Hindustan ERP">
+    <meta name="author" content=" ERP">
     <link rel="shortcut icon" href="assets/images/Favicon.png">
 
     <!-- Simplebar Css -->
@@ -75,13 +75,27 @@
                     </div>
                 </div>
 
+                @php
+                use App\Models\Theme;
+
+                $theme = Theme::where('is_active', 1)->first();
+                $logo = $theme && $theme->logo && file_exists(public_path($theme->logo))
+                ? asset($theme->logo)
+                : asset('uploads/theme/default-logo.png'); // fallback logo
+                @endphp
+
                 <!-- ERP Login Form -->
                 <div class="col-lg-6">
                     <div class="auth-box card card-body m-0 h-100 border-0 justify-content-center shadow-sm">
                         <div class="mb-5 text-center">
-                            <img src="https://i.ibb.co/6mY2yD3/erp-logo.png" alt="ERP Logo" class="mb-3"
-                                style="height:100px;">
-                            <h4 class="fw-bold text-white text-primary">Academic ERP Login</h4>
+                            {{-- <img src="https://i.ibb.co/6mY2yD3/erp-logo.png" alt="ERP Logo" class="mb-3"
+                                style="height:100px;"> --}}
+                            <img src="{{ $logo }}" alt="ERP Logo" class="mb-3" style="height:100px;">
+
+                            {{-- <h4 class="fw-bold text-white text-primary">Academic ERP Login</h4> --}}
+                            <h5 class="fw-bold text-primary">
+                                {{ $theme->tag_line ?? 'Academic ERP Login' }}
+                            </h5>
                             <p class="text-muted mb-0">Enter your credentials to access the ERP dashboard.</p>
                         </div>
 
@@ -128,7 +142,8 @@
                             <div class="row mb-4">
                                 <div class="col-sm-6">
                                     <div class="form-check form-check-sm d-flex align-items-center gap-2 mb-0">
-                                        <input class="form-check-input" type="checkbox" id="remember-me" name="remember">
+                                        <input class="form-check-input" type="checkbox" id="remember-me"
+                                            name="remember">
                                         <label class="form-check-label" for="remember-me"
                                             value="{{ __('Remember me') }}">Remember me</label>
                                     </div>
@@ -147,6 +162,25 @@
                                 <i class="ri-login-circle-line me-2"></i>
                                 {{ __('Log in') }}
                             </x-button>
+
+
+                            {{--
+                            <!-- 💡 Student Query Button -->
+                            <div class="text-center mt-3">
+                                <a href="{{ route('students.query') }}"
+                                    class="btn btn-outline-primary w-100 shadow-sm rounded-2">
+                                    <i class="ri-question-line me-2"></i> Student Query
+                                </a>
+                            </div> --}}
+
+                            <!-- 💡 Student Query Button -->
+                            {{-- <div class="text-center mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm shadow-sm rounded-2"
+                                    data-bs-toggle="modal" data-bs-target="#studentQueryModal">
+                                    <i class="ri-question-line me-1"></i> StudentQuery
+                                </button>
+                            </div> --}}
+
 
 
                             <p class="mt-4 text-muted text-center fs-12">
@@ -218,6 +252,31 @@
         @endif
     });
     </script>
+
+
+
+
+    <!-- 🎓 Student Query Modal -->
+    <div class="modal fade" id="studentQueryModal" tabindex="-1" aria-labelledby="studentQueryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0 rounded-3">
+                <div class="modal-header bg-primary text-white py-2">
+                    <h5 class="modal-title fw-semibold" id="studentQueryModalLabel">
+                        <i class="ri-question-line me-2"></i> Student Query Portal
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Load the student query page here -->
+                    <iframe src="{{ route('students.query') }}" frameborder="0"
+                        style="width:100%; height:75vh; border:0;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 

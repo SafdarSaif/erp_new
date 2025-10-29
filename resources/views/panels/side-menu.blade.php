@@ -1,10 +1,31 @@
+
+@php
+    use App\Models\Theme;
+
+    $theme = Theme::where('is_active', 1)->first();
+
+    // Default logo (main)
+    $defaultLogo = $theme && $theme->logo && file_exists(public_path($theme->logo))
+        ? asset($theme->logo)
+        : asset('assets/images/light-logo.png'); // fallback logo
+
+    // Favicon / minimized logo
+    $faviconLogo = $theme && $theme->favicon && file_exists(public_path($theme->favicon))
+        ? asset($theme->favicon)
+        : asset('assets/images/Favicon.png'); // fallback favicon
+@endphp
+
+
 <!-- START SIDEBAR -->
 <aside class="app-sidebar">
     <!-- START BRAND LOGO -->
     <div class="app-sidebar-logo px-6 justify-content-center align-items-center">
         <a href="/dashboard">
-           <img height="35" class="app-sidebar-logo-default" alt="Logo" src="{{ asset('assets/images/light-logo.png') }}">
-<img height="40" class="app-sidebar-logo-minimize" alt="Logo" src="{{ asset('assets/images/Favicon.png') }}">
+           {{-- <img height="35" class="app-sidebar-logo-default" alt="Logo" src="{{ asset('assets/images/light-logo.png') }}">
+          <img height="40" class="app-sidebar-logo-minimize" alt="Logo" src="{{ asset('assets/images/Favicon.png') }}"> --}}
+
+           <img height="35" class="app-sidebar-logo-default" alt="Logo" src="{{ $defaultLogo }}">
+            <img height="40" class="app-sidebar-logo-minimize" alt="Logo" src="{{ $faviconLogo }}">
 
         </a>
     </div>
