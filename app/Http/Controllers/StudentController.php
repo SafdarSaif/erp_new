@@ -170,10 +170,9 @@ class StudentController extends Controller
                     }
 
                     // 🔍 Filter by Unique ID
-if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
-    $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
-}
-
+                    if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
+                        $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
+                    }
                 })
                 ->make(true);
         }
@@ -227,6 +226,7 @@ if (!empty($request->columns[4]['search']['value'])) { // adjust column index if
      * Generate a unique Student ID.
      * Example: DEV2025U00123
      */
+    
     private function generateStudentUniqueId($student)
     {
         $prefix = 'DEV'; // You can change this to your institute’s code
@@ -311,8 +311,8 @@ if (!empty($request->columns[4]['search']['value'])) { // adjust column index if
             ]);
 
             // ✅ Generate unique Student ID after creation
-    $student->student_unique_id = $this->generateStudentUniqueId($student);
-$student->save();
+            $student->student_unique_id = $this->generateStudentUniqueId($student);
+            $student->save();
 
             return response()->json([
                 'status'  => 'success',

@@ -190,34 +190,65 @@ $('#queryForm').submit(function(e){
 
 
 // View Queries Button Click
-$(document).on('click', '#viewQueriesBtn', function () {
-    let studentId = $('#student_id_hidden').val(); // get ID from hidden field
+// $(document).on('click', '#viewQueriesBtn', function () {
+//     let studentId = $('#student_id_hidden').val(); // get ID from hidden field
 
-    if (!studentId) {
-        toastr.warning('Please verify your Student ID first.');
-        return;
-    }
+//     if (!studentId) {
+//         toastr.warning('Please verify your Student ID first.');
+//         return;
+//     }
 
-    // Build URL using your Laravel route pattern
-    let url = `/students/query/view/${studentId}`;
+//     // Build URL using your Laravel route pattern
+//     let url = `/students/query/view/${studentId}`;
 
-    $.ajax({
-        url: url,
-        type: 'GET',
-        beforeSend: function () {
-            toastr.info('Loading student queries...');
-        },
-        success: function (response) {
-            // If you're using the global modal
-            $('#modal-lg-content').html(response);
-            $('#modal-lg').modal('show');
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-            toastr.error('Unable to fetch student queries. Please try again.');
+//     $.ajax({
+//         url: url,
+//         type: 'GET',
+//         beforeSend: function () {
+//             toastr.info('Loading student queries...');
+//         },
+//         success: function (response) {
+//             // If you're using the global modal
+//             $('#modal-lg-content').html(response);
+//             $('#modal-lg').modal('show');
+//         },
+//         error: function (xhr) {
+//             console.error(xhr.responseText);
+//             toastr.error('Unable to fetch student queries. Please try again.');
+//         }
+//     });
+// });
+
+
+
+// ✅ Prevent multiple event bindings for View Queries
+    $(document).off('click', '#viewQueriesBtn').on('click', '#viewQueriesBtn', function () {
+        let studentId = $('#student_id_hidden').val();
+
+        if (!studentId) {
+            toastr.warning('Please verify your Student ID first.');
+            return;
         }
+
+        let url = `/students/query/view/${studentId}`;
+
+        // ✅ Only show once
+        toastr.clear();
+        toastr.info('Loading student queries...');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                $('#modal-lg-content').html(response);
+                $('#modal-lg').modal('show');
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                toastr.error('Unable to fetch student queries. Please try again.');
+            }
+        });
     });
-});
 
 
 });
