@@ -10,7 +10,7 @@ class SwitchTenantDatabaseWithCredentialsTask implements SwitchTenantTask
 {
     public function makeCurrent(IsTenant $tenant): void
     {
-        
+
         config([
             'database.connections.tenant.database' => $tenant->database,
             'database.connections.tenant.username' => $tenant->db_username,

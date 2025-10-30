@@ -17,6 +17,8 @@ class StudentQuery extends Model
         'attachment',
         'answer',
         'status',
+        'added_by',
+        'answered_at',
     ];
 
     public function queryHead()
@@ -26,6 +28,6 @@ class StudentQuery extends Model
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id', 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 }

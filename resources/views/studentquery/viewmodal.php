@@ -74,7 +74,6 @@
         <p class="text-muted">View all queries submitted by this student.</p>
     </div>
 
-    {{-- ✅ Student Info --}}
     @if ($student)
         <div class="text-center mb-4">
             <h5 class="text-primary">👤 <strong>{{ $student->full_name }}</strong></h5>
@@ -85,11 +84,9 @@
         </div>
     @endif
 
-    {{-- ✅ Queries --}}
     @if ($queries->count() > 0)
         <div class="row g-4">
             @foreach ($queries as $query)
-                {{-- 🟦 Left: Query Card --}}
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
@@ -128,7 +125,6 @@
                     </div>
                 </div>
 
-                {{-- 🟩 Right: Answer Form --}}
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
@@ -164,7 +160,6 @@
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 </div>
 
-{{-- ✅ JS Validation + AJAX --}}
 <script>
     $(function() {
         $('.submit-answer-btn').on('click', function() {
@@ -204,7 +199,7 @@
                                 toastr.error(response.message || 'Something went wrong!');
                             }
                         },
-                        error: function() {
+                        error: function(xhr) {
                             $btn.prop('disabled', false);
                             toastr.error('Submission failed. Please try again.');
                         }

@@ -119,4 +119,11 @@ class Student extends Model
     {
         return $this->belongsTo(Status::class, 'status_id');
     }
+
+
+    public function queries()
+{
+    return $this->hasMany(StudentQuery::class, 'student_id', 'id');
+}
+
 }

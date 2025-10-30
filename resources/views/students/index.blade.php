@@ -26,6 +26,7 @@
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Mobile</th>
+                            <th>UniqueID</th>
                             <th>Academic Year</th>
                             <th>University</th>
                             <th>Course Type</th>
@@ -73,6 +74,7 @@
                             <th><input type="text" class="form-control form-control-sm" placeholder="Name"></th>
                             <th><input type="text" class="form-control form-control-sm" placeholder="Email"></th>
                             <th><input type="text" class="form-control form-control-sm" placeholder="Mobile"></th>
+                            <th><input type="text" class="form-control form-control-sm" placeholder="Student UniqueID"></th>
 
                             <th>
                                 <select class="form-select form-select-sm">
@@ -210,6 +212,7 @@
             { data: 'full_name' },
             { data: 'email' },
             { data: 'mobile' },
+            { data: 'student_unique_id' },
             { data: 'academic_year' },
             { data: 'university' },
             { data: 'course_type' },

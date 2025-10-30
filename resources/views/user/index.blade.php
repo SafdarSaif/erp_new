@@ -33,7 +33,7 @@
                             <th></th>
                             <th>User</th>
                             <th>Role</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Created On</th>
                             <th>Actions</th>
                         </tr>
