@@ -74,12 +74,11 @@
                     <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
                         <i class="ri-close-line me-1"></i> Cancel
                     </button>
-                    {{-- <a href="#" id="viewQueries" class="btn btn-link">View My Queries</a> --}}
-                    <button type="button"
-    class="btn btn-outline-info btn-sm mt-3"
-    onclick="viewQueries(studentId)">
-    <i class="ri-eye-line me-1"></i> View My Queries
-</button>
+
+
+                    <button type="button" class="btn btn-outline-info px-4" id="viewQueriesBtn">
+                        <i class="ri-eye-line me-1"></i> View My Queries
+                    </button>
 
                 </div>
             </form>
@@ -188,75 +187,68 @@ $('#queryForm').submit(function(e){
 });
 
 
-    // View My Queries
-    // $('#viewQueries').click(function(e){
-    //     e.preventDefault();
-    //     let id = $('#student_id_hidden').val();
-    //     if(!id){
-    //         toastr.warning('Please enter your Student ID first.');
-    //         return;
-    //     }
-    //     window.location.href = '{{ url("/student/query/view") }}/' + id;
-    // });
 
-    // View My Queries inside modal
-// $('#viewQueries').click(function(e){
-//     e.preventDefault();
-//     let id = $('#student_id_hidden').val();
 
-//     if(!id){
-//         toastr.warning('Please enter your Student ID first.');
+// View Queries Button Click
+// $(document).on('click', '#viewQueriesBtn', function () {
+//     let studentId = $('#student_id_hidden').val(); // get ID from hidden field
+
+//     if (!studentId) {
+//         toastr.warning('Please verify your Student ID first.');
 //         return;
 //     }
 
-//     // Show loading indicator
-//     // $('.modal-body').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading queries...</p></div>');
+//     // Build URL using your Laravel route pattern
+//     let url = `/students/query/view/${studentId}`;
 
-//     // Fetch view via AJAX
 //     $.ajax({
-//         url: '{{ url("/students/query/view/") }}/' + id,
+//         url: url,
 //         type: 'GET',
-//         success: function(response){
-//             // Replace modal content with fetched HTML
-//             $('#studentQueryModal .modal-content').html(response);
+//         beforeSend: function () {
+//             toastr.info('Loading student queries...');
 //         },
-//         error: function(xhr){
+//         success: function (response) {
+//             // If you're using the global modal
+//             $('#modal-lg-content').html(response);
+//             $('#modal-lg').modal('show');
+//         },
+//         error: function (xhr) {
 //             console.error(xhr.responseText);
-//             toastr.error('Failed to load student queries. Please try again.');
+//             toastr.error('Unable to fetch student queries. Please try again.');
 //         }
 //     });
 // });
 
 
-// View Queries Button Click
-$(document).on('click', '#viewQueriesBtn', function () {
-    let studentId = $('#student_id_hidden').val(); // get ID from hidden field
 
-    if (!studentId) {
-        toastr.warning('Please verify your Student ID first.');
-        return;
-    }
+// ✅ Prevent multiple event bindings for View Queries
+    $(document).off('click', '#viewQueriesBtn').on('click', '#viewQueriesBtn', function () {
+        let studentId = $('#student_id_hidden').val();
 
-    // Build URL using your Laravel route pattern
-    let url = `/students/query/view/${studentId}`;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        beforeSend: function () {
-            toastr.info('Loading student queries...');
-        },
-        success: function (response) {
-            // If you're using the global modal
-            $('#modal-lg-content').html(response);
-            $('#modal-lg').modal('show');
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-            toastr.error('Unable to fetch student queries. Please try again.');
+        if (!studentId) {
+            toastr.warning('Please verify your Student ID first.');
+            return;
         }
+
+        let url = `/students/query/view/${studentId}`;
+
+        // ✅ Only show once
+        toastr.clear();
+        toastr.info('Loading student queries...');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                $('#modal-lg-content').html(response);
+                $('#modal-lg').modal('show');
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                toastr.error('Unable to fetch student queries. Please try again.');
+            }
+        });
     });
-});
 
 
 });

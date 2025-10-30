@@ -472,14 +472,14 @@ class StudentFeeStructureController extends Controller
         // dd($structure->toArray());
         return view('accounts.fee.add_discount',compact('structure'));
     }
-    
+
     public function storeDiscount(Request $request){
         // dd($request->all());
         // $structure = Student::where('id',$request->student_id)->with('fees')->get();
         foreach($request->discount as $id => $discount){
             StudentFeeStructure::where('id',$id)->update(['discount'=>$discount]);
         }
-        
+
         return response()->json([
             'status'=>'success',
             'message'=>'Discount Updated'

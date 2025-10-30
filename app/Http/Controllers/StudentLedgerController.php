@@ -348,25 +348,6 @@ class StudentLedgerController extends Controller
         $balance = ($totalFee + $totalMiscellaneousFee) - $totalPaid;
 
 
-
-//         dd([
-//     'student' => $student,
-//     'feeStructures' => $feeStructures,
-//     'ledgerEntries' => $ledgerEntries,
-//     'invoices' => $invoices,
-//     'totalFee' => $totalFee,
-//     'totalPaid' => $totalPaid,
-//     'balance' => $balance,
-//     'courseName' => $courseName,
-//     'mode' => $mode,
-//     'duration' => $duration,
-//     'semesterWiseFees' => $semesterWiseFees,
-//     'miscellaneousFee' => $miscellaneousFee,
-//     'miscellaneousWithBalance' => $miscellaneousWithBalance,
-//     'totalMiscellaneousFee' => $totalMiscellaneousFee,
-// ]);
-
-
         return view('accounts.fee.ledger', compact(
             'student',
             'feeStructures',
