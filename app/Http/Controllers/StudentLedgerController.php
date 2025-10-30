@@ -250,6 +250,9 @@ class StudentLedgerController extends Controller
 
 
 
+
+
+    // working
     public function ledger($studentId)
     {
         $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
@@ -343,6 +346,26 @@ class StudentLedgerController extends Controller
 
         // Update total balance including Miscellaneous Fee
         $balance = ($totalFee + $totalMiscellaneousFee) - $totalPaid;
+
+
+
+//         dd([
+//     'student' => $student,
+//     'feeStructures' => $feeStructures,
+//     'ledgerEntries' => $ledgerEntries,
+//     'invoices' => $invoices,
+//     'totalFee' => $totalFee,
+//     'totalPaid' => $totalPaid,
+//     'balance' => $balance,
+//     'courseName' => $courseName,
+//     'mode' => $mode,
+//     'duration' => $duration,
+//     'semesterWiseFees' => $semesterWiseFees,
+//     'miscellaneousFee' => $miscellaneousFee,
+//     'miscellaneousWithBalance' => $miscellaneousWithBalance,
+//     'totalMiscellaneousFee' => $totalMiscellaneousFee,
+// ]);
+
 
         return view('accounts.fee.ledger', compact(
             'student',

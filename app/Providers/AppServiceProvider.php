@@ -12,7 +12,7 @@ use App\Models\{
     Academics\University,
     Academics\Department,
     Academics\Course,
-    Academics\SubCourse,    
+    Academics\SubCourse,
     Academics\Subject,
     Student,
     StudentInvoice,
@@ -21,7 +21,7 @@ use App\Models\{
     Report,
     StudentLedger,
     UniversityFees,
-    Settings\Status,
+    StudentQuery,
 };
 use App\Observers\UserDataObserver;
 
@@ -66,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
             Report::class,
             StudentLedger::class,
             UniversityFees::class,
-            Status::class,
+            StudentQuery::class,
         ];
 
         foreach ($models as $model) {

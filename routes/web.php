@@ -33,9 +33,7 @@ use App\Http\Controllers\Settings\ThemeSettingsController;
 use App\Http\Controllers\StudentQueryController;
 
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 
 
 Route::get('/demo', function () {
@@ -55,6 +53,9 @@ Route::get('/', function () {
 //         return view('content.home');
 //     })->name('dashboard');
 // });
+
+
+
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -157,7 +158,6 @@ Route::prefix('settings')->group(function () {
     Route::post('queryhead/update/{id}', [QueryHeadController::class, 'update'])->name('queryhead.update');
     Route::delete('queryhead/delete/{id}', [QueryHeadController::class, 'destroy'])->name('queryhead.delete');
     Route::get('queryhead/status/{id}', [QueryHeadController::class, 'status'])->name('queryhead.status');
-
 });
 
 
@@ -355,7 +355,11 @@ Route::get('getSubCourseByCourseId', [SubCourseController::class, 'getSubCourseB
 
 
 
+Route::get('/students/index', [StudentQueryController::class, 'index1'])->name('students.query.index');
 Route::get('/students/query', [StudentQueryController::class, 'index'])->name('students.query');
 Route::post('/students/fetch', [StudentQueryController::class, 'fetchStudent'])->name('students.fetch');
 Route::post('/students/query/store', [StudentQueryController::class, 'store'])->name('students.query.store');
-Route::get('/students/query/view/{student_id}', [StudentQueryController::class, 'view'])->name('students.query.view');
+Route::get('/students/query/view/{studentId}', [StudentQueryController::class, 'viewQueries'])->name('students.query.view');
+
+Route::get('/studentqueries/answer/{id}', [StudentQueryController::class, 'answer'])->name('students.query.answer');
+Route::post('/studentqueries/answer/{id}', [StudentQueryController::class, 'storeAnswer'])->name('students.query.storeAnswer');

@@ -22,6 +22,8 @@
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <!-- Custom Css -->
     <link href="assets/css/custom.min.css" id="custom-style" rel="stylesheet" type="text/css">
+            <link rel="stylesheet" href="{{ asset('assets/libs/toastr/toastr.css') }}">
+
 </head>
 
 <body>
@@ -174,12 +176,16 @@
                             </div> --}}
 
                             <!-- 💡 Student Query Button -->
-                            {{-- <div class="text-center mt-3">
+                            <!-- 💡 Student Query Button -->
+                            <div class="text-center mt-3">
                                 <button type="button" class="btn btn-outline-primary btn-sm shadow-sm rounded-2"
-                                    data-bs-toggle="modal" data-bs-target="#studentQueryModal">
-                                    <i class="ri-question-line me-1"></i> StudentQuery
+                                    onclick="add('{{ route('students.query') }}', 'modal-lg')">
+                                    <i class="ri-question-line me-1"></i> Student Query
                                 </button>
-                            </div> --}}
+
+                            </div>
+
+
 
 
 
@@ -203,6 +209,14 @@
     <!-- App js -->
     <script type="module" src="assets/js/app.js"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{asset('assets/libs/toastr/toastr.js')}}"></script>
+
+
 
     @livewireScripts
 
@@ -256,26 +270,63 @@
 
 
 
-    <!-- 🎓 Student Query Modal -->
-    <div class="modal fade" id="studentQueryModal" tabindex="-1" aria-labelledby="studentQueryModalLabel"
+
+
+    <div class="modal fade" id="modal-md" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0 rounded-3">
-                <div class="modal-header bg-primary text-white py-2">
-                    <h5 class="modal-title fw-semibold" id="studentQueryModalLabel">
-                        <i class="ri-question-line me-2"></i> Student Query Portal
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <!-- Load the student query page here -->
-                    <iframe src="{{ route('students.query') }}" frameborder="0"
-                        style="width:100%; height:75vh; border:0;"></iframe>
-                </div>
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content" id="modal-md-content">
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="modal-lg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" id="modal-lg-content">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-xl" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content" id="modal-xl-content">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function add(url, modal) {
+        if (modal.length > 0) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    $('#' + modal + '-content').html(data);
+                    $('#' + modal).modal('show');
+                }
+            })
+        } else {
+            window.location.href = url
+        }
+    }
+
+    function viewQueries (url, modal) {
+        $(".modal").modal('hide');
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                $('#' + modal + '-content').html(data);
+                $('#' + modal).modal('show');
+            }
+        })
+    }
+
+
+    </script>
 
 
 

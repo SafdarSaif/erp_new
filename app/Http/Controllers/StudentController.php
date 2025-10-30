@@ -53,6 +53,7 @@ class StudentController extends Controller
 
             return DataTables::of($students)
                 ->addIndexColumn()
+                ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-') // ✅ Add this line
                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
                 ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
@@ -167,6 +168,12 @@ class StudentController extends Controller
                     if (!empty($request->columns[15]['search']['value'])) {
                         $query->where('status_id', $request->columns[15]['search']['value']);
                     }
+
+                    // 🔍 Filter by Unique ID
+if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
+    $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
+}
+
                 })
                 ->make(true);
         }
