@@ -88,17 +88,19 @@
                                     <th>#</th>
                                     <th>Semester/Year</th>
                                     <th>Amount (₹)</th>
+                                    <th>Discount (₹)</th>
                                     <th>Balance (₹)</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- {{dd($semesterWiseFees)}} --}}
                                 @foreach ($semesterWiseFees as $index => $sem)
                                 @php
                                 $paid = $ledgerEntries
                                 ->where('student_fee_id', $sem['id'] ?? 0)
                                 ->where('transaction_type', 'credit')
                                 ->sum('amount');
-                                $balance = $sem['amount'] - $paid;
+                                $balance = $sem['amount'] - $sem['discount'] - $paid;
                                 @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -109,6 +111,10 @@
                                     <td>
                                         <input type="number" class="form-control text-center" name="amounts[]"
                                             value="{{ $sem['amount'] }}" step="0.01" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control text-center" name="discount[]"
+                                            value="{{$sem['discount']}}" step="0.01" required>
                                     </td>
                                     <td>
                                         <span class="fw-bold text-danger">₹{{ number_format($balance, 2) }}</span>
@@ -143,11 +149,18 @@
                         </button>
                     </div>
                     @elseif ($feeStructures->count() > 0)
-                    <div class="text-end mt-3">
-                        <button type="button" class="btn btn-primary"
-                            onclick="add('{{route('accounts.miscellaneous',$student->id )}}','modal-lg')">
-                            <i class="bi bi-check-circle"></i> Add Miscellaneous Fee
-                        </button>
+                    <div class="row d-flex justify-content-end gap-2">
+                        <div class="col-3 mt-3 d-flex flex-row justify-content-end ">
+                            <button type="button" class="btn btn-primary me-2"
+                                onclick="add('{{route('accounts.miscellaneous',$student->id )}}','modal-lg')">
+                                <i class="bi bi-check-circle"></i> Add Miscellaneous Fee
+                            </button>
+                        
+                            <button type="button" class="btn btn-primary"
+                                onclick="add('{{route('accounts.discount',$student->id )}}','modal-lg')">
+                                <i class="bi bi-check-circle"></i> Add Disount
+                            </button>
+                        </div>
                     </div>
                     @endif
 

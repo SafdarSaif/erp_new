@@ -320,6 +320,10 @@ Route::prefix('accounts')->group(function () {
     Route::post('miscellaneous/store', [MiscellaneousFeeController::class, 'store'])->name('accounts.saveMiscellaneous');
     Route::post('miscellaneous/update', [MiscellaneousFeeController::class, 'update'])->name('accounts.updateMiscellaneous');
     Route::get('miscellaneous/edit/{student_id}', [MiscellaneousFeeController::class, 'edit'])->name('accounts.editMiscellaneousFee');
+
+    Route::get('discount/{student_id}', [StudentFeeStructureController::class, 'addDiscount'])->name('accounts.discount');
+    Route::post('fee/discount/store', [StudentFeeStructureController::class, 'storeDiscount'])->name('fees.discount.store');
+
 });
 
 
