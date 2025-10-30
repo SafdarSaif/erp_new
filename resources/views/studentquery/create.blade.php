@@ -74,12 +74,11 @@
                     <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
                         <i class="ri-close-line me-1"></i> Cancel
                     </button>
-                    {{-- <a href="#" id="viewQueries" class="btn btn-link">View My Queries</a> --}}
-                    <button type="button"
-    class="btn btn-outline-info btn-sm mt-3"
-    onclick="viewQueries(studentId)">
-    <i class="ri-eye-line me-1"></i> View My Queries
-</button>
+
+
+                    <button type="button" class="btn btn-outline-info px-4" id="viewQueriesBtn">
+                        <i class="ri-eye-line me-1"></i> View My Queries
+                    </button>
 
                 </div>
             </form>
@@ -188,44 +187,6 @@ $('#queryForm').submit(function(e){
 });
 
 
-    // View My Queries
-    // $('#viewQueries').click(function(e){
-    //     e.preventDefault();
-    //     let id = $('#student_id_hidden').val();
-    //     if(!id){
-    //         toastr.warning('Please enter your Student ID first.');
-    //         return;
-    //     }
-    //     window.location.href = '{{ url("/student/query/view") }}/' + id;
-    // });
-
-    // View My Queries inside modal
-// $('#viewQueries').click(function(e){
-//     e.preventDefault();
-//     let id = $('#student_id_hidden').val();
-
-//     if(!id){
-//         toastr.warning('Please enter your Student ID first.');
-//         return;
-//     }
-
-//     // Show loading indicator
-//     // $('.modal-body').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading queries...</p></div>');
-
-//     // Fetch view via AJAX
-//     $.ajax({
-//         url: '{{ url("/students/query/view/") }}/' + id,
-//         type: 'GET',
-//         success: function(response){
-//             // Replace modal content with fetched HTML
-//             $('#studentQueryModal .modal-content').html(response);
-//         },
-//         error: function(xhr){
-//             console.error(xhr.responseText);
-//             toastr.error('Failed to load student queries. Please try again.');
-//         }
-//     });
-// });
 
 
 // View Queries Button Click
