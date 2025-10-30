@@ -288,18 +288,19 @@ class StudentLedgerController extends Controller
                     ->where('student_fee_id', $fee->id)
                     ->where('transaction_type', 'credit')
                     ->sum('amount');
-                $balance = $fee->amount - $paid;
+                $balance = $fee->amount - $paid - $fee->discount;
 
                 return [
                     'id'       => $fee->id,
                     'semester' => $fee->semester,
                     'amount'   => $fee->amount,
+                    'discount'   => $fee->discount,
                     'paid'     => $paid,
                     'balance'  => $balance,
                 ];
             });
-
-            $totalFee  = $feeStructures->sum('amount');
+            // dd($semesterWiseFees);
+            $totalFee  = $feeStructures->sum('amount') - $feeStructures->sum('discount');
         } else {
             // Static fee structure if not created
             $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
@@ -402,6 +403,7 @@ class StudentLedgerController extends Controller
             $studentId = $request->student_id;
             $semesters = $request->semesters;
             $amounts   = $request->amounts;
+            $discount   = $request->discount;
 
             // Optional: Delete existing fee structure for this student
             StudentFeeStructure::where('student_id', $studentId)->delete();
@@ -412,6 +414,7 @@ class StudentLedgerController extends Controller
                     'student_id' => $studentId,
                     'semester'   => $semester,
                     'amount'     => $amounts[$index],
+                    'discount'     => $discount[$index],
                 ]);
             }
 
@@ -496,12 +499,12 @@ class StudentLedgerController extends Controller
                 ->where('student_fee_id', $fee->id)
                 ->sum('amount');
 
-            $balance = $fee->amount - $paid;
+            $balance = $fee->amount - $paid - $fee->discount;
 
             $semesterBalances[] = [
                 'semester'   => $fee->semester,
                 'fee_id'     => $fee->id,
-                'total_fee'  => $fee->amount,
+                'total_fee'  => $fee->amount - $fee->discount,
                 'paid'       => $paid,
                 'balance'    => $balance,
             ];
