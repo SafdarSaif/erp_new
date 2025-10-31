@@ -523,7 +523,7 @@ class MenuSeeder extends Seeder
 
         foreach ($menus as $menu) {
             // Check if menu already exists by name
-            $exists = DB::table('menus')->where('url', $menu['url'])->exists();
+            $exists = DB::table('menus')->where('name', $menu['name'])->exists();
 
             if (!$exists) {
                 DB::table('menus')->insert($menu);
