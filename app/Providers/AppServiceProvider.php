@@ -22,6 +22,7 @@ use App\Models\{
     StudentLedger,
     UniversityFees,
     StudentQuery,
+    Voucher,
 };
 use App\Observers\UserDataObserver;
 
@@ -67,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
             StudentLedger::class,
             UniversityFees::class,
             StudentQuery::class,
+            Voucher::class,
         ];
 
         foreach ($models as $model) {
