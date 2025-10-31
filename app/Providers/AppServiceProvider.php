@@ -54,10 +54,10 @@ class AppServiceProvider extends ServiceProvider
 
 
         $models = [
-            University::class,
+            // University::class,
             Department::class,
-            Course::class,
-            SubCourse::class,
+            // Course::class,
+            // SubCourse::class,
             Subject::class,
             Student::class,
             StudentInvoice::class,

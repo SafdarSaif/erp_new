@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserRequest;
+use App\Models\ReportingManager;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
@@ -45,7 +46,8 @@ class UserController extends Controller
     {
         if (Auth::check() && Auth::user()->hasPermissionTo('create users')) {
             $roles = \Spatie\Permission\Models\Role::all();
-            return view('user.create', ['roles' => $roles]);
+            $users = User::all();
+            return view('user.create', ['roles' => $roles,'users'=>$users]);
         } else {
             return response()->view('errors.403', [], 403);
         }
@@ -78,6 +80,13 @@ class UserController extends Controller
                     $user->assignRole([$role->id]);
                 }
             }
+
+            // Assign reporting manager
+
+            ReportingManager::updateOrCreate(
+                ['user_id' => $user->id],
+                ['reporting_user_id' => $request->reporting_user_id]
+            );
 
             // Handle Avatar Upload
             if ($request->hasFile('avatar')) {
@@ -129,11 +138,12 @@ class UserController extends Controller
         if (Auth::check() && Auth::user()->hasPermissionTo('edit users')) {
             $user = User::findOrFail($userId);
             $roles = Role::all();
-
+            $reportingId = ReportingManager::where('user_id',$userId)->pluck('reporting_user_id')->first();
+            // dd($reportingId);
             // Get all assigned role IDs for this user
             $userRoleIds = $user->roles->pluck('id')->toArray();
-
-            return view('user.edit', compact('user', 'roles', 'userRoleIds'));
+            $users = User::whereNot('id',$userId)->get();
+            return view('user.edit', compact('user', 'roles', 'userRoleIds','reportingId','users'));
         } else {
             return response()->view('errors.403', [], 403);
         }
@@ -177,6 +187,10 @@ class UserController extends Controller
                 'profile_photo_path' => $user->profile_photo_path, // Store as `profile_photo_path`
             ]);
 
+            ReportingManager::updateOrCreate(
+                ['user_id' => $user->id],
+                ['reporting_user_id' => $request->reporting_user_id]
+            );
             // Update password if provided
             if ($request->filled('password')) {
                 $user->update([

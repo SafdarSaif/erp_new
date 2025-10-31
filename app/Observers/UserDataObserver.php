@@ -27,10 +27,12 @@ class UserDataObserver
         $model::addGlobalScope('added_by_scope', function (Builder $builder) {
             if (Auth::check()) {
                 $user = Auth::user();
-
+                $downlineUserIds = $user->getAllDownlineUserIds();
+                array_push($downlineUserIds,$user->id);
+                // dd($downlineUserIds);
                 // Allow superadmin to see all records
                 if (!$user->hasRole('Super Admin')) {
-                    $builder->where($builder->getModel()->getTable() . '.added_by', $user->id);
+                    $builder->whereIn($builder->getModel()->getTable() . '.added_by', $downlineUserIds);
                 }
             }
         });

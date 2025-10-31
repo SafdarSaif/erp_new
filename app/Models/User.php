@@ -65,4 +65,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // getdown the line users
+    public function getAllDownlineUserIds(): array
+    {
+        $ids = [];
+
+        foreach ($this->teamMembers as $report) {
+            $childUserId = $report->user_id;
+            $ids[] = $childUserId;
+
+            // Recursive call for deeper hierarchy
+            $childUser = User::find($childUserId);
+            if ($childUser) {
+                $ids = array_merge($ids, $childUser->getAllDownlineUserIds());
+            }
+        }
+
+        return $ids;
+    }
+
+    // All users who report to this user
+    public function teamMembers()
+    {
+        return $this->hasMany(ReportingManager::class, 'reporting_user_id');
+    }
 }
