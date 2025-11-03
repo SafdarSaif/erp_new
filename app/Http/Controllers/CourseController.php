@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Academics\Department;
 use App\Models\Academics\CourseType;
 use App\Models\Settings\CourseType as SettingsCourseType;
+use App\Models\Academics\University;
 
 class CourseController extends Controller
 {
@@ -19,10 +20,13 @@ class CourseController extends Controller
     {
         if ($request->ajax()) {
             // Load related department and course type
-            $courses = Course::with(['department','courseType'])->orderBy('id', 'desc')->get();
+            $courses = Course::with(['department', 'courseType'])->orderBy('id', 'desc')->get();
 
             return DataTables::of($courses)
                 ->addIndexColumn()
+                ->addColumn('university', function ($course) {
+                    return $course->university->name ?? '-';
+                })
                 ->addColumn('department', function ($course) {
                     return $course->department->name ?? '-';
                 })
@@ -49,16 +53,28 @@ class CourseController extends Controller
     {
         $departments = Department::where('status', 1)->get();
         $courseTypes = SettingsCourseType::where('status', 1)->get();
-        return view('academics.course.create', compact('departments', 'courseTypes'));
+        $universities = University::where('status', 1)->get();
+        return view('academics.course.create', compact('departments', 'courseTypes', 'universities'));
     }
 
+
+    public function getDepartmentsByUniversity($id)
+    {
+        $departments = Department::where('university_id', $id)
+            ->where('status', 1)
+            ->get(['id', 'name']);
+
+        return response()->json($departments);
+    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'department_id' => 'required|exists:departments,id',
+            'university_id' => 'required|exists:universities,id',
             'course_type_id' => 'required|exists:departments,id', // Fixed validation
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
@@ -74,6 +90,7 @@ class CourseController extends Controller
 
         $data = [
             'department_id' => $request->department_id,
+            'university_id' => $request->university_id,
             'course_type_id' => $request->course_type_id,
             'name' => $request->name,
             'short_name' => $request->short_name,
@@ -114,66 +131,68 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
         $departments = Department::where('status', 1)->get();
         $courseTypes = SettingsCourseType::where('status', 1)->get();
-
-        return view('academics.course.edit', compact('course', 'departments', 'courseTypes'));
+        $universities = University::where('status', 1)->get();
+        return view('academics.course.edit', compact('course', 'departments', 'courseTypes','universities'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-   public function update(Request $request, $id)
-{
-    // Find the course
-    $course = Course::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        // Find the course
+        $course = Course::findOrFail($id);
 
-    // Validate request
-    $validator = Validator::make($request->all(), [
-        'department_id' => 'required|exists:departments,id',
-        'course_type_id' => 'required|exists:departments,id', // corrected validation
-        'name' => 'required|string|max:100',
-        'short_name' => 'required|string|max:50',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    ]);
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'department_id' => 'required|exists:departments,id',
+            'university_id' => 'required|exists:universities,id',
+            'course_type_id' => 'required|exists:departments,id', // corrected validation
+            'name' => 'required|string|max:100',
+            'short_name' => 'required|string|max:50',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $validator->errors()->first()
-        ], 422);
-    }
-
-    // Prepare data for update
-    $data = [
-        'department_id' => $request->department_id,
-        'course_type_id' => $request->course_type_id,
-        'name' => $request->name,
-        'short_name' => $request->short_name,
-        'status' => $request->input('status', 1),
-    ];
-
-    // Handle image upload and replacement
-    if ($request->hasFile('image')) {
-        // Delete old image if exists
-        if ($course->image && file_exists(public_path($course->image))) {
-            unlink(public_path($course->image));
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
         }
 
-        // Upload new image
-        $image = $request->file('image');
-        $imageName = time() . '_' . $image->getClientOriginalName();
-        $image->move(public_path('uploads/courses'), $imageName);
-        $data['image'] = 'uploads/courses/' . $imageName;
+        // Prepare data for update
+        $data = [
+            'department_id' => $request->department_id,
+            'university_id' => $request->university_id,
+            'course_type_id' => $request->course_type_id,
+            'name' => $request->name,
+            'short_name' => $request->short_name,
+            'status' => $request->input('status', 1),
+        ];
+
+        // Handle image upload and replacement
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($course->image && file_exists(public_path($course->image))) {
+                unlink(public_path($course->image));
+            }
+
+            // Upload new image
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/courses'), $imageName);
+            $data['image'] = 'uploads/courses/' . $imageName;
+        }
+
+        // Update course
+        $course->update($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Course updated successfully!',
+            'data' => $course
+        ], 200); // 200 OK
     }
-
-    // Update course
-    $course->update($data);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Course updated successfully!',
-        'data' => $course
-    ], 200); // 200 OK
-}
 
 
 
@@ -181,7 +200,7 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-   public function destroy($courseId)
+    public function destroy($courseId)
     { {
             try {
                 $course = Course::destroy($courseId);
@@ -216,19 +235,20 @@ class CourseController extends Controller
         }
     }
 
-    public function getCourseByUniversityAndCourseType(Request $request){
-        try{
-            $departments = Department::where('university_id',$request->universityId)->pluck('id');
-            $courses = Course::where('course_type_id',$request->courseType)->whereIn('department_id',$departments)->get();
+    public function getCourseByUniversityAndCourseType(Request $request)
+    {
+        try {
+            $departments = Department::where('university_id', $request->universityId)->pluck('id');
+            $courses = Course::where('course_type_id', $request->courseType)->whereIn('department_id', $departments)->get();
             return response()->json([
-                'status'=>'success',
-                'message'=>$courses
+                'status' => 'success',
+                'message' => $courses
             ]);
             // $courses = Course::where('univer')
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-                'status'=>'error',
-                'message'=>$e->getMessage()
+                'status' => 'error',
+                'message' => $e->getMessage()
             ]);
         }
     }

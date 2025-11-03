@@ -21,8 +21,15 @@ class University extends Model
 
 
     public function departments()
-{
-    return $this->hasMany(\App\Models\Academics\Department::class, 'university_id', 'id');
-}
-
+    {
+        return $this->hasMany(\App\Models\Academics\Department::class, 'university_id', 'id');
+    }
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'university_id', 'id');
+    }
+    public function subCourses()
+    {
+        return $this->hasMany(SubCourse::class, 'university_id', 'id');
+    }
 }

@@ -7,14 +7,21 @@
     <form id="subcourse-form" action="{{ route('subcourse.store') }}" method="POST" class="row g-3">
         @csrf
 
-        <!-- Course Select -->
+        <!-- University Select -->
+        <div class="col-md-12">
+            <label for="university_id" class="form-label">University <span class="text-danger">*</span></label>
+            <select name="university_id" id="university_id" class="form-select" required>
+                <option value="">-- Select University --</option>
+                @foreach($universities as $uni)
+                <option value="{{ $uni->id }}">{{ $uni->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
         <div class="col-md-6">
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
             <select name="course_id" id="course_id" class="form-select" required>
                 <option value="">-- Select Course --</option>
-                @foreach ($courses as $course)
-                    <option value="{{ $course->id }}">{{ $course->name }}</option>
-                @endforeach
             </select>
         </div>
 
@@ -25,7 +32,7 @@
             <select name="mode_id" id="mode_id" class="form-select" required>
                 <option value="">-- Select Mode --</option>
                 @foreach ($courseModes as $mode)
-                    <option value="{{ $mode->id }}">{{ $mode->name }}</option>
+                <option value="{{ $mode->id }}">{{ $mode->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -33,15 +40,14 @@
         <!-- Duration -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
-            <input type="text" name="duration" id="duration" class="form-control"
-                placeholder="e.g. 3 Years, 6 Months" required>
+            <input type="text" name="duration" id="duration" class="form-control" placeholder="e.g. 3 Years, 6 Months"
+                required>
         </div>
 
         <!-- Sub Course Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter sub course name"
-                required>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Enter sub course name" required>
         </div>
 
         <!-- Short Name -->
@@ -52,8 +58,8 @@
         </div>
         <div class="col-md-6">
             <label for="university_fee" class="form-label">University Fees <span class="text-danger">*</span></label>
-            <input type="text" name="university_fee" id="university_fee" class="form-control" placeholder="Enter University Fees"
-            >
+            <input type="text" name="university_fee" id="university_fee" class="form-control"
+                placeholder="Enter University Fees">
         </div>
         <!-- Image Upload -->
         <div class="col-md-6">
@@ -71,6 +77,33 @@
 </div>
 
 <script>
+  $(function() {
+    $('#university_id').on('change', function() {
+        var universityId = $(this).val();
+        var courseSelect = $('#course_id');
+        courseSelect.html('<option value="">-- Select Course --</option>');
+
+        if (universityId) {
+            $.ajax({
+                url: "{{ url('/academics/course/by-university') }}/" + universityId,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.length > 0) {
+                        $.each(data, function(key, course) {
+                            courseSelect.append('<option value="' + course.id + '">' + course.name + '</option>');
+                        });
+                    } else {
+                        courseSelect.append('<option value="">No courses found</option>');
+                    }
+                },
+                error: function() {
+                    toastr.error('Failed to load courses!');
+                }
+            });
+        }
+    });
+});
     $(function() {
         $("#subcourse-form").submit(function(e) {
             e.preventDefault();
