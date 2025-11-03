@@ -200,6 +200,11 @@ class VoucherController extends Controller
 
     public function status(Request $request, $id)
     {
+        // dd($request->all());
+        //  $request->validate([
+        //     'action' => 'required|string|in:approve,reject',
+        //     'comment' => 'nullable|string',
+        // ]);
         try {
             $voucher = Voucher::findOrFail($id);
 
@@ -208,6 +213,7 @@ class VoucherController extends Controller
                 $message = 'Voucher approved successfully!';
             } elseif ($request->action === 'reject') {
                 $voucher->status = 2;
+                $voucher->reject_comment = $request->comment;
                 $message = 'Voucher rejected successfully!';
             } else {
                 return response()->json(['status' => 'error', 'message' => 'Invalid action']);
