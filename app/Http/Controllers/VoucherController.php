@@ -194,34 +194,36 @@ class VoucherController extends Controller
 
 
 
-   public function status(Request $request, $id)
-{
-    try {
-        $voucher = Voucher::findOrFail($id);
 
-        if ($request->action === 'approve') {
-            $voucher->status = 1;
-            $message = 'Voucher approved successfully!';
-        } elseif ($request->action === 'reject') {
-            $voucher->status = 2;
-            $message = 'Voucher rejected successfully!';
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Invalid action']);
+
+
+
+    public function status(Request $request, $id)
+    {
+        try {
+            $voucher = Voucher::findOrFail($id);
+
+            if ($request->action === 'approve') {
+                $voucher->status = 1;
+                $message = 'Voucher approved successfully!';
+            } elseif ($request->action === 'reject') {
+                $voucher->status = 2;
+                $message = 'Voucher rejected successfully!';
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Invalid action']);
+            }
+
+            $voucher->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ]);
         }
-
-        $voucher->save();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => $message,
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Something went wrong: ' . $e->getMessage(),
-        ]);
     }
-}
-
 }
