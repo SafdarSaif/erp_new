@@ -20,7 +20,16 @@
             <input type="text" name="short_name" id="short_name" class="form-control" value="{{ $course->short_name }}"
                 required>
         </div>
-
+       <!--` University Select -->
+        <div class="col-md-12">
+            <label for="university_id" class="form-label">Unviersity <span class="text-danger">*</span></label>
+            <select name="university_id" id="university_id" class="form-select" required>
+                <option value="">-- Select Universtiy --</option>
+                @foreach($universities as $uni)
+                <option value="{{ $uni->id }}" {{ $course->university_id == $uni->id ? 'selected' : '' }}>{{ $uni->name }}</option>
+                @endforeach
+            </select>
+        </div>
         <!-- Department Select -->
         <div class="col-md-6">
             <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
@@ -69,6 +78,31 @@
 </div>
 
 <script>
+     $('#university_id').on('change', function() {
+    var universityId = $(this).val();
+    var departmentSelect = $('#department_id');
+    departmentSelect.html('<option value="">-- Select Department --</option>');
+
+    if (universityId) {
+        $.ajax({
+            url: "{{ url('academics/course/departments/by-university') }}/" + universityId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.length > 0) {
+                    $.each(data, function(key, department) {
+                        departmentSelect.append('<option value="' + department.id + '">' + department.name + '</option>');
+                    });
+                } else {
+                    departmentSelect.append('<option value="">No departments found</option>');
+                }
+            },
+            error: function() {
+                toastr.error('Failed to load departments!');
+            }
+        });
+    }
+});
     $(function() {
     $("#course-form").submit(function(e) {
         e.preventDefault();

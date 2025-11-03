@@ -31,6 +31,8 @@ use App\Http\Controllers\Settings\StatusController;
 use App\Http\Controllers\Settings\QueryHeadController;
 use App\Http\Controllers\Settings\ThemeSettingsController;
 use App\Http\Controllers\StudentQueryController;
+use App\Http\Controllers\Settings\ExpenseCategoryController;
+use App\Http\Controllers\VoucherController;
 
 
 
@@ -158,6 +160,15 @@ Route::prefix('settings')->group(function () {
     Route::post('queryhead/update/{id}', [QueryHeadController::class, 'update'])->name('queryhead.update');
     Route::delete('queryhead/delete/{id}', [QueryHeadController::class, 'destroy'])->name('queryhead.delete');
     Route::get('queryhead/status/{id}', [QueryHeadController::class, 'status'])->name('queryhead.status');
+
+    // Expense Categories
+    Route::get('expensecategory', [ExpenseCategoryController::class, 'index'])->name('expensecategory.index');
+    Route::get('expensecategory/create', [ExpenseCategoryController::class, 'create'])->name('expensecategory.create');
+    Route::post('expensecategory/store', [ExpenseCategoryController::class, 'store'])->name('expensecategory.store');
+    Route::post('expensecategory/update/{id}', [ExpenseCategoryController::class, 'update'])->name('expensecategory.update');
+    Route::get('expensecategory/edit/{id}', [ExpenseCategoryController::class, 'edit'])->name('expensecategory.edit');
+    Route::delete('expensecategory/delete/{id}', [ExpenseCategoryController::class, 'destroy'])->name('expensecategory.delete');
+    Route::get('expensecategory/status/{id}', [ExpenseCategoryController::class, 'status'])->name('expensecategory.status');
 });
 
 
@@ -231,7 +242,8 @@ Route::prefix('academics')->group(function () {
     Route::post('/course/update/{id}', [CourseController::class, 'update'])->name('course.update');
     Route::delete('/course/destroy/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
     Route::get('/course/status/{id}', [CourseController::class, 'status'])->name('course.status');
-
+    Route::get('/course/departments/by-university/{id}', [CourseController::class, 'getDepartmentsByUniversity'])
+        ->name('departments.byUniversity');
 
     // Sub Courses
     Route::get('/subcourse', [SubCourseController::class, 'index'])->name('subcourse.index');
@@ -241,6 +253,7 @@ Route::prefix('academics')->group(function () {
     Route::post('/subcourse/update/{id}', [SubCourseController::class, 'update'])->name('subcourse.update');
     Route::delete('/subcourse/destroy/{id}', [SubCourseController::class, 'destroy'])->name('subcourse.destroy');
     Route::get('/subcourse/status/{id}', [SubCourseController::class, 'status'])->name('subcourse.status');
+    Route::get('course/by-university/{id}', [SubCourseController::class, 'getCoursesByUniversity'])->name('courses.byUniversity');
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -324,6 +337,17 @@ Route::prefix('accounts')->group(function () {
     Route::get('discount/{student_id}', [StudentFeeStructureController::class, 'addDiscount'])->name('accounts.discount');
     Route::post('fee/discount/store', [StudentFeeStructureController::class, 'storeDiscount'])->name('fees.discount.store');
 
+
+
+    // Vouchers
+    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers/store', [VoucherController::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers/edit/{id}', [VoucherController::class, 'edit'])->name('vouchers.edit');
+    Route::post('/vouchers/update/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
+    Route::delete('/vouchers/destroy/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::get('/vouchers/view/{id}', [VoucherController::class, 'show'])->name('vouchers.view');
+    Route::post('/vouchers/status/{id}', [VoucherController::class, 'status'])->name('vouchers.status');
 });
 
 

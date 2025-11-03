@@ -7,16 +7,24 @@
     <form id="course-form" action="{{ route('course.store') }}" method="POST" class="row g-3">
         @csrf
 
-
-
+        <!-- University Select -->
+        <div class="col-md-12">
+            <label for="university_id" class="form-label">Unviersity <span class="text-danger">*</span></label>
+            <select name="university_id" id="university_id" class="form-select" required>
+                <option value="">-- Select Universtiy --</option>
+                @foreach($universities as $uni)
+                <option value="{{ $uni->id }}">{{ $uni->name }}</option>
+                @endforeach
+            </select>
+        </div>
         <!-- Department Select -->
         <div class="col-md-6">
             <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
             <select name="department_id" id="department_id" class="form-select" required>
                 <option value="">-- Select Department --</option>
-                @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                @endforeach
+                {{-- @foreach($departments as $dept)
+                <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                @endforeach --}}
             </select>
         </div>
 
@@ -26,12 +34,12 @@
             <select name="course_type_id" id="course_type_id" class="form-select" required>
                 <option value="">-- Select Course Type --</option>
                 @foreach($courseTypes as $type)
-                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                <option value="{{ $type->id }}">{{ $type->name }}</option>
                 @endforeach
             </select>
         </div>
 
-          <!-- Course Name -->
+        <!-- Course Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Course Name <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control" placeholder="Enter course name" required>
@@ -40,7 +48,8 @@
         <!-- Short Name -->
         <div class="col-md-6">
             <label for="short_name" class="form-label">Short Name <span class="text-danger">*</span></label>
-            <input type="text" name="short_name" id="short_name" class="form-control" placeholder="Enter short name" required>
+            <input type="text" name="short_name" id="short_name" class="form-control" placeholder="Enter short name"
+                required>
         </div>
 
         <!-- Image Upload -->
@@ -58,7 +67,32 @@
 </div>
 
 <script>
-$(function() {
+    $('#university_id').on('change', function() {
+    var universityId = $(this).val();
+    var departmentSelect = $('#department_id');
+    departmentSelect.html('<option value="">-- Select Department --</option>');
+
+    if (universityId) {
+        $.ajax({
+            url: "{{ url('academics/course/departments/by-university') }}/" + universityId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.length > 0) {
+                    $.each(data, function(key, department) {
+                        departmentSelect.append('<option value="' + department.id + '">' + department.name + '</option>');
+                    });
+                } else {
+                    departmentSelect.append('<option value="">No departments found</option>');
+                }
+            },
+            error: function() {
+                toastr.error('Failed to load departments!');
+            }
+        });
+    }
+});
+    $(function() {
     $("#course-form").submit(function(e) {
         e.preventDefault();
         $(':input[type="submit"]').prop('disabled', true);

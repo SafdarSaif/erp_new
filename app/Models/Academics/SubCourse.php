@@ -19,7 +19,9 @@ class SubCourse extends Model
         'course_id',
         'status',
         'image',
-        'duration'
+        'duration',
+        'university_fee',
+        'university_id',
     ];
 
     public function course()
@@ -42,4 +44,9 @@ class SubCourse extends Model
 {
     return $this->hasMany(\App\Models\Student::class, 'sub_course_id');
 }
+    public function university()
+    {
+        return $this->belongsTo(University::class, 'university_id');
+    }
+
 }

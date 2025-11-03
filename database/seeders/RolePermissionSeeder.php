@@ -159,6 +159,19 @@ class RolePermissionSeeder extends Seeder
             'delete studentquery',
             'view studentquery',
 
+// expense category permissions
+             'view expensecategory',
+            'create expensecategory',
+            'edit expensecategory',
+            'delete expensecategory',
+
+            // voucher permissions
+            'view voucher',
+            'create voucher',
+            'edit voucher',
+            'delete voucher',
+            'approve voucher',
+
         ];
 
         // Create permissions

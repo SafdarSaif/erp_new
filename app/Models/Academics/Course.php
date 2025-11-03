@@ -18,11 +18,19 @@ class Course extends Model
         'image',
         'short_name',
         'status',
+        'university_id',
     ];
-
+    /**
+     * Get the university that owns the course.
+     */
+    public function university()
+    {
+        return $this->belongsTo(University::class, 'university_id');
+    }
     /**
      * Get the department that owns the course.
      */
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');

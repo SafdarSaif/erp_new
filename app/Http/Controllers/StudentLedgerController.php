@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Accounts\StudentFeeStructure;
 use App\Models\MiscellaneousFee;
 use App\Models\StudentInvoice;
+use App\Models\Theme;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -650,10 +651,15 @@ class StudentLedgerController extends Controller
 
     public function downloadReceipt($id)
     {
+    //    $user = auth()->user();
+    //     dd($user);
         $ledger = StudentLedger::with('feeStructure', 'student')->findOrFail($id);
 
         $student = Student::find($ledger->student_id);
-
+    //    dd($student);
+    // $themeName = Theme::where('is_active', 1)->value('name')->first();
+    $themeName= Theme::where('is_active', 1)->value('name');
+    // dd($themeName);
         $courseName = $student->course->name ?? 'N/A';
 
         $data = [
@@ -666,6 +672,7 @@ class StudentLedgerController extends Controller
             'mode'             => $ledger->payment_mode,
             'transaction_id'   => $ledger->utr_no ?? '-',
             'date'             => $ledger->created_at->format('d M Y'),
+             'theme'            => $themeName,
         ];
 
         $pdf = Pdf::loadView('accounts.ledger.receipt', $data);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
+use App\Models\Academics\University;
 use Illuminate\Http\Request;
 use App\Models\Settings\CourseMode;
 use Yajra\DataTables\Facades\DataTables;
@@ -43,6 +44,7 @@ class SubCourseController extends Controller
 
             return DataTables::of($courses)
                 ->addIndexColumn()
+                ->addColumn('university', fn($course) => $course->university->name ?? '-')
                 ->addColumn('course', fn($course) => $course->course->name ?? '-')
                 ->addColumn('mode', fn($course) => $course->courseMode->name ?? '-') // key = mode
                 ->editColumn('status', fn($course) => $course->status ? 1 : 0)
@@ -63,20 +65,31 @@ class SubCourseController extends Controller
     {
         $courses  = Course::where('status', 1)->get();
         $courseModes  = CourseMode::where('status', 1)->get();
-        return view('academics.subcourse.create', compact('courses', 'courseModes'));
+        $universities = University::where('status', 1)->get();
+        return view('academics.subcourse.create', compact('courses', 'courseModes', 'universities'));
     }
+    public function getCoursesByUniversity($id)
+    {
+        // dd($id);
+        $courses = Course::where('university_id', $id)
+            ->where('status', 1)
+            ->get(['id', 'name']);
 
+        return response()->json($courses);
+    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'course_id' => 'required|exists:courses,id',
             'mode_id'   => 'required|exists:course_modes,id',
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
             'university_fee' => 'nullable|string|max:50',
+            'university_id' => 'required|exists:universities,id',
             'duration'  => 'required|string|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
@@ -90,11 +103,12 @@ class SubCourseController extends Controller
 
         $data = [
             'course_id' => $request->course_id,
+            'university_id' => $request->university_id,
             'mode_id'   => $request->mode_id,
             'name' => $request->name,
             'short_name' => $request->short_name,
             'duration'  => $request->duration,
-            'university_fee'=> $request->university_fee,
+            'university_fee' => $request->university_fee,
             'status' => $request->input('status', 1),
         ];
 
@@ -132,7 +146,8 @@ class SubCourseController extends Controller
         $subcourse  = SubCourse::findOrFail($subCourseID);
         $courses  = Course::where('status', 1)->get();
         $courseModes = CourseMode::where('status', 1)->get(); // Pass course modes to view
-        return view('academics.subcourse.edit', compact('subcourse', 'courses', 'courseModes'));
+        $universities = University::where('status', 1)->get();
+        return view('academics.subcourse.edit', compact('subcourse', 'courses', 'courseModes', 'universities'));
     }
 
     /**
@@ -149,6 +164,7 @@ class SubCourseController extends Controller
             'short_name' => 'required|string|max:50',
             'duration'  => 'required|string|max:100',         // Validate duration
             'university_fee' => 'nullable|string|max:50',
+            'university_id' => 'required|exists:universities,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -164,6 +180,7 @@ class SubCourseController extends Controller
         $subcourse->name = $request->name;
         $subcourse->short_name = $request->short_name;
         $subcourse->university_fee = $request->university_fee;
+        $subcourse->university_id = $request->university_id;
         $subcourse->duration   = $request->duration;  // Save duration
 
 
@@ -225,21 +242,19 @@ class SubCourseController extends Controller
         }
     }
 
-    public function getSubCourseByCourseId(Request $request){
-        try{
-            $subCourse = SubCourse::where('course_id',$request->courseId)->get();
+    public function getSubCourseByCourseId(Request $request)
+    {
+        try {
+            $subCourse = SubCourse::where('course_id', $request->courseId)->get();
             return response()->json([
-                'status'=>'success',
-                'message'=>$subCourse
+                'status' => 'success',
+                'message' => $subCourse
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-                'status'=>'error',
-                'message'=>$e->getMessage()
+                'status' => 'error',
+                'message' => $e->getMessage()
             ]);
         }
     }
-
-
-    
 }

@@ -89,6 +89,19 @@
         })
     }
 
+
+     function view(url, modal) {
+        $(".modal").modal('hide');
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                $('#' + modal + '-content').html(data);
+                $('#' + modal).modal('show');
+            }
+        })
+    }
+
     function updateActiveStatus(url, table) {
         $.ajax({
             url: url,
