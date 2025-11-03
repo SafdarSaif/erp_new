@@ -171,6 +171,10 @@ class RolePermissionSeeder extends Seeder
             'edit voucher',
             'delete voucher',
             'approve voucher',
+            'preview voucher',
+            // payment permissions
+            'view payment',
+            'approve payment',
 
         ];
 
