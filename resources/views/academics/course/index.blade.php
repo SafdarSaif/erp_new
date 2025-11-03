@@ -26,6 +26,7 @@
                                     <th>No.</th>
                                     <th>Name</th>
                                     <th>Short Name</th>
+                                    <th>Unversity Name</th>
                                     <th>Department</th>
                                     <th>Course Type</th>
                                     <th>Status</th>
@@ -62,6 +63,7 @@ $(function() {
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
             { data: 'short_name', name: 'short_name' },
+            { data: 'university', name: 'university.name' },
             { data: 'department', name: 'department.name' },
             { data: 'course_type', name: 'course_type.name' },
 

@@ -242,7 +242,8 @@ Route::prefix('academics')->group(function () {
     Route::post('/course/update/{id}', [CourseController::class, 'update'])->name('course.update');
     Route::delete('/course/destroy/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
     Route::get('/course/status/{id}', [CourseController::class, 'status'])->name('course.status');
-
+    Route::get('/course/departments/by-university/{id}', [CourseController::class, 'getDepartmentsByUniversity'])
+        ->name('departments.byUniversity');
 
     // Sub Courses
     Route::get('/subcourse', [SubCourseController::class, 'index'])->name('subcourse.index');
@@ -252,6 +253,7 @@ Route::prefix('academics')->group(function () {
     Route::post('/subcourse/update/{id}', [SubCourseController::class, 'update'])->name('subcourse.update');
     Route::delete('/subcourse/destroy/{id}', [SubCourseController::class, 'destroy'])->name('subcourse.destroy');
     Route::get('/subcourse/status/{id}', [SubCourseController::class, 'status'])->name('subcourse.status');
+    Route::get('course/by-university/{id}', [SubCourseController::class, 'getCoursesByUniversity'])->name('courses.byUniversity');
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -340,14 +342,12 @@ Route::prefix('accounts')->group(function () {
     // Vouchers
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
-    Route::post('/vouchers/store', [VoucherController   ::class, 'store'])->name('vouchers.store');
+    Route::post('/vouchers/store', [VoucherController::class, 'store'])->name('vouchers.store');
     Route::get('/vouchers/edit/{id}', [VoucherController::class, 'edit'])->name('vouchers.edit');
     Route::post('/vouchers/update/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/destroy/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
     Route::get('/vouchers/view/{id}', [VoucherController::class, 'show'])->name('vouchers.view');
     Route::post('/vouchers/status/{id}', [VoucherController::class, 'status'])->name('vouchers.status');
-
-
 });
 
 

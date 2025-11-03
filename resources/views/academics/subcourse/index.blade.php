@@ -26,6 +26,7 @@
                                     <th>No.</th>
                                     <th>Name</th>
                                     <th>Short Name</th>
+                                    <th>University Name</th>
                                     <th>Course</th>
                                     {{-- <th>Mode</th> --}}
                                     <th>Status</th>
@@ -61,6 +62,7 @@
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
             { data: 'short_name', name: 'short_name' },
+            { data: 'university', name: 'university.name', defaultContent: '-' },
             { data: 'course', name: 'course.name', defaultContent: '-' },
 
             {
