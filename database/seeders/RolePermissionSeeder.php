@@ -135,6 +135,43 @@ class RolePermissionSeeder extends Seeder
 
 
             'view university fee',
+
+            'create reports',
+            'view reports',
+            'edit reports',
+            'delete reports',
+
+            // Settings
+            'create status',
+            'edit status',
+            'delete status',
+            'view status',
+
+            // query head permissions
+            'create queryhead',
+            'edit queryhead',
+            'delete queryhead',
+            'view queryhead',
+
+            // student query permissions
+            'create studentquery',
+            'edit studentquery',
+            'delete studentquery',
+            'view studentquery',
+
+// expense category permissions
+             'view expensecategory',
+            'create expensecategory',
+            'edit expensecategory',
+            'delete expensecategory',
+
+            // voucher permissions
+            'view voucher',
+            'create voucher',
+            'edit voucher',
+            'delete voucher',
+            'approve voucher',
+
         ];
 
         // Create permissions

@@ -8,6 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Academics\Department;
 use App\Models\Academics\CourseType;
+use App\Models\Settings\CourseType as SettingsCourseType;
 
 class CourseController extends Controller
 {
@@ -18,7 +19,7 @@ class CourseController extends Controller
     {
         if ($request->ajax()) {
             // Load related department and course type
-            $courses = Course::with(['department'])->orderBy('id', 'desc')->get();
+            $courses = Course::with(['department','courseType'])->orderBy('id', 'desc')->get();
 
             return DataTables::of($courses)
                 ->addIndexColumn()
@@ -26,7 +27,7 @@ class CourseController extends Controller
                     return $course->department->name ?? '-';
                 })
                 ->addColumn('course_type', function ($course) {
-                    return $course->department->name ?? '-';
+                    return $course->courseType->name ?? '-';
                 })
                 ->editColumn('status', function ($course) {
                     return $course->status ? 1 : 0;
@@ -47,7 +48,7 @@ class CourseController extends Controller
     public function create()
     {
         $departments = Department::where('status', 1)->get();
-        $courseTypes = Department::where('status', 1)->get();
+        $courseTypes = SettingsCourseType::where('status', 1)->get();
         return view('academics.course.create', compact('departments', 'courseTypes'));
     }
 
@@ -112,7 +113,7 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
         $departments = Department::where('status', 1)->get();
-        $courseTypes = Department::where('status', 1)->get();
+        $courseTypes = SettingsCourseType::where('status', 1)->get();
 
         return view('academics.course.edit', compact('course', 'departments', 'courseTypes'));
     }

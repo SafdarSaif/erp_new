@@ -54,7 +54,7 @@
             <!-- start page title -->
             <div class="hstack flex-wrap gap-3 mb-5">
                 <div class="flex-grow-1">
-                    <h4 class="mb-1 fw-semibold">Education Management Dashboard</h4>
+                    <h4 class="mb-1 fw-semibold">Dashboard</h4>
                     <nav>
                         <ol class="breadcrumb breadcrumb-arrow mb-0">
                             <li class="breadcrumb-item">
@@ -368,7 +368,7 @@
                                         </span>
                                     </div>
 
-                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                    {{-- <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
                                         <div>
                                             <h6 class="mb-0">Total Subjects</h6>
                                             <small class="text-muted">Across all courses</small>
@@ -376,7 +376,7 @@
                                         <span class="badge bg-primary">
                                             {{ \App\Models\Academics\Subject::count() }}
                                         </span>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                             </div>
@@ -483,7 +483,7 @@
                                     $q2->withCount('subCourses');
                                     $q2->with([
                                         'subCourses' => function ($q3) {
-                                            $q3->withCount('subjects');
+                                            // $q3->withCount('subjects');
                                             // Count students in each subcourse
                                             $q3->withCount('students');
                                         },
@@ -551,9 +551,9 @@
                                                                         <span
                                                                             class="badge bg-success">{{ $department->courses->sum('sub_courses_count') ?? 0 }}
                                                                             Subcourses</span>
-                                                                        <span
+                                                                        {{-- <span
                                                                             class="badge bg-secondary">{{ $department->courses->sum(fn($c) => $c->subCourses->sum('subjects_count')) ?? 0 }}
-                                                                            Subjects</span>
+                                                                            Subjects</span> --}}
                                                                         <span
                                                                             class="badge bg-dark">{{ $departmentStudentCount }}
                                                                             Students</span>

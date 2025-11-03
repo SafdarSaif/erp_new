@@ -15,9 +15,14 @@ use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
 use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
+use App\Models\Settings\Status;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+
 
 class StudentController extends Controller
 {
@@ -42,11 +47,13 @@ class StudentController extends Controller
                 'language',
                 'bloodGroup',
                 'religion',
-                'category'
+                'category',
+                'status'
             ])->orderBy('id', 'desc');
 
             return DataTables::of($students)
                 ->addIndexColumn()
+                ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-') // ✅ Add this line
                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
                 ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
@@ -58,7 +65,7 @@ class StudentController extends Controller
                 ->addColumn('blood_group', fn($row) => $row->bloodGroup?->name ?? '-')
                 ->addColumn('religion', fn($row) => $row->religion?->name ?? '-')
                 ->addColumn('category', fn($row) => $row->category?->name ?? '-')
-                ->editColumn('status', fn($row) => $row->status ? 1 : 0)
+                ->addColumn('status', fn($row) => $row->status?->name ?? '-') // ✅ status_id column now used
                 ->filter(function ($query) use ($request) {
 
                     // 🔍 Filter by Full Name
@@ -153,9 +160,18 @@ class StudentController extends Controller
                         });
                     }
 
-                    // 🔍 Filter by Status
-                    if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
-                        $query->where('status', $request->columns[15]['search']['value']);
+                    // // 🔍 Filter by Status
+                    // if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
+                    //     $query->where('status', $request->columns[15]['search']['value']);
+                    // }
+                    // 🔍 Filter by Status (status_id)
+                    if (!empty($request->columns[15]['search']['value'])) {
+                        $query->where('status_id', $request->columns[15]['search']['value']);
+                    }
+
+                    // 🔍 Filter by Unique ID
+                    if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
+                        $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
                     }
                 })
                 ->make(true);
@@ -173,6 +189,7 @@ class StudentController extends Controller
             'bloodGroups' => BloodGroup::all(),
             'religions' => Religion::all(),
             'categories' => Category::all(),
+            'statuses' => Status::all(),
         ]);
     }
 
@@ -197,6 +214,33 @@ class StudentController extends Controller
             'categories' => Category::all(),
         ]);
     }
+
+
+
+
+
+
+
+
+    /**
+     * Generate a unique Student ID.
+     * Example: DEV2025U00123
+     */
+    
+    private function generateStudentUniqueId($student)
+    {
+        $prefix = 'DEV'; // You can change this to your institute’s code
+        $year   = date('Y');
+
+        // Use university short name or ID if available
+        $universityCode = str_pad($student->university_id, 2, '0', STR_PAD_LEFT);
+
+        // Combine components
+        $uniqueNumber = str_pad($student->id, 5, '0', STR_PAD_LEFT);
+
+        return "{$prefix}{$year}U{$universityCode}{$uniqueNumber}";
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -266,6 +310,10 @@ class StudentController extends Controller
                 'status'            => $validatedData['status'] ?? 1,
             ]);
 
+            // ✅ Generate unique Student ID after creation
+            $student->student_unique_id = $this->generateStudentUniqueId($student);
+            $student->save();
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Student has been added successfully.',
@@ -283,30 +331,130 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show($id)
-{
-    $student = Student::findOrFail($id);
+    public function show($id)
+    {
+        $student = Student::findOrFail($id);
 
-    // Load related data for select fields
-    $academicYears = AcademicYear::all();
-    $universities = University::all();
-    $courseTypes  = CourseType::all();
-    $courses      = Course::all();
-    $subCourses   = SubCourse::all();
-    $modes        = AdmissionMode::all();
-    $courseModes  = CourseMode::all();
-    $languages    = Language::all();
-    $bloodGroups  = BloodGroup::all();
-    $religions    = Religion::all();
-    $categories   = Category::all();
+        // Load related data for select fields
+        $academicYears = AcademicYear::all();
+        $universities = University::all();
+        $courseTypes  = CourseType::all();
+        $courses      = Course::all();
+        $subCourses   = SubCourse::all();
+        $modes        = AdmissionMode::all();
+        $courseModes  = CourseMode::all();
+        $languages    = Language::all();
+        $bloodGroups  = BloodGroup::all();
+        $religions    = Religion::all();
+        $categories   = Category::all();
 
-    return view('students.view', compact(
-        'student', 'academicYears', 'universities', 'courseTypes',
-        'courses', 'subCourses', 'modes', 'courseModes', 'languages',
-        'bloodGroups', 'religions', 'categories'
-    ));
-}
+        return view('students.view', compact(
+            'student',
+            'academicYears',
+            'universities',
+            'courseTypes',
+            'courses',
+            'subCourses',
+            'modes',
+            'courseModes',
+            'languages',
+            'bloodGroups',
+            'religions',
+            'categories'
+        ));
+    }
 
+
+    public function print($id)
+    {
+        $student = Student::findOrFail($id);
+
+        return view('students.print', compact('student'));
+    }
+
+    public function pdf($id)
+    {
+        $student = Student::findOrFail($id);
+
+        $pdf = Pdf::loadView('students.print', compact('student'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download($student->full_name . '_details.pdf');
+    }
+
+
+
+    public function generateIdCardPDF($id)
+    {
+        $student = Student::with(['course', 'academicYear', 'bloodGroup', 'university'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('students.idcardpdf', compact('student'))
+            ->setPaper([0, 0, 350, 220], 'landscape'); // ID card size
+
+        return $pdf->download($student->full_name . '_IDCard.pdf');
+    }
+
+
+    //     public function idCard($id)
+    // {
+    //     $student = Student::findOrFail($id);
+
+    //     $pdf = Pdf::loadView('students.idcard', compact('student'))
+    //               ->setPaper([0, 0, 350, 220], 'landscape'); // small ID card size
+
+    //     return $pdf->download($student->full_name . '_IDCard.pdf');
+    // }
+
+
+    // public function idCard($id)
+    // {
+    //     $student = Student::findOrFail($id);
+
+    //     // Set standard ID card size (landscape mode)
+    //     $pdf = Pdf::loadView('students.idcard', compact('student'))
+    //               ->setPaper([0, 0, 340, 220], 'landscape'); // Professional card size
+
+    //     return $pdf->download($student->full_name . '_IDCard.pdf');
+    // }
+
+
+    public function idcard($id)
+    {
+        $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+        return view('students.idcard', compact('student'));
+    }
+
+
+    //     public function idcard($id)
+    // {
+    //     $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+
+    //     // Generate QR code with student ID and name (you can customize data)
+    //     $qrCode = base64_encode(QrCode::format('png')
+    //                   ->size(100)
+    //                   ->generate("ID: {$student->id}, Name: {$student->full_name}"));
+
+    //     return view('students.idcard', compact('student', 'qrCode'));
+    // }
+
+    // public function idcard($id)
+    // {
+    //     $student = Student::with(['university', 'course', 'academicYear', 'bloodGroup'])->findOrFail($id);
+
+    //     $qrData = [
+    //         'name' => $student->full_name,
+    //         'id' => $student->id,
+    //         'admissionNo' => $student->admission_no,
+    //         'course' => $student->course->name,
+    //         'university' => $student->university->name,
+    //         'email' => $student->email,
+    //         'mobile' => $student->mobile
+    //     ];
+
+    //     $qrCode = QrCode::size(120)->generate(json_encode($qrData));
+
+    //     return view('students.idcard', compact('student', 'qrCode'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -406,7 +554,7 @@ class StudentController extends Controller
                 'course_type_id'    => $validatedData['course_type_id'],
                 'course_id'         => $validatedData['course_id'],
                 'sub_course_id'     => $validatedData['sub_course_id'],
-                'admissionmode_id'           => $validatedData['mode_id'], // ✅ Fixed column name
+                'admissionmode_id'  => $validatedData['mode_id'], // ✅ Fixed column name
                 'course_mode_id'    => $validatedData['course_mode_id'],
                 'semester'          => $validatedData['semester'] ?? null,
                 'course_duration'   => $validatedData['course_duration'] ?? null,
@@ -442,5 +590,25 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         //
+    }
+
+    public function updateStatus($id, Request $request)
+    {
+        // dd($request->all());
+        try {
+            $student = \App\Models\Student::findOrFail($id);
+            $student->status_id = $request->status_id;
+            $student->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student status updated successfully!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update status: ' . $e->getMessage(),
+            ]);
+        }
     }
 }

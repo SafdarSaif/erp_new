@@ -26,10 +26,16 @@ use App\Http\Controllers\Accounts\StudentFeeStructureController;
 use App\Http\Controllers\StudentLedgerController;
 use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MiscellaneousFeeController;
+use App\Http\Controllers\Settings\StatusController;
+use App\Http\Controllers\Settings\QueryHeadController;
+use App\Http\Controllers\Settings\ThemeSettingsController;
+use App\Http\Controllers\StudentQueryController;
+use App\Http\Controllers\Settings\ExpenseCategoryController;
+use App\Http\Controllers\VoucherController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
+
 
 
 Route::get('/demo', function () {
@@ -49,6 +55,9 @@ Route::get('/', function () {
 //         return view('content.home');
 //     })->name('dashboard');
 // });
+
+
+
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -133,24 +142,51 @@ Route::prefix('settings')->group(function () {
     Route::post('religions/update/{id}', [ReligionController::class, 'update'])->name('religions.update');
     Route::delete('religions/delete/{id}', [ReligionController::class, 'destroy'])->name('religions.delete');
     Route::get('religions/status/{id}', [ReligionController::class, 'status'])->name('religions.status');
+
+    // Statuses
+    Route::get('status', [StatusController::class, 'index'])->name('status.index');
+    Route::get('status/create', [StatusController::class, 'create'])->name('status.create');
+    Route::post('status/store', [StatusController::class, 'store'])->name('status.store');
+    Route::get('status/edit/{id}', [StatusController::class, 'edit'])->name('status.edit');
+    Route::post('status/update/{id}', [StatusController::class, 'update'])->name('status.update');
+    Route::delete('status/delete/{id}', [StatusController::class, 'destroy'])->name('status.delete');
+    Route::get('status/status/{id}', [StatusController::class, 'status'])->name('status.status');
+
+    //queryhead
+    Route::get('queryhead', [QueryHeadController::class, 'index'])->name('queryhead.index');
+    Route::get('queryhead/create', [QueryHeadController::class, 'create'])->name('queryhead.create');
+    Route::post('queryhead/store', [QueryHeadController::class, 'store'])->name('queryhead.store');
+    Route::get('queryhead/edit/{id}', [QueryHeadController::class, 'edit'])->name('queryhead.edit');
+    Route::post('queryhead/update/{id}', [QueryHeadController::class, 'update'])->name('queryhead.update');
+    Route::delete('queryhead/delete/{id}', [QueryHeadController::class, 'destroy'])->name('queryhead.delete');
+    Route::get('queryhead/status/{id}', [QueryHeadController::class, 'status'])->name('queryhead.status');
+
+    // Expense Categories
+    Route::get('expensecategory', [ExpenseCategoryController::class, 'index'])->name('expensecategory.index');
+    Route::get('expensecategory/create', [ExpenseCategoryController::class, 'create'])->name('expensecategory.create');
+    Route::post('expensecategory/store', [ExpenseCategoryController::class, 'store'])->name('expensecategory.store');
+    Route::post('expensecategory/update/{id}', [ExpenseCategoryController::class, 'update'])->name('expensecategory.update');
+    Route::get('expensecategory/edit/{id}', [ExpenseCategoryController::class, 'edit'])->name('expensecategory.edit');
+    Route::delete('expensecategory/delete/{id}', [ExpenseCategoryController::class, 'destroy'])->name('expensecategory.delete');
+    Route::get('expensecategory/status/{id}', [ExpenseCategoryController::class, 'status'])->name('expensecategory.status');
 });
 
 
-    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
-    Route::get('/menu/create', [MenuController::class, 'create'])->name('menu.create');
-    Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
-    Route::get('/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
-    Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
-    Route::delete('/menu/destroy/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
-    Route::get('menu/status/{id}', [MenuController::class, 'status'])->name('menu.status');
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+Route::get('/menu/create', [MenuController::class, 'create'])->name('menu.create');
+Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
+Route::get('/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
+Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
+Route::delete('/menu/destroy/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+Route::get('menu/status/{id}', [MenuController::class, 'status'])->name('menu.status');
 
-    Route::get('/theme', [ThemeController::class, 'index'])->name('theme.index');
-    Route::get('/theme/create', [ThemeController::class, 'create'])->name('theme.create');
-    Route::post('/theme/store', [ThemeController::class, 'store'])->name('theme.store');
-    Route::get('/theme/edit/{id}', [ThemeController::class, 'edit'])->name('theme.edit');
-    Route::post('/theme/update/{id}', [ThemeController::class, 'update'])->name('theme.update');
-    Route::delete('/theme/destroy/{id}', [ThemeController::class, 'destroy'])->name('theme.destroy');
-    Route::get('theme/status/{id}', [ThemeController::class, 'status'])->name('theme.status');
+Route::get('/theme', [ThemeController::class, 'index'])->name('theme.index');
+Route::get('/theme/create', [ThemeController::class, 'create'])->name('theme.create');
+Route::post('/theme/store', [ThemeController::class, 'store'])->name('theme.store');
+Route::get('/theme/edit/{id}', [ThemeController::class, 'edit'])->name('theme.edit');
+Route::post('/theme/update/{id}', [ThemeController::class, 'update'])->name('theme.update');
+Route::delete('/theme/destroy/{id}', [ThemeController::class, 'destroy'])->name('theme.destroy');
+Route::get('theme/status/{id}', [ThemeController::class, 'status'])->name('theme.status');
 
 
 
@@ -236,8 +272,12 @@ Route::prefix('students')->group(function () {
     Route::get('/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');    // Edit student
     Route::put('/update/{id}', [StudentController::class, 'update'])->name('students.update'); // Update
     Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
-    Route::get('/status/{id}', [StudentController::class, 'status'])->name('students.status');     // Toggle status
+    Route::get('/status/{id}', [StudentController::class, 'updateStatus'])->name('students.status');     // Toggle status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
+    Route::get('/{id}/print', [StudentController::class, 'print'])->name('students.print');
+    Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');
+    Route::get('/{id}/idcard', [StudentController::class, 'idCard'])->name('students.idcard');
+    Route::get('/idcardpdf/{id}', [StudentController::class, 'generateIdCardPDF'])->name('students.idcardpdf');
 });
 
 
@@ -286,15 +326,64 @@ Route::prefix('accounts')->group(function () {
     Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
     Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
         ->name('student.updatePayment');
+
+    Route::get('miscellaneous/{student_id}', [MiscellaneousFeeController::class, 'create'])->name('accounts.miscellaneous');
+    Route::post('miscellaneous/store', [MiscellaneousFeeController::class, 'store'])->name('accounts.saveMiscellaneous');
+    Route::post('miscellaneous/update', [MiscellaneousFeeController::class, 'update'])->name('accounts.updateMiscellaneous');
+    Route::get('miscellaneous/edit/{student_id}', [MiscellaneousFeeController::class, 'edit'])->name('accounts.editMiscellaneousFee');
+
+    Route::get('discount/{student_id}', [StudentFeeStructureController::class, 'addDiscount'])->name('accounts.discount');
+    Route::post('fee/discount/store', [StudentFeeStructureController::class, 'storeDiscount'])->name('fees.discount.store');
+
+
+
+    // Vouchers
+    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers/store', [VoucherController   ::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers/edit/{id}', [VoucherController::class, 'edit'])->name('vouchers.edit');
+    Route::post('/vouchers/update/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
+    Route::delete('/vouchers/destroy/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::get('/vouchers/view/{id}', [VoucherController::class, 'show'])->name('vouchers.view');
+    Route::post('/vouchers/status/{id}', [VoucherController::class, 'status'])->name('vouchers.status');
+
+
 });
 
 
-Route::prefix('reports')->name('reports.')->group(function(){
-    Route::get('students',[ReportController::class,'studentReport'])->name('students');
-    Route::get('students/create',[ReportController::class,'createStudentReport'])->name('students.create');
-    Route::post('students/store',[ReportController::class,'storeStudentReport'])->name('students.store');
-    Route::get('student/{id}',[ReportController::class,'viewStudentReport'])->name('students.view');
+Route::prefix('reports')->name('reports.')->group(function () {
+    Route::get('students', [ReportController::class, 'studentReport'])->name('students');
+    Route::get('students/create', [ReportController::class, 'createStudentReport'])->name('students.create');
+    Route::post('students/store', [ReportController::class, 'storeStudentReport'])->name('students.store');
+    Route::get('student/{id}', [ReportController::class, 'viewStudentReport'])->name('students.view');
+    Route::get('income', [ReportController::class, 'incomeReport'])->name('income');
+    Route::get('expence', [ReportController::class, 'expenceReport'])->name('expence');
+    Route::post('getExpense', [ReportController::class, 'getExpense'])->name('getExpense');
+    Route::get('getIncome', [ReportController::class, 'getIncome'])->name('getIncome');
+
+    Route::get('pendingfees', [ReportController::class, 'PendingReport'])->name('pendingfees');
+
+    Route::post('getpendingFees', [ReportController::class, 'pendingFeesReport'])->name('getpendingFees');
+
+    Route::get('profit', [ReportController::class, 'profitReport'])->name('profit');
+    Route::post('getProfitReport', [ReportController::class, 'getProfitReport'])->name('getProfitReport');
 });
 
-Route::get('getCourseByUniversityAndCourseType',[CourseController::class,'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
-Route::get('getSubCourseByCourseId',[SubCourseController::class,'getSubCourseByCourseId'])->name('getSubCourseByCourseId');
+Route::get('getCourseByUniversityAndCourseType', [CourseController::class, 'getCourseByUniversityAndCourseType'])->name('getCourseByUniversityAndCourseType');
+Route::get('getSubCourseByCourseId', [SubCourseController::class, 'getSubCourseByCourseId'])->name('getSubCourseByCourseId');
+
+
+
+
+
+
+
+
+Route::get('/students/index', [StudentQueryController::class, 'index1'])->name('students.query.index');
+Route::get('/students/query', [StudentQueryController::class, 'index'])->name('students.query');
+Route::post('/students/fetch', [StudentQueryController::class, 'fetchStudent'])->name('students.fetch');
+Route::post('/students/query/store', [StudentQueryController::class, 'store'])->name('students.query.store');
+Route::get('/students/query/view/{studentId}', [StudentQueryController::class, 'viewQueries'])->name('students.query.view');
+
+Route::get('/studentqueries/answer/{id}', [StudentQueryController::class, 'answer'])->name('students.query.answer');
+Route::post('/studentqueries/answer/{id}', [StudentQueryController::class, 'storeAnswer'])->name('students.query.storeAnswer');

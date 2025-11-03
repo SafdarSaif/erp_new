@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Academic ERP system for managing universities, departments, courses, students, and faculty. Secure and scalable ERP for education.">
-    <meta name="author" content="Hindustan ERP">
+    <meta name="author" content=" ERP">
     <link rel="shortcut icon" href="assets/images/Favicon.png">
 
     <!-- Simplebar Css -->
@@ -22,6 +22,8 @@
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <!-- Custom Css -->
     <link href="assets/css/custom.min.css" id="custom-style" rel="stylesheet" type="text/css">
+            <link rel="stylesheet" href="{{ asset('assets/libs/toastr/toastr.css') }}">
+
 </head>
 
 <body>
@@ -75,13 +77,27 @@
                     </div>
                 </div>
 
+                @php
+                use App\Models\Theme;
+
+                $theme = Theme::where('is_active', 1)->first();
+                $logo = $theme && $theme->logo && file_exists(public_path($theme->logo))
+                ? asset($theme->logo)
+                : asset('uploads/theme/default-logo.png'); // fallback logo
+                @endphp
+
                 <!-- ERP Login Form -->
                 <div class="col-lg-6">
                     <div class="auth-box card card-body m-0 h-100 border-0 justify-content-center shadow-sm">
                         <div class="mb-5 text-center">
-                            <img src="https://i.ibb.co/6mY2yD3/erp-logo.png" alt="ERP Logo" class="mb-3"
-                                style="height:100px;">
-                            <h4 class="fw-bold text-white text-primary">Academic ERP Login</h4>
+                            {{-- <img src="https://i.ibb.co/6mY2yD3/erp-logo.png" alt="ERP Logo" class="mb-3"
+                                style="height:100px;"> --}}
+                            <img src="{{ $logo }}" alt="ERP Logo" class="mb-3" style="height:100px;">
+
+                            {{-- <h4 class="fw-bold text-white text-primary">Academic ERP Login</h4> --}}
+                            <h5 class="fw-bold text-primary">
+                                {{ $theme->tag_line ?? 'Academic ERP Login' }}
+                            </h5>
                             <p class="text-muted mb-0">Enter your credentials to access the ERP dashboard.</p>
                         </div>
 
@@ -128,7 +144,8 @@
                             <div class="row mb-4">
                                 <div class="col-sm-6">
                                     <div class="form-check form-check-sm d-flex align-items-center gap-2 mb-0">
-                                        <input class="form-check-input" type="checkbox" id="remember-me" name="remember">
+                                        <input class="form-check-input" type="checkbox" id="remember-me"
+                                            name="remember">
                                         <label class="form-check-label" for="remember-me"
                                             value="{{ __('Remember me') }}">Remember me</label>
                                     </div>
@@ -147,6 +164,29 @@
                                 <i class="ri-login-circle-line me-2"></i>
                                 {{ __('Log in') }}
                             </x-button>
+
+
+                            {{--
+                            <!-- 💡 Student Query Button -->
+                            <div class="text-center mt-3">
+                                <a href="{{ route('students.query') }}"
+                                    class="btn btn-outline-primary w-100 shadow-sm rounded-2">
+                                    <i class="ri-question-line me-2"></i> Student Query
+                                </a>
+                            </div> --}}
+
+                            <!-- 💡 Student Query Button -->
+                            <!-- 💡 Student Query Button -->
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm shadow-sm rounded-2"
+                                    onclick="add('{{ route('students.query') }}', 'modal-lg')">
+                                    <i class="ri-question-line me-1"></i> Student Query
+                                </button>
+
+                            </div>
+
+
+
 
 
                             <p class="mt-4 text-muted text-center fs-12">
@@ -169,6 +209,14 @@
     <!-- App js -->
     <script type="module" src="assets/js/app.js"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{asset('assets/libs/toastr/toastr.js')}}"></script>
+
+
 
     @livewireScripts
 
@@ -218,6 +266,68 @@
         @endif
     });
     </script>
+
+
+
+
+
+
+    <div class="modal fade" id="modal-md" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content" id="modal-md-content">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modal-lg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" id="modal-lg-content">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-xl" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content" id="modal-xl-content">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function add(url, modal) {
+        if (modal.length > 0) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    $('#' + modal + '-content').html(data);
+                    $('#' + modal).modal('show');
+                }
+            })
+        } else {
+            window.location.href = url
+        }
+    }
+
+    function viewQueries (url, modal) {
+        $(".modal").modal('hide');
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                $('#' + modal + '-content').html(data);
+                $('#' + modal).modal('show');
+            }
+        })
+    }
+
+
+    </script>
+
 
 
 

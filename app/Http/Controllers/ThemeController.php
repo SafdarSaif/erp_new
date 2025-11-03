@@ -142,10 +142,80 @@ class ThemeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Theme $theme)
-    {
-        //
+   /**
+ * Update the specified resource in storage.
+ */
+public function update(Request $request, $id)
+{
+    // Validate request
+    $validator = Validator::make($request->all(), [
+        'name'            => 'required|string|min:2|max:255',
+        'tag_line'        => 'nullable|string|max:255',
+        'main_color'      => 'nullable|string|max:7',
+        'top_color'       => 'nullable|string|max:7',
+        'secondary_color' => 'nullable|string|max:7',
+        'logo'            => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
+        'favicon'         => 'nullable|image|mimes:jpeg,png,jpg,svg,ico|max:1024',
+        'custom_colors'   => 'nullable|string',
+        'is_active'       => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => $validator->errors()->first()
+        ], 422);
     }
+
+    try {
+        $theme = Theme::findOrFail($id);
+
+        // Handle logo upload
+        $logoPath = $theme->logo; // keep old if not replaced
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/theme'), $filename);
+            $logoPath = 'uploads/theme/' . $filename;
+        }
+
+        // Handle favicon upload
+        $faviconPath = $theme->favicon; // keep old if not replaced
+        if ($request->hasFile('favicon')) {
+            $file = $request->file('favicon');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/theme'), $filename);
+            $faviconPath = 'uploads/theme/' . $filename;
+        }
+
+        // Update record
+        $theme->update([
+            'name'            => $request->name,
+            'tag_line'        => $request->tag_line,
+            'main_color'      => $request->main_color ?? $theme->main_color,
+            'top_color'       => $request->top_color ?? $theme->top_color,
+            'secondary_color' => $request->secondary_color ?? $theme->secondary_color,
+            'custom_colors'   => $request->custom_colors ? json_encode(json_decode($request->custom_colors, true)) : $theme->custom_colors,
+            'logo'            => $logoPath,
+            'favicon'         => $faviconPath,
+            'is_active'       => $request->input('is_active', '1'),
+        ]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Theme updated successfully!',
+            'data'    => $theme
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Something went wrong: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
 
     /**
      * Remove the specified resource from storage.

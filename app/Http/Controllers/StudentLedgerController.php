@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Student;
 use App\Models\Accounts\StudentFeeStructure;
+use App\Models\MiscellaneousFee;
 use App\Models\StudentInvoice;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -24,134 +25,47 @@ class StudentLedgerController extends Controller
      */
 
 
-    // public function ledger($studentId)
-    // {
-    //     // 1️⃣ Fetch Student with Relations
-    //     $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
 
-    //     // 2️⃣ Fetch Fee Structure & Ledger Data
-    //     $feeStructures = StudentFeeStructure::where('student_id', $studentId)
-    //         ->orderBy('id')
-    //         ->get();
-
-    //     $ledgerEntries = StudentLedger::where('student_id', $studentId)
-    //         ->orderBy('id')
-    //         ->get();
-
-    //     // 3️⃣ Calculate Summary
-    //     $totalFee = $student->total_fee ?? 0;
-    //     $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
-    //     $balance = $totalFee - $totalPaid;
-
-    //     // 4️⃣ Course Details
-    //     $subCourse = $student->subCourse;
-    //     $courseName = $subCourse->name ?? '-';
-    //     $mode = $subCourse->courseMode->name ?? 'Semesters';
-    //     $duration = $subCourse->duration ?? 0;
-
-    //     // 🔹 Static semester fee calculation (like getStudentFeeInfo)
-    //     $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
-
-    //     // Generate static semester-wise array (no ledger dependency)
-    //     $semesterWiseFees = [];
-    //     for ($i = 1; $i <= $duration; $i++) {
-    //         $semesterWiseFees[] = [
-    //             'semester' => ($mode === 'Yearly') ? "Year $i" : "Semester $i",
-    //             'amount'   => $feePerSem,
-    //         ];
-    //     }
-
-    //     // 5️⃣ Fetch Invoices (optional)
-    //     $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
-
-    //     // 6️⃣ Pass to View
-    //     return view('accounts.fee.ledger', compact(
-    //         'student',
-    //         'feeStructures',
-    //         'ledgerEntries',
-    //         'invoices',
-    //         'totalFee',
-    //         'totalPaid',
-    //         'balance',
-    //         'courseName',
-    //         'mode',
-    //         'duration',
-    //         'feePerSem',
-    //         'semesterWiseFees'
-    //     ));
-    // }
 
     // public function ledger($studentId)
     // {
     //     $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
 
+    //     //  Fetch existing fee structure
     //     $feeStructures = StudentFeeStructure::where('student_id', $studentId)
     //         ->orderBy('id')
     //         ->get();
 
-    //     $ledgerEntries = StudentLedger::where('student_id', $studentId)
-    //         ->orderBy('id')
+    //     // Fetch ledger entries and join semester from fee structure
+    //     // $ledgerEntries = StudentLedger::leftJoin('student_fee_structures', 'student_ledgers.student_fee_id', '=', 'student_fee_structures.id')
+    //     //     ->select(
+    //     //         'student_ledgers.*',
+    //     //         'student_fee_structures.semester as semester' // ✅ Add semester column
+    //     //     )
+    //     //     ->where('student_ledgers.student_id', $studentId)
+    //     //     ->orderBy('student_ledgers.id')
+    //     //     ->get();
+
+    //     $ledgerEntries = StudentLedger::leftJoin('student_fee_structures', 'student_ledgers.student_fee_id', '=', 'student_fee_structures.id')
+    //         ->leftJoin('miscellaneous_fees', 'student_ledgers.miscellaneous_id', '=', 'miscellaneous_fees.id')
+    //         ->select(
+    //             'student_ledgers.*',
+    //             'student_fee_structures.semester as semester',
+    //             'miscellaneous_fees.head as misc_head' // ✅ Added for displaying miscellaneous head
+    //         )
+    //         ->where('student_ledgers.student_id', $studentId)
+    //         ->orderBy('student_ledgers.id')
     //         ->get();
 
-    //     $totalFee  = $student->total_fee ?? 0;
-    //     $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
-    //     $balance   = $totalFee - $totalPaid;
 
-    //     $subCourse = $student->subCourse;
-    //     $courseName = $subCourse->name ?? '-';
-    //     $mode       = $subCourse->courseMode->name ?? 'Semesters';
-    //     $duration   = $subCourse->duration ?? 0;
-    //     $feePerSem  = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
-
-    //     $semesterWiseFees = [];
-    //     for ($i = 1; $i <= $duration; $i++) {
-    //         $semesterWiseFees[] = [
-    //             'id'       => $feeStructures[$i - 1]->id ?? null, // store DB id if exists
-    //             'semester' => ($mode === 'Yearly') ? "Year $i" : "Semester $i",
-    //             'amount'   => $feePerSem,
-    //         ];
-    //     }
-
-    //     $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
-
-    //     return view('accounts.fee.ledger', compact(
-    //         'student',
-    //         'feeStructures',
-    //         'ledgerEntries',
-    //         'invoices',
-    //         'totalFee',
-    //         'totalPaid',
-    //         'balance',
-    //         'courseName',
-    //         'mode',
-    //         'duration',
-    //         'feePerSem',
-    //         'semesterWiseFees'
-    //     ));
-    // }
-
-    // public function ledger($studentId)
-    // {
-    //     $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
-
-    //     // 🔹 Fetch existing fee structure (if any)
-    //     $feeStructures = StudentFeeStructure::where('student_id', $studentId)
-    //         ->orderBy('id')
-    //         ->get();
-
-    //     // 🔹 Fetch ledger entries for student
-    //     $ledgerEntries = StudentLedger::where('student_id', $studentId)
-    //         ->orderBy('id')
-    //         ->get();
-
-    //     // 🔹 Student & course details
+    //     // Student & course details
     //     $subCourse  = $student->subCourse;
     //     $courseName = $subCourse->name ?? '-';
     //     $mode       = $subCourse->courseMode->name ?? 'Semesters';
     //     $duration   = $subCourse->duration ?? 0;
     //     $totalFee   = $student->total_fee ?? 0;
 
-    //     // 🔹 CASE 1: If fee structure is already created → show from DB
+    //     //  CASE 1: If fee structure is already created → show from DB
     //     if ($feeStructures->count() > 0) {
     //         $semesterWiseFees = $feeStructures->map(function ($fee) use ($ledgerEntries) {
     //             $paid = $ledgerEntries
@@ -174,7 +88,7 @@ class StudentLedgerController extends Controller
     //         $balance   = $totalFee - $totalPaid;
     //     }
 
-    //     // 🔹 CASE 2: If no fee structure exists → generate static structure
+    //     //  CASE 2: If no fee structure exists → generate static structure
     //     else {
     //         $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
 
@@ -193,8 +107,128 @@ class StudentLedgerController extends Controller
     //         $balance   = $totalFee - $totalPaid;
     //     }
 
-    //     // 🔹 Fetch invoices (if linked to ledger)
+    //     //  Fetch invoices (if linked to ledger)
     //     $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
+
+    //     //MiscellaneousFee
+    //     $miscellaneousFee = MiscellaneousFee::where('student_id', $studentId)->get();
+    //     $totalMiscellaneousFee = MiscellaneousFee::where('student_id', $studentId)->sum('amount');
+    //     return view('accounts.fee.ledger', compact(
+    //         'student',
+    //         'feeStructures',
+    //         'ledgerEntries',
+    //         'invoices',
+    //         'totalFee',
+    //         'totalPaid',
+    //         'balance',
+    //         'courseName',
+    //         'mode',
+    //         'duration',
+    //         'semesterWiseFees',
+    //         'miscellaneousFee',
+    //         'totalMiscellaneousFee'
+    //     ));
+    // }
+
+
+    //     public function ledger($studentId)
+    // {
+    //     $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
+
+    //     //  Fetch existing fee structure
+    //     $feeStructures = StudentFeeStructure::where('student_id', $studentId)
+    //         ->orderBy('id')
+    //         ->get();
+
+    //     // Fetch ledger entries with semester and miscellaneous head
+    //     $ledgerEntries = StudentLedger::leftJoin('student_fee_structures', 'student_ledgers.student_fee_id', '=', 'student_fee_structures.id')
+    //         ->leftJoin('miscellaneous_fees', 'student_ledgers.miscellaneous_id', '=', 'miscellaneous_fees.id')
+    //         ->select(
+    //             'student_ledgers.*',
+    //             'student_fee_structures.semester as semester',
+    //             'miscellaneous_fees.head as misc_head' // for displaying misc head
+    //         )
+    //         ->where('student_ledgers.student_id', $studentId)
+    //         ->orderBy('student_ledgers.id')
+    //         ->get();
+
+    //     // Student & course details
+    //     $subCourse  = $student->subCourse;
+    //     $courseName = $subCourse->name ?? '-';
+    //     $mode       = $subCourse->courseMode->name ?? 'Semesters';
+    //     $duration   = $subCourse->duration ?? 0;
+    //     $totalFee   = $student->total_fee ?? 0;
+
+    //     // --- Semester-wise Fee Calculation ---
+    //     if ($feeStructures->count() > 0) {
+    //         $semesterWiseFees = $feeStructures->map(function ($fee) use ($ledgerEntries) {
+    //             $paid = $ledgerEntries
+    //                 ->where('student_fee_id', $fee->id)
+    //                 ->where('transaction_type', 'credit')
+    //                 ->sum('amount');
+    //             $balance = $fee->amount - $paid;
+
+    //             return [
+    //                 'id'       => $fee->id,
+    //                 'semester' => $fee->semester,
+    //                 'amount'   => $fee->amount,
+    //                 'paid'     => $paid,
+    //                 'balance'  => $balance,
+    //             ];
+    //         });
+
+    //         $totalFee  = $feeStructures->sum('amount');
+    //         // $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->whereNull('miscellaneous_id')->sum('amount');
+    //         $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
+    //         $balance   = $totalFee - $totalPaid;
+    //     } else {
+    //         // Static fee structure if not created
+    //         $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
+
+    //         $semesterWiseFees = [];
+    //         for ($i = 1; $i <= $duration; $i++) {
+    //             $semesterWiseFees[] = [
+    //                 'id'       => null,
+    //                 'semester' => ($mode === 'Yearly') ? "Year $i" : "Semester $i",
+    //                 'amount'   => $feePerSem,
+    //                 'paid'     => 0,
+    //                 'balance'  => $feePerSem,
+    //             ];
+    //         }
+
+    //         $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->whereNull('miscellaneous_id')->sum('amount');
+    //         $balance   = $totalFee - $totalPaid;
+    //     }
+
+    //     //  Fetch invoices (if linked to ledger)
+    //     $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
+
+    //     // --- Miscellaneous Fee ---
+    //     $miscellaneousFee = MiscellaneousFee::where('student_id', $studentId)->get();
+    //     $totalMiscellaneousFee = $miscellaneousFee->sum('amount');
+
+    //     // ✅ Step 1: Compute Miscellaneous Balances
+    //     $miscellaneousWithBalance = $miscellaneousFee->map(function ($misc) use ($ledgerEntries) {
+    //         $paid = $ledgerEntries
+    //             ->where('miscellaneous_id', $misc->id)
+    //             ->where('transaction_type', 'credit')
+    //             ->sum('amount');
+
+    //         $balance = $misc->amount - $paid;
+
+    //         $misc->paid = $paid;
+    //         $misc->balance = $balance;
+
+    //         return $misc;
+    //     });
+
+    //     // ✅ Step 3: Update Summary Cards to include Miscellaneous Balance
+    //     $totalMiscellaneousPaid = $ledgerEntries
+    //         ->whereNotNull('miscellaneous_id')
+    //         ->where('transaction_type', 'credit')
+    //         ->sum('amount');
+
+    //     $balance = ($totalFee + $totalMiscellaneousFee) - ($totalPaid + $totalMiscellaneousPaid);
 
     //     return view('accounts.fee.ledger', compact(
     //         'student',
@@ -207,25 +241,34 @@ class StudentLedgerController extends Controller
     //         'courseName',
     //         'mode',
     //         'duration',
-    //         'semesterWiseFees'
+    //         'semesterWiseFees',
+    //         'miscellaneousFee',
+    //         'miscellaneousWithBalance', // ✅ new variable for blade
+    //         'totalMiscellaneousFee'
     //     ));
     // }
 
 
+
+
+
+    // working
     public function ledger($studentId)
     {
         $student = Student::with('subCourse.courseMode')->findOrFail($studentId);
 
-        //  Fetch existing fee structure
+        // Fetch existing fee structure
         $feeStructures = StudentFeeStructure::where('student_id', $studentId)
             ->orderBy('id')
             ->get();
 
-        // Fetch ledger entries and join semester from fee structure
+        // Fetch ledger entries with semester and miscellaneous head
         $ledgerEntries = StudentLedger::leftJoin('student_fee_structures', 'student_ledgers.student_fee_id', '=', 'student_fee_structures.id')
+            ->leftJoin('miscellaneous_fees', 'student_ledgers.miscellaneous_id', '=', 'miscellaneous_fees.id')
             ->select(
                 'student_ledgers.*',
-                'student_fee_structures.semester as semester' // ✅ Add semester column
+                'student_fee_structures.semester as semester',
+                'miscellaneous_fees.head as misc_head'
             )
             ->where('student_ledgers.student_id', $studentId)
             ->orderBy('student_ledgers.id')
@@ -238,31 +281,28 @@ class StudentLedgerController extends Controller
         $duration   = $subCourse->duration ?? 0;
         $totalFee   = $student->total_fee ?? 0;
 
-        //  CASE 1: If fee structure is already created → show from DB
+        // --- Semester-wise Fee Calculation ---
         if ($feeStructures->count() > 0) {
             $semesterWiseFees = $feeStructures->map(function ($fee) use ($ledgerEntries) {
                 $paid = $ledgerEntries
                     ->where('student_fee_id', $fee->id)
                     ->where('transaction_type', 'credit')
                     ->sum('amount');
-                $balance = $fee->amount - $paid;
+                $balance = $fee->amount - $paid - $fee->discount;
 
                 return [
                     'id'       => $fee->id,
                     'semester' => $fee->semester,
                     'amount'   => $fee->amount,
+                    'discount'   => $fee->discount,
                     'paid'     => $paid,
                     'balance'  => $balance,
                 ];
             });
-
-            $totalFee  = $feeStructures->sum('amount');
-            $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
-            $balance   = $totalFee - $totalPaid;
-        }
-
-        //  CASE 2: If no fee structure exists → generate static structure
-        else {
+            // dd($semesterWiseFees);
+            $totalFee  = $feeStructures->sum('amount') - $feeStructures->sum('discount');
+        } else {
+            // Static fee structure if not created
             $feePerSem = ($duration > 0) ? round($totalFee / $duration, 2) : 0;
 
             $semesterWiseFees = [];
@@ -275,13 +315,38 @@ class StudentLedgerController extends Controller
                     'balance'  => $feePerSem,
                 ];
             }
-
-            $totalPaid = $ledgerEntries->where('transaction_type', 'credit')->sum('amount');
-            $balance   = $totalFee - $totalPaid;
         }
 
-        //  Fetch invoices (if linked to ledger)
+        // --- Total Paid including Miscellaneous Fees ---
+        $totalPaid = $ledgerEntries
+            ->where('transaction_type', 'credit')
+            ->sum('amount'); // ✅ includes semester + miscellaneous payments
+
+        // Fetch invoices (if linked to ledger)
         $invoices = StudentInvoice::whereIn('ledger_id', $ledgerEntries->pluck('id'))->get();
+
+        // --- Miscellaneous Fee ---
+        $miscellaneousFee = MiscellaneousFee::where('student_id', $studentId)->get();
+        $totalMiscellaneousFee = $miscellaneousFee->sum('amount');
+
+        // Compute Miscellaneous Balances
+        $miscellaneousWithBalance = $miscellaneousFee->map(function ($misc) use ($ledgerEntries) {
+            $paid = $ledgerEntries
+                ->where('miscellaneous_id', $misc->id)
+                ->where('transaction_type', 'credit')
+                ->sum('amount');
+
+            $balance = $misc->amount - $paid;
+
+            $misc->paid = $paid;
+            $misc->balance = $balance;
+
+            return $misc;
+        });
+
+        // Update total balance including Miscellaneous Fee
+        $balance = ($totalFee + $totalMiscellaneousFee) - $totalPaid;
+
 
         return view('accounts.fee.ledger', compact(
             'student',
@@ -294,10 +359,12 @@ class StudentLedgerController extends Controller
             'courseName',
             'mode',
             'duration',
-            'semesterWiseFees'
+            'semesterWiseFees',
+            'miscellaneousFee',
+            'miscellaneousWithBalance',
+            'totalMiscellaneousFee'
         ));
     }
-
 
 
 
@@ -317,6 +384,7 @@ class StudentLedgerController extends Controller
             $studentId = $request->student_id;
             $semesters = $request->semesters;
             $amounts   = $request->amounts;
+            $discount   = $request->discount;
 
             // Optional: Delete existing fee structure for this student
             StudentFeeStructure::where('student_id', $studentId)->delete();
@@ -327,6 +395,7 @@ class StudentLedgerController extends Controller
                     'student_id' => $studentId,
                     'semester'   => $semester,
                     'amount'     => $amounts[$index],
+                    'discount'     => $discount[$index],
                 ]);
             }
 
@@ -411,12 +480,12 @@ class StudentLedgerController extends Controller
                 ->where('student_fee_id', $fee->id)
                 ->sum('amount');
 
-            $balance = $fee->amount - $paid;
+            $balance = $fee->amount - $paid - $fee->discount;
 
             $semesterBalances[] = [
                 'semester'   => $fee->semester,
                 'fee_id'     => $fee->id,
-                'total_fee'  => $fee->amount,
+                'total_fee'  => $fee->amount - $fee->discount,
                 'paid'       => $paid,
                 'balance'    => $balance,
             ];
@@ -434,8 +503,12 @@ class StudentLedgerController extends Controller
     public function loadPaymentModal($studentId)
     {
         $student = Student::with('feeStructures')->findOrFail($studentId);
-        return view('accounts.ledger.create', compact('student'));
+        $miscellaneousFee = MiscellaneousFee::where('student_id', $studentId)->get();
+        return view('accounts.ledger.create', compact('student', 'miscellaneousFee'));
     }
+
+
+
 
 
 
@@ -444,19 +517,51 @@ class StudentLedgerController extends Controller
 
     // public function savePayment(Request $request)
     // {
-    //     //  dd($request);
     //     try {
+    //         $studentId    = $request->student_id;
+    //         $studentFeeId = $request->student_fee_id;
+    //         $amount       = $request->amount;
+
+    //         // ✅ Fetch fee structure for the selected semester
+    //         $fee = StudentFeeStructure::findOrFail($studentFeeId);
+
+    //         // ✅ Calculate total paid so far for this semester
+    //         $paid = StudentLedger::where('student_id', $studentId)
+    //             ->where('student_fee_id', $studentFeeId)
+    //             ->where('transaction_type', 'credit')
+    //             ->sum('amount');
+
+    //         $balance = $fee->amount - $paid;
+
+    //         // ✅ Check if balance is zero
+    //         if ($balance <= 0) {
+    //             return response()->json([
+    //                 'status'  => 'error',
+    //                 'message' => 'This semester is already fully paid. Cannot add more payment.'
+    //             ]);
+    //         }
+
+    //         // ✅ Check if amount exceeds balance
+    //         if ($amount > $balance) {
+    //             return response()->json([
+    //                 'status'  => 'error',
+    //                 'message' => 'Payment amount exceeds the remaining balance for this semester.'
+    //             ]);
+    //         }
+
+    //         // 🔹 Save ledger entry
     //         $ledger = StudentLedger::create([
-    //             'student_id'       => $request->student_id,
-    //             'student_fee_id'   => $request->student_fee_id, // <- add this
+    //             'student_id'       => $studentId,
+    //             'student_fee_id'   => $studentFeeId,
     //             'transaction_type' => 'credit',
-    //             'amount'           => $request->amount,
+    //             'amount'           => $amount,
     //             'transaction_date' => $request->transaction_date,
     //             'payment_mode'     => $request->payment_mode,
     //             'utr_no'           => $request->utr_no,
     //             'remarks'          => $request->remarks,
     //         ]);
 
+    //         // 🔹 Generate invoice
     //         StudentInvoice::create([
     //             'ledger_id'  => $ledger->id,
     //             'invoice_no' => 'INV-' . strtoupper(Str::random(6)),
@@ -470,63 +575,72 @@ class StudentLedgerController extends Controller
 
 
     public function savePayment(Request $request)
-{
-    try {
-        $studentId    = $request->student_id;
-        $studentFeeId = $request->student_fee_id;
-        $amount       = $request->amount;
+    {
 
-        // ✅ Fetch fee structure for the selected semester
-        $fee = StudentFeeStructure::findOrFail($studentFeeId);
+        // dd($request->all());
+        try {
+            $paymentType = $request->payment_type;
 
-        // ✅ Calculate total paid so far for this semester
-        $paid = StudentLedger::where('student_id', $studentId)
-            ->where('student_fee_id', $studentFeeId)
-            ->where('transaction_type', 'credit')
-            ->sum('amount');
+            if ($paymentType === 'student_fee') {
+                // Existing student fee payment logic
+                $studentId    = $request->student_id;
+                $studentFeeId = $request->student_fee_id;
+                $amount       = $request->amount;
 
-        $balance = $fee->amount - $paid;
+                $fee = StudentFeeStructure::findOrFail($studentFeeId);
+                $paid = StudentLedger::where('student_id', $studentId)
+                    ->where('student_fee_id', $studentFeeId)
+                    ->where('transaction_type', 'credit')
+                    ->sum('amount');
 
-        // ✅ Check if balance is zero
-        if ($balance <= 0) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'This semester is already fully paid. Cannot add more payment.'
+                $balance = $fee->amount - $paid;
+
+                if ($balance <= 0) {
+                    return response()->json(['status' => 'error', 'message' => 'This semester is already fully paid.']);
+                }
+
+                if ($amount > $balance) {
+                    return response()->json(['status' => 'error', 'message' => 'Payment exceeds remaining balance.']);
+                }
+
+                $ledger = StudentLedger::create([
+                    'student_id'       => $studentId,
+                    'student_fee_id'   => $studentFeeId,
+                    'transaction_type' => 'credit',
+                    'amount'           => $amount,
+                    'transaction_date' => $request->transaction_date,
+                    'payment_mode'     => $request->payment_mode,
+                    'utr_no'           => $request->utr_no,
+                    'remarks'          => $request->remarks,
+                ]);
+            } elseif ($paymentType === 'miscellaneous_fee') {
+                // Handle miscellaneous fee payment
+                $miscFee = MiscellaneousFee::findOrFail($request->miscellaneous_id);
+
+                $ledger = StudentLedger::create([
+                    'student_id'       => $request->student_id,
+                    'miscellaneous_id'  => $request->miscellaneous_id, // ✅ Add this line
+                    'transaction_type' => 'credit',
+                    'amount'           =>  $request->amount,
+                    'transaction_date' => $request->transaction_date,
+                    'payment_mode'     => $request->payment_mode,
+                    'utr_no'           => $request->utr_no,
+                    'remarks'          => $request->remarks ?? 'Payment for miscellaneous fee: ' . $miscFee->name,
+                ]);
+            }
+
+            // Generate invoice for both cases
+            StudentInvoice::create([
+                'ledger_id'  => $ledger->id,
+                'invoice_no' => 'INV-' . strtoupper(Str::random(6)),
             ]);
+
+            return response()->json(['status' => 'success', 'message' => 'Payment recorded successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-
-        // ✅ Check if amount exceeds balance
-        if ($amount > $balance) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Payment amount exceeds the remaining balance for this semester.'
-            ]);
-        }
-
-        // 🔹 Save ledger entry
-        $ledger = StudentLedger::create([
-            'student_id'       => $studentId,
-            'student_fee_id'   => $studentFeeId,
-            'transaction_type' => 'credit',
-            'amount'           => $amount,
-            'transaction_date' => $request->transaction_date,
-            'payment_mode'     => $request->payment_mode,
-            'utr_no'           => $request->utr_no,
-            'remarks'          => $request->remarks,
-        ]);
-
-        // 🔹 Generate invoice
-        StudentInvoice::create([
-            'ledger_id'  => $ledger->id,
-            'invoice_no' => 'INV-' . strtoupper(Str::random(6)),
-        ]);
-
-        return response()->json(['status' => 'success', 'message' => 'Payment added successfully.']);
-
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
     }
-}
+
 
 
 

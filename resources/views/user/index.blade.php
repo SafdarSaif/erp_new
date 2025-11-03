@@ -33,7 +33,7 @@
                             <th></th>
                             <th>User</th>
                             <th>Role</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Created On</th>
                             <th>Actions</th>
                         </tr>
@@ -65,7 +65,7 @@
             { data: '', orderable: false, searchable: false }, // Responsive
             { data: 'name' },
             { data: 'role' },
-            { data: 'status', orderable: false },
+            // { data: 'status', orderable: false },
             { data: 'created_at' },
             { data: '', orderable: false, searchable: false } // Actions
         ],
@@ -125,26 +125,26 @@
 },
 
 
+            // {
+            //     targets: 3, // Status toggle
+            //     render: function(data, type, full) {
+            //         var checked = full.status == 1 ? 'checked' : '';
+            //         var statusText = full.status == 1 ? 'Active' : 'In-Active';
+            //         var disabled = !canEdit ? 'onclick="return false;"' : 'onclick="updateActiveStatus(\'/users/status/'+full.id+'\', \'users-datatable\')"';
+            //         return `<div class="form-check form-switch form-switch-success mb-0">
+            //                     <input class="form-check-input" type="checkbox" role="switch" ${checked} ${disabled}>
+            //                     <label class="form-check-label">${statusText}</label>
+            //                 </div>`;
+            //     }
+            // },
             {
-                targets: 3, // Status toggle
-                render: function(data, type, full) {
-                    var checked = full.status == 1 ? 'checked' : '';
-                    var statusText = full.status == 1 ? 'Active' : 'In-Active';
-                    var disabled = !canEdit ? 'onclick="return false;"' : 'onclick="updateActiveStatus(\'/users/status/'+full.id+'\', \'users-datatable\')"';
-                    return `<div class="form-check form-switch form-switch-success mb-0">
-                                <input class="form-check-input" type="checkbox" role="switch" ${checked} ${disabled}>
-                                <label class="form-check-label">${statusText}</label>
-                            </div>`;
-                }
-            },
-            {
-                targets: 4, // Created date
+                targets: 3, // Created date
                 render: function(data, type, full) {
                     return '<span class="text-truncate">'+full.created_at+'</span>';
                 }
             },
             {
-                targets: 5, // Actions
+                targets: 4, // Actions
                 visible: canEdit,
                 render: function(data, type, full) {
                     return `<div class="hstack gap-2">

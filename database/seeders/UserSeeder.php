@@ -15,14 +15,22 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::firstOrCreate([
-            'name' => 'Super Admin',
-            'email' => 'superadmins@example.com',
-            'password' => Hash::make('password')
-          ]);
+       $user = User::firstOrCreate(
+            ['email' => 'superadmins@example.com'], // Unique identifier
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password'),
+                'mobile' => '1234567891',
+            ]
+        );
 
-          $role = Role::where('name', 'Super Admin')->first();
-          $user->assignRole([$role->id]);
+        // Find the role
+        $role = Role::firstOrCreate(['name' => 'Super Admin']);
+
+        // Assign role only if not already assigned
+        if (!$user->hasRole($role->name)) {
+            $user->assignRole($role);
+        }
     }
 
     //  public function run(): void

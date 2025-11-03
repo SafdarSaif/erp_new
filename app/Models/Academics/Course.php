@@ -5,7 +5,7 @@ namespace App\Models\Academics;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Academics\Department;
-use App\Models\Academics\CourseType;
+use App\Models\Settings\CourseType;
 
 class Course extends Model
 {
@@ -31,10 +31,10 @@ class Course extends Model
     /**
      * Get the course type that owns the course.
      */
-    // public function courseType()
-    // {
-    //     return $this->belongsTo(CourseType::class, 'course_type_id');
-    // }
+    public function courseType()
+    {
+        return $this->belongsTo(CourseType::class, 'course_type_id');
+    }
 
     // SubCourses under this course
     public function subCourses()
