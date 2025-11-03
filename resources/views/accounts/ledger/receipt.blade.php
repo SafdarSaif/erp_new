@@ -142,10 +142,10 @@
 <body>
     <div class="receipt-container">
 
-        <div class="watermark">ABCD</div>
+        <div class="watermark">{{ $theme }}</div>
 
         <div class="header">
-            <h1>ABCD</h1>
+            <h1>{{ $theme }}</h1>
             <p>Official Payment Receipt</p>
         </div>
 
@@ -196,7 +196,7 @@
 
         <div class="footer">
             <p>This is a computer-generated receipt and does not require a physical signature.</p>
-            <p>© {{ date('Y') }} ABCD. All rights reserved.</p>
+            <p>© {{ date('Y') }} {{ $theme }}. All rights reserved.</p>
         </div>
     </div>
 </body>
