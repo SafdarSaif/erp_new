@@ -295,43 +295,49 @@ class ReportController extends Controller
     }
 
 
+
+
     // public function getExpense(Request $request)
     // {
     //     try {
-    //         $dates = json_decode($request->daterange, true);  // convert to array
+    //         $dates = json_decode($request->daterange, true);
     //         $university = $request->university;
     //         $mode = $request->mode;
+    //         $student = $request->student;
+    //         $course = $request->course;
 
-    //         // Get all university fee records
-    //         $expenses = UniversityFees::with('university');
+    //         $expenses = \App\Models\UniversityFees::with(['university', 'student', 'course'])->where('status', 'success');
 
-    //         // Filter by university
     //         if (!empty($university)) {
-    //             $expenses = $expenses->where('university_id', $university);
+    //             $expenses->where('university_id', $university);
     //         }
 
-    //         // Filter by payment mode (if applicable)
     //         if (!empty($mode)) {
-    //             $expenses = $expenses->where('mode', $mode);
+    //             $expenses->where('mode', $mode);
     //         }
 
-    //         // Filter by date range
+    //         if (!empty($student)) {
+    //             $expenses->where('student_id', $student);
+    //         }
+
+    //         if (!empty($course)) {
+    //             $expenses->where('course_id', $course);
+    //         }
+
     //         if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
     //             $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
     //             $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
-    //             $expenses = $expenses->whereBetween('created_at', [$start, $end]);
+    //             $expenses->whereBetween('created_at', [$start, $end]);
     //         }
 
     //         $data = $expenses->get();
-
-    //         // Optional: Add total expense summary
     //         $totalExpense = $data->sum('amount');
 
     //         return response()->json([
     //             'data' => $data,
     //             'total' => number_format($totalExpense, 2)
     //         ]);
-    //     } catch (Exception $e) {
+    //     } catch (\Exception $e) {
     //         return response()->json([
     //             'status' => 'error',
     //             'message' => $e->getMessage()
@@ -339,53 +345,106 @@ class ReportController extends Controller
     //     }
     // }
 
+
     public function getExpense(Request $request)
-    {
-        try {
-            $dates = json_decode($request->daterange, true);
-            $university = $request->university;
-            $mode = $request->mode;
-            $student = $request->student;
-            $course = $request->course;
+{
+    try {
+        $dates = json_decode($request->daterange, true);
+        $university = $request->university;
+        $mode = $request->mode;
+        $student = $request->student;
+        $course = $request->course;
 
-            $expenses = \App\Models\UniversityFees::with(['university', 'student', 'course'])->where('status', 'success');
+        // ---------------------------------------
+        // 🟢 FETCH UNIVERSITY FEES EXPENSES
+        // ---------------------------------------
+        $feesQuery = \App\Models\UniversityFees::with(['university', 'student', 'course'])
+            ->where('status', 'success');
 
-            if (!empty($university)) {
-                $expenses->where('university_id', $university);
-            }
-
-            if (!empty($mode)) {
-                $expenses->where('mode', $mode);
-            }
-
-            if (!empty($student)) {
-                $expenses->where('student_id', $student);
-            }
-
-            if (!empty($course)) {
-                $expenses->where('course_id', $course);
-            }
-
-            if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
-                $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
-                $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
-                $expenses->whereBetween('created_at', [$start, $end]);
-            }
-
-            $data = $expenses->get();
-            $totalExpense = $data->sum('amount');
-
-            return response()->json([
-                'data' => $data,
-                'total' => number_format($totalExpense, 2)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ]);
+        if (!empty($university)) {
+            $feesQuery->where('university_id', $university);
         }
+
+        if (!empty($mode)) {
+            $feesQuery->where('mode', $mode);
+        }
+
+        if (!empty($student)) {
+            $feesQuery->where('student_id', $student);
+        }
+
+        if (!empty($course)) {
+            $feesQuery->where('course_id', $course);
+        }
+
+        if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
+            $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
+            $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
+            $feesQuery->whereBetween('created_at', [$start, $end]);
+        }
+
+        $fees = $feesQuery->get()->map(function ($item) {
+            return [
+                'source' => 'University Fees',
+                'student' => $item->student->full_name ?? '-',
+                'course' => $item->course->name ?? '-',
+                'university' => $item->university->name ?? '-',
+                'date' => $item->created_at,
+                'mode' => $item->mode ?? '-',
+                'amount' => $item->amount ?? 0,
+            ];
+        });
+
+        // ---------------------------------------
+        // 🟡 FETCH VOUCHER PAYMENTS
+        // ---------------------------------------
+        $voucherQuery = \App\Models\Voucher::with(['expenseCategory', 'payments'])
+            ->whereHas('payments', function ($q) {
+                $q->where('status', '1'); // adjust according to your status column
+            });
+
+        if (!empty($mode)) {
+            $voucherQuery->where('payment_mode', $mode);
+        }
+
+        if (!empty($dates) && isset($dates[0]) && isset($dates[1])) {
+            $start = date('Y-m-d 00:00:00', strtotime($dates[0]));
+            $end   = date('Y-m-d 23:59:59', strtotime($dates[1]));
+            $voucherQuery->whereBetween('date', [$start, $end]);
+        }
+
+        $vouchers = $voucherQuery->get()->map(function ($item) {
+            return [
+                'source' => 'Voucher Payment',
+                'student' => '-',
+                'course' => '-',
+                'university' => $item->expenseCategory->name ?? '-',
+                'date' => $item->date,
+                'mode' => $item->payment_mode ?? '-',
+                'amount' => $item->amount ?? 0,
+            ];
+        });
+
+        // ---------------------------------------
+        // 🔵 MERGE BOTH COLLECTIONS
+        // ---------------------------------------
+        $data = $fees->merge($vouchers)->sortByDesc('date')->values();
+
+        $totalExpense = $data->sum('amount');
+
+        return response()->json([
+            'data' => $data,
+            'total' => number_format($totalExpense, 2),
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ]);
     }
+}
+
 
 
 

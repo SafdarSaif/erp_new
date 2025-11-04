@@ -29,7 +29,7 @@
                                         <th>Amount</th>
                                         <th>Payment Mode</th>
                                         <th>Date</th>
-                                                                                <th>Action</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -74,7 +74,7 @@
                         data: 'date',
                         name: 'date'
                     },
-                   
+
                     {
                         data: 'action',
                         name: 'action',
@@ -95,7 +95,7 @@
 
             // ✅ Handle Mark Paid Click
             $(document).on('click', '.mark-paid', function() {
-                var id = $(this).data('id');              
+                var id = $(this).data('id');
 
                 $.ajax({
                     url: `/accounts/payments/${id}/update-status`,

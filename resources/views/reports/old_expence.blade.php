@@ -15,7 +15,6 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="row mb-3">
-                    <!-- Date Range -->
                     <div class="col-md-2">
                         <label for="reportrange">Expense Date</label>
                         <div id="reportrange"
@@ -25,7 +24,6 @@
                         </div>
                     </div>
 
-                    <!-- Payment Mode -->
                     <div class="col-md-2">
                         <label for="payment_mode">Payment Mode</label>
                         <select name="payment_mode" id="payment_mode" class="form-select">
@@ -37,60 +35,56 @@
                         </select>
                     </div>
 
-                    <!-- University -->
                     <div class="col-md-2">
                         <label for="university">University</label>
                         <select name="university" id="university" class="form-select">
                             <option value="">-- Select University --</option>
                             @foreach ($universities as $university)
-                            <option value="{{ $university->id }}">{{ $university->name }}</option>
+                                <option value="{{ $university->id }}">{{ $university->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Student -->
                     <div class="col-md-2">
                         <label for="student">Student</label>
                         <select name="student" id="student" class="form-select">
                             <option value="">-- Select Student --</option>
                             @foreach ($students as $student)
-                            <option value="{{ $student->id }}">{{ $student->full_name }}</option>
+                                <option value="{{ $student->id }}">{{ $student->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Course -->
                     <div class="col-md-2">
                         <label for="course">Course</label>
                         <select name="course" id="course" class="form-select">
                             <option value="">-- Select Course --</option>
                             @foreach ($courses as $course)
-                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                <option value="{{ $course->id }}">{{ $course->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Generate Button -->
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="applyFilter()">Generate</button>
                     </div>
-
-                    <!-- Download Buttons -->
                     <div class="col-md-3 text-end">
-                        <button class="btn btn-primary mt-5" onclick="downloadCSV()">Download CSV</button>
-                        <button class="btn btn-danger mt-5" onclick="exportPDF()">Download PDF</button>
+                        <button class="btn btn-primary mt-5" onclick="downloadCSV()">
+                            DownLoad CSV
+                        </button>
+                        <button class="btn btn-primary mt-5" onclick="exportPDF()">
+                            DownLoad PDF
+                        </button>
                     </div>
                 </div>
 
-                <!-- Expense Table -->
                 <table id="expense-table" class="table table-hover align-middle table-bordered table-striped w-100">
                     <thead class="bg-light">
                         <tr>
                             <th>#</th>
-                            <th>Source</th>
                             <th>Student</th>
                             <th>Course</th>
-                            <th>University / Expense Category</th>
+                            <th>University</th>
                             <th>Expense Date</th>
                             <th>Payment Mode</th>
                             <th>Amount</th>
@@ -99,7 +93,6 @@
                     <tbody id="expenseTable"></tbody>
                 </table>
 
-                <!-- Total -->
                 <div class="text-end mt-3">
                     <h5 class="fw-bold">Total Expense: ₹<span id="totalExpense">0.00</span></h5>
                 </div>
@@ -116,9 +109,8 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-
 <script type="text/javascript">
-    $(function() {
+$(function() {
     var start = moment().subtract(29, 'days');
     var end = moment();
 
@@ -170,11 +162,10 @@ function applyFilter() {
                     html += `
                         <tr>
                             <td>${key + 1}</td>
-                            <td>${val.source ?? '-'}</td>
-                            <td>${val.student ?? '-'}</td>
-                            <td>${val.course ?? '-'}</td>
-                            <td>${val.university ?? '-'}</td>
-                            <td>${val.date ? new Date(val.date).toLocaleDateString() : '-'}</td>
+                            <td>${val.student?.full_name ?? '-'}</td>
+                            <td>${val.course?.name ?? '-'}</td>
+                            <td>${val.university?.name ?? '-'}</td>
+                            <td>${val.created_at ? new Date(val.created_at).toLocaleDateString() : '-'}</td>
                             <td>${val.mode ?? '-'}</td>
                             <td>₹${parseFloat(val.amount).toFixed(2)}</td>
                         </tr>
@@ -191,30 +182,22 @@ function applyFilter() {
                 `);
                 $('#totalExpense').text('0.00');
             }
-        },
-        // error: function(err) {
-        //     alert("Error fetching data. Check console for details.");
-        //     console.error(err);
-        // }
-        error: function (err) {
-    toastr.error("Error fetching data. Please check the console for more details.", "Error");
-    console.error("AJAX Error:", err);
-}
-
+        }
     });
 }
 
-function downloadCSV() {
-    let table = document.getElementById("expense-table");
+function downloadCSV(){
+    let table = document.getElementById("expense-table"); // table ka id
     let workbook = XLSX.utils.table_to_book(table);
-    XLSX.writeFile(workbook, 'expense_report.xlsx');
+    XLSX.writeFile(workbook, 'table_data.xlsx');
 }
 
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     var doc = new jsPDF();
-    doc.autoTable({ html: '#expense-table', startY: 10 });
-    doc.save('expense_report.pdf');
+
+    doc.autoTable({ html: '#expense-table' }); // table ka id yaha bhi same
+    doc.save('table_data.pdf');
 }
 </script>
 @endsection
