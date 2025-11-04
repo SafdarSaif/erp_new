@@ -100,7 +100,8 @@
                                 ->where('student_fee_id', $sem['id'] ?? 0)
                                 ->where('transaction_type', 'credit')
                                 ->sum('amount');
-                                $balance = $sem['amount'] - $sem['discount'] - $paid;
+                                $discount = isset($sem['discount'])??0;
+                                $balance = $sem['amount'] - $discount - $paid;
                                 @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -114,7 +115,7 @@
                                     </td>
                                     <td>
                                         <input type="number" class="form-control text-center" name="discount[]"
-                                            value="{{$sem['discount']}}" step="0.01" required>
+                                            value="{{$discount}}" step="0.01" required>
                                     </td>
                                     <td>
                                         <span class="fw-bold text-danger">₹{{ number_format($balance, 2) }}</span>
