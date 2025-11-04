@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -208,9 +209,32 @@ class VoucherController extends Controller
         try {
             $voucher = Voucher::findOrFail($id);
 
+            // if ($request->action === 'approve') {
+            //     $voucher->status = 1;
+            //     $message = 'Voucher approved successfully!';
+            //     $voucherData=Voucher::find($id);
+            //     $pay = new Payment();
+            //     $pay->voucher_id = $voucher->id;
+            //     $pay->user_by = $voucher->added_by;
+            //     $pay->status = 0; // 0 = Paid (active)
+            //     $pay->save();
+            // }
             if ($request->action === 'approve') {
+                // ✅ Fetch the voucher first
+                $voucher = Voucher::findOrFail($id);
+
+                // ✅ Update voucher status
                 $voucher->status = 1;
-                $message = 'Voucher approved successfully!';
+                $voucher->save();
+
+                // ✅ Create related payment
+                $pay = new Payment();
+                $pay->voucher_id = $voucher->id;
+                $pay->user_by = $voucher->added_by;
+                $pay->status = 0; // 0 = Paid (active)              
+                $pay->save();
+
+                $message = 'Voucher approved and payment record created successfully!';
             } elseif ($request->action === 'reject') {
                 $voucher->status = 2;
                 $voucher->reject_comment = $request->comment;

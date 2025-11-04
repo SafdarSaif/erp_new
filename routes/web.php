@@ -27,6 +27,7 @@ use App\Http\Controllers\StudentLedgerController;
 use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MiscellaneousFeeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Settings\StatusController;
 use App\Http\Controllers\Settings\QueryHeadController;
 use App\Http\Controllers\Settings\ThemeSettingsController;
@@ -300,6 +301,10 @@ Route::prefix('accounts')->group(function () {
     Route::get('/fees/edit/{id}', [StudentFeeStructureController::class, 'edit'])->name('fees.edit');
     Route::post('/fees/update/{id}', [StudentFeeStructureController::class, 'update'])->name('fees.update');
     Route::delete('/fees/destroy/{id}', [StudentFeeStructureController::class, 'destroy'])->name('fees.destroy');
+
+    //Payment Routes
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::post('/payments/{id}/update-status', [PaymentController::class, 'updateStatus'])->name('payments.updateStatus');
 
 
     Route::get('/student-fee-info/{id}', [StudentFeeStructureController::class, 'getStudentFeeInfo'])->name('fees.info');

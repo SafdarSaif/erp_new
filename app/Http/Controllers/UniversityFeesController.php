@@ -23,7 +23,7 @@ class UniversityFeesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+   public function index(Request $request)
     {
         // dd('here');
         if ($request->ajax()) {

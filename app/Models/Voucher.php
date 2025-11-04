@@ -26,4 +26,8 @@ class Voucher extends Model
     {
         return $this->belongsTo(ExpenseCategory::class, 'expense_category_id');
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'voucher_id', 'id');
+    }
 }
