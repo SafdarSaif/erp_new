@@ -36,7 +36,7 @@ class MenuSeeder extends Seeder
                 "is_active" => "1",
                 "is_searchable" => "0",
             ],
-           
+
             [
                 "id" => 4,
                 "added_by" => null,
@@ -518,7 +518,49 @@ class MenuSeeder extends Seeder
                 "permission" => null,
                 "is_active" => "1",
                 "is_searchable" => "0",
-            ]
+            ],
+
+
+              // New menus
+            [
+                "id" => 43,
+                "added_by" => null,
+                "name" => "Expense Category",
+                "parent_id" => 1,
+                "is_parent" => "0",
+                "url" => "/settings/expensecategory",
+                "icon" => null,
+                "position" => 11,
+                "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
+            [
+                "id" => 44,
+                "added_by" => null,
+                "name" => "Voucher",
+                "parent_id" => 29,
+                "is_parent" => "0",
+                "url" => "/accounts/vouchers",
+                "icon" => null,
+                "position" => 3,
+                "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
+            [
+                "id" => 45,
+                "added_by" => null,
+                "name" => "Voucher Payment",
+                "parent_id" => 29,
+                "is_parent" => "0",
+                "url" => "/accounts/payments",
+                "icon" => null,
+                "position" => 4,
+                "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
         ];
 
         foreach ($menus as $menu) {
