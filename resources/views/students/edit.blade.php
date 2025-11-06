@@ -227,50 +227,9 @@
 @endsection
 
 @section('scripts')
+
+
 {{-- <script>
-    $(document).ready(function() {
-    $("#student-form").submit(function(e) {
-        e.preventDefault();
-        $(':input[type="submit"]').prop('disabled', true);
-
-        var formData = new FormData(this);
-        formData.append("_token", "{{ csrf_token() }}");
-        formData.append("_method", "PUT"); // Add this line
-
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST', // Even for PUT, Laravel will detect via @method('PUT')
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                $(':input[type="submit"]').prop('disabled', false);
-                if(response.status === 'success') {
-                    toastr.success(response.message);
-                    window.location.href = "{{ route('students.index') }}";
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function(xhr) {
-                $(':input[type="submit"]').prop('disabled', false);
-                if(xhr.status === 422) {
-                    var errors = xhr.responseJSON.errors;
-                    $.each(errors, function(key, value) {
-                        toastr.error(value[0]);
-                    });
-                } else {
-                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
-                }
-            }
-        });
-    });
-});
-</script> --}}
-
-<script>
 $(document).ready(function() {
     // Set CSRF token for all AJAX requests
     $.ajaxSetup({
@@ -316,5 +275,118 @@ $(document).ready(function() {
         });
     });
 });
+</script> --}}
+
+<script>
+$(document).ready(function() {
+    // Set CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
+
+    var selectedUniversity = '{{ old("university_id", $student->university_id) }}';
+    var selectedCourse = '{{ old("course_id", $student->course_id) }}';
+    var selectedSubCourse = '{{ old("sub_course_id", $student->sub_course_id) }}';
+
+    var courseSelect = $('select[name="course_id"]');
+    var subCourseSelect = $('select[name="sub_course_id"]');
+
+    // Function to load courses
+    function loadCourses(universityId, selectedCourseId = null) {
+        courseSelect.html('<option value="">-- Select Course --</option>');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+        if (universityId) {
+            $.get('/students/get-courses/' + universityId, function(data) {
+                $.each(data, function(key, course) {
+                    courseSelect.append('<option value="'+course.id+'">'+course.name+'</option>');
+                });
+                if(selectedCourseId) {
+                    courseSelect.val(selectedCourseId).trigger('change');
+                }
+            });
+        }
+    }
+
+    // Function to load subcourses
+    function loadSubCourses(courseId, selectedSubCourseId = null) {
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+        if(courseId) {
+            $.get('/students/get-subcourses/' + courseId, function(data) {
+                $.each(data, function(key, sub) {
+                    subCourseSelect.append('<option value="'+sub.id+'">'+sub.name+'</option>');
+                });
+                if(selectedSubCourseId) {
+                    subCourseSelect.val(selectedSubCourseId);
+                }
+            });
+        }
+    }
+
+    // Load courses on page load if university is selected
+    if(selectedUniversity) {
+        loadCourses(selectedUniversity, selectedCourse);
+    }
+
+    // Load subcourses on page load if course is selected
+    if(selectedCourse) {
+        loadSubCourses(selectedCourse, selectedSubCourse);
+    }
+
+    // =======================
+    // Dependent Dropdowns
+    // =======================
+    $('select[name="university_id"]').on('change', function() {
+        var universityId = $(this).val();
+        loadCourses(universityId);
+    });
+
+    $('select[name="course_id"]').on('change', function() {
+        var courseId = $(this).val();
+        loadSubCourses(courseId);
+    });
+
+    // =======================
+    // Student Form Submission
+    // =======================
+    $("#student-form").submit(function(e) {
+        e.preventDefault();
+        $(':input[type="submit"]').prop('disabled', true);
+
+        var formData = new FormData(this);
+        formData.append("_method", "PUT"); // for Laravel PUT
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST', // Laravel will detect PUT from _method
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false);
+                if(response.status === 'success') {
+                    toastr.success(response.message);
+                    window.location.href = "{{ route('students.index') }}";
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false);
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
+                }
+            }
+        });
+    });
+});
 </script>
+
 @endsection

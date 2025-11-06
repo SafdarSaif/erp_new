@@ -204,8 +204,8 @@
 @section('scripts')
 
 
-<script>
-$(document).ready(function() {
+{{-- <script>
+    $(document).ready(function() {
     $("#student-form").submit(function(e) {
         e.preventDefault(); // Prevent default form submission
         $(':input[type="submit"]').prop('disabled', true); // Disable submit button
@@ -248,7 +248,95 @@ $(document).ready(function() {
         });
     });
 });
+</script> --}}
+
+
+
+<script>
+    $(document).ready(function() {
+
+    // =======================
+    // Dependent Dropdowns
+    // =======================
+
+    // On university change, fetch courses
+    $('select[name="university_id"]').on('change', function() {
+        var universityId = $(this).val();
+        var courseSelect = $('select[name="course_id"]');
+        var subCourseSelect = $('select[name="sub_course_id"]');
+
+        courseSelect.html('<option value="">-- Select Course --</option>');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (universityId) {
+            $.get('/students/get-courses/' + universityId, function(data) {
+                $.each(data, function(key, course) {
+                    courseSelect.append('<option value="'+course.id+'">'+course.name+'</option>');
+                });
+            });
+        }
+    });
+
+    // On course change, fetch sub courses
+    $('select[name="course_id"]').on('change', function() {
+        var courseId = $(this).val();
+        var subCourseSelect = $('select[name="sub_course_id"]');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (courseId) {
+            $.get('/students/get-subcourses/' + courseId, function(data) {
+                $.each(data, function(key, sub) {
+                    subCourseSelect.append('<option value="'+sub.id+'">'+sub.name+'</option>');
+                });
+            });
+        }
+    });
+
+    // =======================
+    // Student Form Submission
+    // =======================
+    $("#student-form").submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        $(':input[type="submit"]').prop('disabled', true); // Disable submit button
+
+        var formData = new FormData(this);
+        formData.append("_token", "{{ csrf_token() }}");
+
+        $.ajax({
+            url: $(this).attr('action'), // Form action URL
+            type: $(this).attr('method'), // POST
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                if(response.status === 'success') {
+                    toastr.success(response.message); // Show success message
+                    $("#student-form")[0].reset(); // Reset the form
+                    // Optional: Redirect to students list
+                    window.location.href = "{{ route('students.index') }}";
+                } else {
+                    toastr.error(response.message); // Show error message
+                }
+            },
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                // Show validation errors
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
+                }
+            }
+        });
+    });
+
+});
 </script>
-
 @endsection
-

@@ -215,6 +215,19 @@ class StudentController extends Controller
         ]);
     }
 
+    public function getCourses($universityId)
+    {
+        $courses = Course::where('university_id', $universityId)->get();
+        return response()->json($courses);
+    }
+
+    public function getSubCourses($courseId)
+    {
+        $subCourses = SubCourse::where('course_id', $courseId)->get();
+        return response()->json($subCourses);
+    }
+
+
 
 
 
@@ -226,7 +239,7 @@ class StudentController extends Controller
      * Generate a unique Student ID.
      * Example: DEV2025U00123
      */
-    
+
     private function generateStudentUniqueId($student)
     {
         $prefix = 'DEV'; // You can change this to your institute’s code

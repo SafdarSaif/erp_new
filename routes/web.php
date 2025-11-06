@@ -270,7 +270,12 @@ Route::prefix('academics')->group(function () {
 // Students CRUD routes (outside the academics group)
 Route::prefix('students')->group(function () {
     Route::get('/', [StudentController::class, 'index'])->name('students.index');           // List all students
+
     Route::get('/create', [StudentController::class, 'create'])->name('students.create');   // Show form
+    // Fetch courses based on university
+    Route::get('/get-courses/{university}', [StudentController::class, 'getCourses'])->name('get.courses');
+    // Fetch subcourses based on course
+    Route::get('/get-subcourses/{course}', [StudentController::class, 'getSubCourses'])->name('get.subcourses');
     Route::post('/store', [StudentController::class, 'store'])->name('students.store');     // Save new student
     Route::get('/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');    // Edit student
     Route::put('/update/{id}', [StudentController::class, 'update'])->name('students.update'); // Update
