@@ -364,6 +364,8 @@ Route::prefix('reports')->name('reports.')->group(function () {
     Route::get('income', [ReportController::class, 'incomeReport'])->name('income');
     Route::get('expence', [ReportController::class, 'expenceReport'])->name('expence');
     Route::post('getExpense', [ReportController::class, 'getExpense'])->name('getExpense');
+    Route::post('getUniversityExpense', [ReportController::class, 'getUniversityExpense'])->name('getUniversityExpense');
+    Route::post('getVoucherExpense', [ReportController::class, 'getVoucherExpense'])->name('getVoucherExpense');
     Route::get('getIncome', [ReportController::class, 'getIncome'])->name('getIncome');
 
     Route::get('pendingfees', [ReportController::class, 'PendingReport'])->name('pendingfees');
