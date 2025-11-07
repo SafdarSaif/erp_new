@@ -9,7 +9,7 @@
 
         <div class="col-md-12">
             <label for="name" class="form-label">Course Type Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter course type name" required>
+            <input type="text" name="name" id="name" class="form-control" placeholder="ex: UG, PG, or Other" required>
         </div>
 
 

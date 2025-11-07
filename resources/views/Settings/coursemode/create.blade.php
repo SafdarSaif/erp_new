@@ -8,7 +8,7 @@
         @csrf
         <div class="col-md-12">
             <label for="name" class="form-label">Course Mode Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter course mode name" required>
+            <input type="text" name="name" id="name" class="form-control" placeholder="ex: Yearly, Semester-wise" required>
         </div>
 
         <div class="col-12 text-center mt-3">

@@ -2,12 +2,11 @@
 
 @section('content')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
 <main class="app-wrapper">
     <div class="app-container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-semibold mb-0">
-                <i class="bi bi-graph-up-arrow me-2"></i>Income and Expense Report
+                <i class="bi bi-graph-up-arrow me-2"></i>Income and Expense  Report
             </h4>
         </div>
 
@@ -24,11 +23,11 @@
                     </div>
 
                     <div class="col-md-3">
-                        <label>User</label>
-                        <select id="user" class="form-select">
-                            <option value="">-- All Users --</option>
-                            @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        <label>University</label>
+                        <select id="university" class="form-select">
+                            <option value="">-- All Universities --</option>
+                            @foreach($universities as $university)
+                            <option value="{{ $university->id }}">{{ $university->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -47,10 +46,10 @@
                     <thead class="bg-light">
                         <tr>
                             <th>No</th>
-                            <th>User</th>
+                            <th>University</th>
                             <th>Student Count</th>
                             <th>Income (₹)</th>
-                            <th>Expense (₹) <small>(includes Voucher Payments)</small></th>
+                            <th>Expense (₹)</th>
                             <th>Profit (₹)</th>
                         </tr>
                     </thead>
@@ -71,7 +70,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-$(function() {
+    $(function() {
     var start = moment().subtract(29, 'days');
     var end = moment();
 
@@ -83,10 +82,10 @@ $(function() {
         startDate: start,
         endDate: end,
         ranges: {
-            'Today': [moment(), moment()],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')]
+           'Today': [moment(), moment()],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')]
         }
     }, cb);
 
@@ -96,14 +95,14 @@ $(function() {
 function loadProfitReport() {
     var daterange = $('#reportrange span').html();
     var daterange = JSON.stringify(daterange.split(' to '));
-    var user = $('#user').val();
+    var university = $('#university').val();
 
     $.ajax({
         url: "/reports/getProfitReport",
         type: "POST",
         data: {
             daterange: daterange,
-            user: user,
+            university: university,
             _token: "{{ csrf_token() }}"
         },
         success: function(res) {
@@ -113,7 +112,7 @@ function loadProfitReport() {
                     html += `
                         <tr>
                             <td>${key + 1}</td>
-                            <td>${val.user}</td>
+                            <td>${val.university}</td>
                             <td>${val.student_count}</td>
                             <td>${val.income}</td>
                             <td>${val.expense}</td>
@@ -143,6 +142,10 @@ function exportPDF(){
     var doc = new jsPDF();
     doc.autoTable({ html: '#profit-table' });
     doc.save('profit_report.pdf');
+}
+
+function downloadSingle(university){
+    alert('You clicked to download report for: ' + university);
 }
 </script>
 @endsection

@@ -9,7 +9,7 @@
 
         <div class="col-md-12">
             <label for="name" class="form-label">Admission Mode Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter admission mode name" required>
+            <input type="text" name="name" id="name" class="form-control" placeholder="ex: Regular, Distance, or Other" required>
         </div>
 
         <div class="col-12 text-center mt-3">

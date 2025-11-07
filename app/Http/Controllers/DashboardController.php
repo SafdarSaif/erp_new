@@ -10,6 +10,7 @@ use App\Models\Academics\SubCourse;
 use App\Models\Academics\Subject;
 use App\Models\StudentLedger;
 use App\Models\UniversityFees;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -79,6 +80,23 @@ class DashboardController extends Controller
         return $months;
     }
 
+    // private function getMonthlyUniversityFees()
+    // {
+    //     $rows = UniversityFees::selectRaw('MONTH(date) as month, SUM(amount) as total')
+    //         ->whereYear('date', now()->year)
+    //         ->where('status', 'success')
+    //         ->groupBy('month')
+    //         ->pluck('total', 'month')
+    //         ->toArray();
+
+    //     $months = [];
+    //     for ($m = 1; $m <= 12; $m++) {
+    //         $months[] = $rows[$m] ?? 0;
+    //     }
+
+    //     return $months;
+    // }
+
     private function getMonthlyUniversityFees()
     {
         $rows = UniversityFees::selectRaw('MONTH(date) as month, SUM(amount) as total')
@@ -87,11 +105,25 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->pluck('total', 'month')
             ->toArray();
+            // dd($rows);
+
+        $rows1 = Voucher::selectRaw('MONTH(date) as month, SUM(amount) as total')
+            ->whereYear('date', now()->year)
+            ->where('status', 1)
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+            // dd($rows1);
 
         $months = [];
+
         for ($m = 1; $m <= 12; $m++) {
-            $months[] = $rows[$m] ?? 0;
+            $universityFee = $rows[$m] ?? 0;
+            $voucherPayment = $rows1[$m] ?? 0;
+            $months[] = $universityFee + $voucherPayment;
         }
+        // dd($months);
 
         return $months;
     }

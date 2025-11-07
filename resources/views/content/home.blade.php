@@ -309,7 +309,7 @@
                             <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
                                 <div class="flex-grow-1">
                                     <h5 class="mb-1">Revenue Analytics</h5>
-                                    <p class="mb-0 card-subtitle">Monthly revenue, university fee & profit trends</p>
+                                    <p class="mb-0 card-subtitle">Monthly revenue, Expense & profit trends</p>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -641,55 +641,7 @@
             console.log('monthlyRevenue:', monthlyRevenue);
             console.log('monthlyUniversityFees:', monthlyUniversityFees);
 
-            // // Revenue + University Fee Area Chart
-            // var revenueChartEl = document.querySelector("#revenue-analytics-chart");
-            // if (revenueChartEl) {
-            //     var revenueOptions = {
-            //         series: [{
-            //                 name: 'Revenue',
-            //                 data: monthlyRevenue
-            //             },
-            //             {
-            //                 name: 'University Fee',
-            //                 data: monthlyUniversityFees
-            //             }
-            //         ],
-            //         chart: {
-            //             height: 350,
-            //             type: 'area',
-            //             toolbar: {
-            //                 show: false
-            //             }
-            //         },
-            //         stroke: {
-            //             curve: 'smooth',
-            //             width: [2, 2]
-            //         },
-            //         colors: ['#556ee6', '#ff4d4f'], // Blue and Red
-            //         dataLabels: {
-            //             enabled: false
-            //         },
-            //         xaxis: {
-            //             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
-            //                 'Nov', 'Dec'
-            //             ]
-            //         },
-            //         tooltip: {
-            //             y: {
-            //                 formatter: val => '₹' + Number(val).toLocaleString()
-            //             }
-            //         },
-            //         legend: {
-            //             position: 'top'
-            //         }
-            //     };
 
-            //     try {
-            //         new ApexCharts(revenueChartEl, revenueOptions).render();
-            //     } catch (err) {
-            //         console.error('Revenue chart render error:', err);
-            //     }
-            // }
 
             // Calculate Profit = Revenue - University Fee
             var profit = monthlyRevenue.map((rev, idx) => rev - monthlyUniversityFees[idx]);
@@ -703,7 +655,7 @@
                             data: monthlyRevenue
                         },
                         {
-                            name: 'University Fee',
+                            name: 'Expense',
                             data: monthlyUniversityFees
                         },
                         {
