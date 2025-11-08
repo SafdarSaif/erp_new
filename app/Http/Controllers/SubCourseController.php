@@ -147,7 +147,10 @@ class SubCourseController extends Controller
         $courses  = Course::where('status', 1)->get();
         $courseModes = CourseMode::where('status', 1)->get(); // Pass course modes to view
         $universities = University::where('status', 1)->get();
+                // dd($subcourse);
+
         return view('academics.subcourse.edit', compact('subcourse', 'courses', 'courseModes', 'universities'));
+
     }
 
     /**

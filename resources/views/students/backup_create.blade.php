@@ -2,50 +2,198 @@
 @section('content')
 
 <main class="app-wrapper">
-    <div class="app-container">
-        <!-- Page title -->
-        <div class="hstack flex-wrap gap-3 mb-5">
-            <div class="flex-grow-1">
-                <h4 class="mb-1 fw-semibold">Students</h4>
-                <nav>
-                    <ol class="breadcrumb breadcrumb-arrow mb-0">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                        <li class="breadcrumb-item">Students</li>
-                        <li class="breadcrumb-item active" aria-current="page">All Students</li>
-                    </ol>
-                </nav>
-            </div>
+    <div class="container mt-5">
+        <!-- Page Header -->
+        <div class="text-center mb-5">
+            <h2 class="text-primary fw-bold">Add Student</h2>
+            <p class="text-muted fs-6">Please fill in the student details below</p>
         </div>
 
-        <div class="row g-4">
-            <div class="col-12">
-                <div class="card mb-0 h-100">
-                    <div class="card-body">
-                        <table id="student-table" class="table table-hover align-middle table-nowrap w-100">
-                            <thead class="bg-light bg-opacity-30">
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Mobile</th>
-                                    <th>Academic Year</th>
-                                    <th>University</th>
-                                    <th>Course Type</th>
-                                    <th>Course</th>
-                                    <th>Sub Course</th>
-                                    <th>Mode</th>
-                                    <th>Course Mode</th>
-                                    <th>Language</th>
-                                    <th>Blood Group</th>
-                                    <th>Religion</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                        </table>
+        <!-- Student Form Card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form id="student-form" action="{{ route('students.store') }}" method="POST" class="row g-4">
+                    @csrf
+
+                    <!-- Personal Details -->
+                    <h5 class="mb-3 text-secondary"><i class="bi bi-person-circle me-2"></i>Personal Details</h5>
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="full_name" class="form-control" placeholder="Enter full name" required>
                     </div>
-                </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Father Name</label>
+                        <input type="text" name="father_name" class="form-control" placeholder="Enter father name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mother Name</label>
+                        <input type="text" name="mother_name" class="form-control" placeholder="Enter mother name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Aadhaar Number</label>
+                        <input type="text" name="aadhaar_no" class="form-control" placeholder="Enter Aadhaar number">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter email">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mobile</label>
+                        <input type="text" name="mobile" class="form-control" placeholder="Enter mobile number">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="dob" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-select">
+                            <option value="">-- Select Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Academic Details -->
+                    <h5 class="mt-4 mb-3 text-secondary"><i class="bi bi-mortarboard me-2"></i>Academic Details</h5>
+                    <div class="col-md-6">
+                        <label class="form-label">Academic Year <span class="text-danger">*</span></label>
+                        <select name="academic_year_id" class="form-select" required>
+                            <option value="">-- Select Academic Year --</option>
+                            @foreach($academicYears as $year)
+                            <option value="{{ $year->id }}">{{ $year->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">University <span class="text-danger">*</span></label>
+                        <select name="university_id" class="form-select" required>
+                            <option value="">-- Select University --</option>
+                            @foreach($universities as $uni)
+                            <option value="{{ $uni->id }}">{{ $uni->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course Type <span class="text-danger">*</span></label>
+                        <select name="course_type_id" class="form-select" required>
+                            <option value="">-- Select Course Type --</option>
+                            @foreach($courseTypes as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course <span class="text-danger">*</span></label>
+                        <select name="course_id" class="form-select" required>
+                            <option value="">-- Select Course --</option>
+                            @foreach($courses as $course)
+                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sub Course <span class="text-danger">*</span></label>
+                        <select name="sub_course_id" class="form-select" required>
+                            <option value="">-- Select Sub Course --</option>
+                            @foreach($subCourses as $sub)
+                            <option value="{{ $sub->id }}">{{ $sub->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mode <span class="text-danger">*</span></label>
+                        <select name="mode_id" class="form-select" required>
+                            <option value="">-- Select Mode --</option>
+                            @foreach($modes as $mode)
+                            <option value="{{ $mode->id }}">{{ $mode->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course Mode <span class="text-danger">*</span></label>
+                        <select name="course_mode_id" class="form-select" required>
+                            <option value=""> Select Course Mode</option>
+                            @foreach($courseModes as $cm)
+                            <option value="{{ $cm->id }}">{{ $cm->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Semester</label>
+                        <input type="text" name="semester" class="form-control" placeholder="Enter semester">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course Duration</label>
+                        <input type="text" name="course_duration" class="form-control" placeholder="Enter duration" readonly>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <h5 class="mt-4 mb-3 text-secondary"><i class="bi bi-info-circle me-2"></i>Additional Details</h5>
+                    <div class="col-md-6">
+                        <label class="form-label">Language</label>
+                        <select name="language_id" class="form-select">
+                            <option value="">-- Select Language --</option>
+                            @foreach($languages as $lang)
+                            <option value="{{ $lang->id }}">{{ $lang->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Blood Group</label>
+                        <select name="blood_group_id" class="form-select">
+                            <option value="">-- Select Blood Group --</option>
+                            @foreach($bloodGroups as $bg)
+                            <option value="{{ $bg->id }}">{{ $bg->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Religion</label>
+                        <select name="religion_id" class="form-select">
+                            <option value="">-- Select Religion --</option>
+                            @foreach($religions as $rel)
+                            <option value="{{ $rel->id }}">{{ $rel->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        <select name="category_id" class="form-select">
+                            <option value="">-- Select Category --</option>
+                            @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Income</label>
+                        <input type="number" name="income" class="form-control" placeholder="Enter income" step="0.01">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Total Fee</label>
+                        <input type="number" name="total_fee" class="form-control" placeholder="Enter total fee"
+                            step="0.01">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Permanent Address</label>
+                        <textarea name="permanent_address" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Current Address</label>
+                        <textarea name="current_address" class="form-control" rows="2"></textarea>
+                    </div>
+
+
+                    <!-- Submit Button -->
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">Save Student</button>
+                        <a href="{{ route('students.index') }}"
+                            class="btn btn-outline-secondary btn-lg px-4 ms-2">Cancel</a>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
@@ -54,90 +202,164 @@
 @endsection
 
 @section('scripts')
-<script>
-$(function() {
-    var canAdd = "{{ Auth::user()->hasPermissionTo('create students') ? true : false }}";
-    var canEdit = "{{ Auth::user()->hasPermissionTo('edit students') ? true : false }}";
 
-    const addButton = canAdd ? {
-        text: 'Add Student',
-        className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
-        attr: { 'onclick': "add('{{ route('students.create') }}', 'modal-lg')" }
-    } : '';
 
-    var table = $('#student-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('students.index') }}",
-        scrollX: true, // horizontal scroll for many columns
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'full_name', name: 'full_name' },
-            { data: 'email', name: 'email' },
-            { data: 'mobile', name: 'mobile' },
-            { data: 'academic_year', name: 'academic_year' },
-            { data: 'university', name: 'university' },
-            { data: 'course_type', name: 'course_type' },
-            { data: 'course', name: 'course' },
-            { data: 'sub_course', name: 'sub_course' },
-            { data: 'mode', name: 'mode' },
-            { data: 'course_mode', name: 'course_mode' },
-            { data: 'language', name: 'language' },
-            { data: 'blood_group', name: 'blood_group' },
-            { data: 'religion', name: 'religion' },
-            { data: 'category', name: 'category' },
-            { data: 'status', name: 'status', orderable: false, searchable: false },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
-        ],
-        columnDefs: [
-            {
-                targets: 15, // status column
-                render: function(data, type, full) {
-                    var checked = full.status == 1 ? 'checked' : '';
-                    var label = full.status == 1 ? 'Active' : 'Inactive';
-                    var toggle = canEdit ? `onclick="updateActiveStatus('/students/status/${full.id}', 'student-table')"` : 'onclick="return false;"';
-                    return `<div class="form-check form-switch form-switch-success mb-3">
-                                <input class="form-check-input" type="checkbox" role="switch" ${checked} ${toggle}>
-                                <label class="form-check-label">${label}</label>
-                            </div>`;
+{{-- <script>
+    $(document).ready(function() {
+    $("#student-form").submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        $(':input[type="submit"]').prop('disabled', true); // Disable submit button
+
+        var formData = new FormData(this);
+        formData.append("_token", "{{ csrf_token() }}");
+
+        $.ajax({
+            url: $(this).attr('action'), // Form action URL
+            type: $(this).attr('method'), // POST
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                if(response.status === 'success') {
+                    toastr.success(response.message); // Show success message
+                    $("#student-form")[0].reset(); // Reset the form
+                    // Optional: Redirect to students list
+                    window.location.href = "{{ route('students.index') }}";
+                } else {
+                    toastr.error(response.message); // Show error message
                 }
             },
-            {
-                targets: 16, // action column
-                visible: canEdit,
-                render: function(data, type, full) {
-                    return `<div class="hstack gap-2 fs-15">
-                                <button class="btn btn-sm btn-light-primary" onclick="edit('/students/edit/${full.id}', 'modal-lg')">
-                                    <i class="ri-pencil-line"></i>
-                                </button>
-                                <button class="btn btn-sm btn-light-danger delete-item" onclick="destry('/students/delete/${full.id}', 'student-table')">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-                            </div>`;
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                // Show validation errors
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
                 }
             }
-        ],
-        order: [[1, 'asc']],
-        responsive: true,
-        pageLength: 10,
-        dom: '<"d-flex justify-content-between mb-2"<"dataTables_filter"f><"add_button"B>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-        buttons: [addButton],
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search Students..."
-        }
+        });
     });
 });
+</script> --}}
+
+
+
+<script>
+    $(document).ready(function() {
+
+    // =======================
+    // Dependent Dropdowns
+    // =======================
+
+    // On university change, fetch courses
+    $('select[name="university_id"]').on('change', function() {
+        var universityId = $(this).val();
+        var courseSelect = $('select[name="course_id"]');
+        var subCourseSelect = $('select[name="sub_course_id"]');
+
+        courseSelect.html('<option value="">-- Select Course --</option>');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (universityId) {
+            $.get('/students/get-courses/' + universityId, function(data) {
+                $.each(data, function(key, course) {
+                    courseSelect.append('<option value="'+course.id+'">'+course.name+'</option>');
+                });
+            });
+        }
+    });
+
+    // On course change, fetch sub courses
+    $('select[name="course_id"]').on('change', function() {
+        var courseId = $(this).val();
+        var subCourseSelect = $('select[name="sub_course_id"]');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (courseId) {
+            $.get('/students/get-subcourses/' + courseId, function(data) {
+                $.each(data, function(key, sub) {
+                    subCourseSelect.append('<option value="'+sub.id+'">'+sub.name+'</option>');
+                });
+            });
+        }
+    });
+
+
+     // =======================
+    // On Sub Course change - auto-fill Course Mode & Duration
+    // =======================
+    $('select[name="sub_course_id"]').on('change', function() {
+        var subCourseId = $(this).val();
+        var courseModeSelect = $('select[name="course_mode_id"]');
+        var courseDurationInput = $('input[name="course_duration"]');
+
+        if(subCourseId) {
+            $.get('/students/get-subcourse-details/' + subCourseId, function(data) {
+                // Display course mode as placeholder text (readonly view)
+                courseModeSelect.find('option:first').text('-- ' + data.course_mode_name + ' --');
+
+                // Display duration
+                courseDurationInput.val(data.course_duration);
+            });
+        } else {
+            courseModeSelect.find('option:first').text('-- Select Course Mode --');
+            courseDurationInput.val('');
+        }
+    });
+
+    // =======================
+    // Student Form Submission
+    // =======================
+    $("#student-form").submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        $(':input[type="submit"]').prop('disabled', true); // Disable submit button
+
+        var formData = new FormData(this);
+        formData.append("_token", "{{ csrf_token() }}");
+
+        $.ajax({
+            url: $(this).attr('action'), // Form action URL
+            type: $(this).attr('method'), // POST
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                if(response.status === 'success') {
+                    toastr.success(response.message); // Show success message
+                    $("#student-form")[0].reset(); // Reset the form
+                    // Optional: Redirect to students list
+                    window.location.href = "{{ route('students.index') }}";
+                } else {
+                    toastr.error(response.message); // Show error message
+                }
+            },
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false); // Enable submit button
+
+                // Show validation errors
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
+                }
+            }
+        });
+    });
+
+});
 </script>
-
-<style>
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-    margin-bottom: 1rem;
-}
-
-table.dataTable tbody tr.selected {
-    background-color: rgba(13, 110, 253, 0.1);
-}
-</style>
 @endsection

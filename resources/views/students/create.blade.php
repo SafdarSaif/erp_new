@@ -111,22 +111,38 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <label class="form-label">Course Mode <span class="text-danger">*</span></label>
                         <select name="course_mode_id" class="form-select" required>
-                            <option value="">-- Select Course Mode --</option>
+                            <option value=""> Select Course Mode</option>
                             @foreach($courseModes as $cm)
                             <option value="{{ $cm->id }}">{{ $cm->name }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" name="course_mode_id" id="course_mode_id">
+
+                    </div> --}}
+
+                    <div class="col-md-6">
+                        <label class="form-label">Course Mode <span class="text-danger">*</span></label>
+
+                        <!-- visible dropdown (for display only) -->
+                        <select id="course_mode_display" class="form-select" disabled>
+                            <option value="">Select Course Mode</option>
+                        </select>
+
+                        <!-- hidden field sent to backend -->
+                        <input type="hidden" name="course_mode_id" id="course_mode_id">
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label">Semester</label>
                         <input type="text" name="semester" class="form-control" placeholder="Enter semester">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Course Duration</label>
-                        <input type="text" name="course_duration" class="form-control" placeholder="Enter duration">
+                        <input type="text" name="course_duration" class="form-control" placeholder="Enter duration"
+                            readonly>
                     </div>
 
                     <!-- Additional Details -->
@@ -291,6 +307,37 @@
             });
         }
     });
+
+
+    // On sub course change, fetch course mode and duration
+
+$('select[name="sub_course_id"]').on('change', function() {
+    var subCourseId = $(this).val();
+    var courseModeSelect = $('#course_mode_display'); // visible dropdown
+    var hiddenCourseModeInput = $('#course_mode_id'); // hidden input
+    var courseDurationInput = $('input[name="course_duration"]'); // duration input
+
+    if (subCourseId) {
+        $.get('/students/get-subcourse-details/' + subCourseId, function(data) {
+            // Show the course mode name visibly
+            courseModeSelect.html('<option value="' + data.course_mode_id + '" selected>' + data.course_mode_name + '</option>');
+
+            // Store only ID in hidden input
+            hiddenCourseModeInput.val(data.course_mode_id);
+
+            // Set duration
+            courseDurationInput.val(data.course_duration);
+
+            // ✅ Debug: confirm value set ho gayi hai
+            console.log('Hidden Course Mode ID set:', data.course_mode_id);
+        });
+    } else {
+        // Reset fields
+        courseModeSelect.html('<option value="">-- Select Course Mode --</option>');
+        hiddenCourseModeInput.val('');
+        courseDurationInput.val('');
+    }
+});
 
     // =======================
     // Student Form Submission

@@ -76,7 +76,7 @@ class Student extends Model
     }
     public function mode()
     {
-        return $this->belongsTo(AdmissionMode::class, 'admissionmode_id ');
+        return $this->belongsTo(AdmissionMode::class, 'admissionmode_id');
     }
     public function courseMode()
     {

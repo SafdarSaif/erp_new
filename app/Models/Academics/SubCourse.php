@@ -30,7 +30,7 @@ class SubCourse extends Model
     }
     public function courseMode()
     {
-         return $this->belongsTo(CourseMode::class, 'mode_id');
+        return $this->belongsTo(CourseMode::class, 'mode_id');
     }
 
 
@@ -41,12 +41,11 @@ class SubCourse extends Model
 
 
     public function students()
-{
-    return $this->hasMany(\App\Models\Student::class, 'sub_course_id');
-}
+    {
+        return $this->hasMany(\App\Models\Student::class, 'sub_course_id');
+    }
     public function university()
     {
         return $this->belongsTo(University::class, 'university_id');
     }
-
 }

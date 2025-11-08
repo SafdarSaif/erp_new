@@ -127,7 +127,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <label class="form-label">Course Mode <span class="text-danger">*</span></label>
                         <select name="course_mode_id" class="form-select" required>
                             <option value="">-- Select Course Mode --</option>
@@ -136,7 +136,16 @@
                                 ? 'selected' : '' }}>{{ $cm->name }}</option>
                             @endforeach
                         </select>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <label class="form-label">Course Mode <span class="text-danger">*</span></label>
+                        <select id="course_mode_display" class="form-select" disabled>
+                            <option value="">Select Course Mode</option>
+                        </select>
+                        <input type="hidden" name="course_mode_id" id="course_mode_id"
+                            value="{{ old('course_mode_id', $student->course_mode_id) }}">
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label">Semester</label>
                         <input type="text" name="semester" class="form-control" placeholder="Enter semester"
@@ -145,7 +154,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Course Duration</label>
                         <input type="text" name="course_duration" class="form-control" placeholder="Enter duration"
-                            value="{{ old('course_duration', $student->course_duration) }}">
+                            value="{{ old('course_duration', $student->course_duration) }}" readonly>
                     </div>
 
                     <!-- Additional Details -->
@@ -230,7 +239,7 @@
 
 
 {{-- <script>
-$(document).ready(function() {
+    $(document).ready(function() {
     // Set CSRF token for all AJAX requests
     $.ajaxSetup({
         headers: {
@@ -278,7 +287,7 @@ $(document).ready(function() {
 </script> --}}
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function() {
     // Set CSRF token for all AJAX requests
     $.ajaxSetup({
         headers: {
@@ -333,6 +342,36 @@ $(document).ready(function() {
     if(selectedCourse) {
         loadSubCourses(selectedCourse, selectedSubCourse);
     }
+
+
+    // Handle Sub Course change (auto-load course mode + duration)
+//   $('select[name="sub_course_id"]').on('change', function() {
+//     var subCourseId = $(this).val();
+//     var courseModeSelect = $('#course_mode_display');
+//     var hiddenCourseModeInput = $('#course_mode_id');
+//     var courseDurationInput = $('input[name="course_duration"]');
+
+//     if (subCourseId) {
+//         $.get('/students/get-subcourse-details/' + subCourseId, function(data) {
+//             if (data.course_mode_id) {
+//                 courseModeSelect.html('<option value="' + data.course_mode_id + '" selected>' + data.course_mode_name + '</option>');
+//                 hiddenCourseModeInput.val(data.course_mode_id);
+//                 courseDurationInput.val(data.course_duration);
+//             } else {
+//                 toastr.error("Course mode not found for this sub course.");
+//             }
+//         }).fail(function() {
+//             toastr.error("Failed to load sub course details.");
+//         });
+//     } else {
+//         courseModeSelect.html('<option value="">-- Select Course Mode --</option>');
+//         hiddenCourseModeInput.val('');
+//         courseDurationInput.val('');
+//     }
+//   });
+
+
+
 
     // =======================
     // Dependent Dropdowns

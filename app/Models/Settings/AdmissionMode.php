@@ -14,4 +14,7 @@ class AdmissionMode extends Model
         'name',
         'status',
     ];
+
+
+    
 }

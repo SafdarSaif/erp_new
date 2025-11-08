@@ -4,11 +4,8 @@
         <p class="text-muted">Update the sub course details below</p>
     </div>
 
-    <form id="subcourse-edit-form"
-          action="{{ route('subcourse.update', $subcourse->id) }}"
-          method="POST"
-          enctype="multipart/form-data"
-          class="row g-3">
+    <form id="subcourse-edit-form" action="{{ route('subcourse.update', $subcourse->id) }}" method="POST"
+        enctype="multipart/form-data" class="row g-3">
         @csrf
 
         <!-- Hidden ID -->
@@ -20,10 +17,9 @@
             <select name="university_id" id="university_id" class="form-select" required>
                 <option value="">-- Select University --</option>
                 @foreach($universities as $uni)
-                    <option value="{{ $uni->id }}"
-                        {{ $uni->id == $subcourse->university_id ? 'selected' : '' }}>
-                        {{ $uni->name }}
-                    </option>
+                <option value="{{ $uni->id }}" {{ $uni->id == $subcourse->university_id ? 'selected' : '' }}>
+                    {{ $uni->name }}
+                </option>
                 @endforeach
             </select>
         </div>
@@ -42,9 +38,9 @@
             <select name="mode_id" id="mode_id" class="form-select" required>
                 <option value="">-- Select Mode --</option>
                 @foreach ($courseModes as $mode)
-                    <option value="{{ $mode->id }}" {{ $mode->id == $subcourse->mode_id ? 'selected' : '' }}>
-                        {{ $mode->name }}
-                    </option>
+                <option value="{{ $mode->id }}" {{ $mode->id == $subcourse->mode_id ? 'selected' : '' }}>
+                    {{ $mode->name }}
+                </option>
                 @endforeach
             </select>
         </div>
@@ -53,28 +49,28 @@
         <div class="col-md-6">
             <label for="name" class="form-label">Sub Course Name <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" value="{{ $subcourse->name }}" class="form-control"
-                   placeholder="Enter sub course name" required>
+                placeholder="Enter sub course name" required>
         </div>
 
         <!-- Short Name -->
         <div class="col-md-6">
             <label for="short_name" class="form-label">Short Name <span class="text-danger">*</span></label>
-            <input type="text" name="short_name" id="short_name" value="{{ $subcourse->short_name }}" class="form-control"
-                   placeholder="Enter short name" required>
+            <input type="text" name="short_name" id="short_name" value="{{ $subcourse->short_name }}"
+                class="form-control" placeholder="Enter short name" required>
         </div>
 
         <!-- University Fee -->
         <div class="col-md-6">
             <label for="university_fee" class="form-label">University Fees <span class="text-danger">*</span></label>
             <input type="text" name="university_fee" id="university_fee" class="form-control"
-                   value="{{ $subcourse->university_fee }}" placeholder="Enter University Fees">
+                value="{{ $subcourse->university_fee }}" placeholder="Enter University Fees">
         </div>
 
         <!-- Duration -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
             <input type="text" name="duration" id="duration" value="{{ $subcourse->duration }}" class="form-control"
-                   placeholder="Enter duration" required>
+                placeholder="Enter duration" required>
         </div>
 
         <!-- Logo Upload -->
@@ -84,9 +80,9 @@
             <small class="text-muted">Upload a logo (PNG, JPG, JPEG, SVG)</small>
 
             @if (!empty($subcourse->image))
-                <div class="mt-2">
-                    <img src="{{ asset($subcourse->image) }}" alt="Course Logo" width="80" class="rounded">
-                </div>
+            <div class="mt-2">
+                <img src="{{ asset($subcourse->image) }}" alt="Course Logo" width="80" class="rounded">
+            </div>
             @endif
         </div>
 
@@ -99,7 +95,7 @@
 </div>
 
 <script>
-$(function() {
+    $(function() {
     // Load courses when a university is selected
     function loadCourses(universityId, selectedCourseId = null) {
         var courseSelect = $('#course_id');

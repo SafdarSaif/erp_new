@@ -99,7 +99,7 @@
                 }
             }
         ],
-        order: [[1, 'desc']],
+        // order: [[1, 'DESC']],
         responsive: true,
         pageLength: 10,
         dom: '<"d-flex justify-content-between mb-2"<"dataTables_filter"f><"add_button"B>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',

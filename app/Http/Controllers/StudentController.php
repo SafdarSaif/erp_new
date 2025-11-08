@@ -51,6 +51,8 @@ class StudentController extends Controller
                 'status'
             ])->orderBy('id', 'desc');
 
+            // dd($students);
+
             return DataTables::of($students)
                 ->addIndexColumn()
                 ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-') // ✅ Add this line
@@ -226,6 +228,27 @@ class StudentController extends Controller
         $subCourses = SubCourse::where('course_id', $courseId)->get();
         return response()->json($subCourses);
     }
+
+
+    public function getSubCourseDetails($subCourseId)
+    {
+        $subCourse = SubCourse::with('courseMode')->find($subCourseId);
+
+        if ($subCourse) {
+            return response()->json([
+                'course_mode_id'   => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null), // ✅ Added line
+                'course_mode_name' => $subCourse->courseMode->name ?? '',
+                'course_duration'  => $subCourse->duration ?? ''
+            ]);
+        }
+
+        return response()->json([
+            'course_mode_id'   => '',
+            'course_mode_name' => '',
+            'course_duration'  => ''
+        ]);
+    }
+
 
 
 
