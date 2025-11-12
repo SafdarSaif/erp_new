@@ -263,19 +263,47 @@ class StudentController extends Controller
      * Example: DEV2025U00123
      */
 
-    private function generateStudentUniqueId($student)
-    {
-        $prefix = 'DEV'; // You can change this to your institute’s code
-        $year   = date('Y');
+    // private function generateStudentUniqueId($student)
+    // {
+    //     $prefix = 'DEV'; // You can change this to your institute’s code
+    //     $year   = date('Y');
 
-        // Use university short name or ID if available
-        $universityCode = str_pad($student->university_id, 2, '0', STR_PAD_LEFT);
+    //     // Use university short name or ID if available
+    //     $universityCode = str_pad($student->university_id, 2, '0', STR_PAD_LEFT);
 
-        // Combine components
-        $uniqueNumber = str_pad($student->id, 5, '0', STR_PAD_LEFT);
+    //     // Combine components
+    //     $uniqueNumber = str_pad($student->id, 5, '0', STR_PAD_LEFT);
 
-        return "{$prefix}{$year}U{$universityCode}{$uniqueNumber}";
-    }
+    //     return "{$prefix}{$year}U{$universityCode}{$uniqueNumber}";
+    // }
+
+
+
+  private function generateStudentUniqueId($student)
+{
+    $university = University::find($student->university_id);
+
+    // Use university prefix or fallback
+    $prefix = $university && !empty($university->prefix)
+        ? strtoupper($university->prefix)
+        : 'UNI'; // default prefix if not set
+
+    // Determine total length of serial digits (default 4 if not set)
+    $length = $university && $university->length > 0 ? $university->length : 4;
+
+    // Get current year
+    $year = date('Y');
+
+    // Get count of existing students for that university
+    $count = Student::where('university_id', $student->university_id)->count() + 1;
+
+    // Pad serial number according to university length
+    $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
+
+    // Final format: PREFIXYEARU000001
+    return "{$prefix}{$serial}";
+}
+
 
 
     /**

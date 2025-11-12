@@ -54,6 +54,8 @@ class UniversityController extends Controller
         // Validate input
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:255',
+            'prefix' => 'nullable|string|max:10',
+            'length' => 'nullable|integer|min:0',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ]);
 
@@ -77,6 +79,8 @@ class UniversityController extends Controller
             // Create new university
             $university = University::create([
                 'name' => $request->name,
+                'prefix' => $request->prefix,
+                'length' => $request->length,
                 'logo' => $logoPath,
             ]);
 
@@ -126,6 +130,8 @@ class UniversityController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:255',
+            'prefix' => 'nullable|string|max:10',
+            'length' => 'nullable|integer|min:0',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ]);
 
@@ -156,6 +162,8 @@ class UniversityController extends Controller
             // Update record
             $university->update([
                 'name' => $request->name,
+                'prefix' => $request->prefix,
+                'length' => $request->length,
                 'logo' => $logoPath,
             ]);
 

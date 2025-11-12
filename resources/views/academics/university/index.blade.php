@@ -26,6 +26,8 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Name</th>
+                                    <th>Prefix</th>
+                                    <th>Length</th>
                                     <th>Logo</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -60,6 +62,8 @@
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'name', name: 'name' },
+                 { data: 'prefix', name: 'prefix', defaultContent: '—' },
+        { data: 'length', name: 'length', defaultContent: '—' },
                 // {
                 //     data: 'logo',
                 //     name: 'logo',

@@ -19,7 +19,9 @@ class University extends Model
      */
     protected $fillable = [
         'name',
-        'logo'
+        'logo',
+        'prefix',
+        'length',
     ];
 
 

@@ -15,6 +15,21 @@
                 value="{{ $university->name ?? '' }}" required>
         </div>
 
+
+        <!-- Prefix -->
+        <div class="col-md-3">
+            <label for="prefix" class="form-label">Prefix</label>
+            <input type="text" name="prefix" id="prefix" class="form-control" maxlength="10"
+                value="{{ $university->prefix ?? '' }}" placeholder="e.g., HM">
+        </div>
+
+        <!-- Length -->
+        <div class="col-md-3">
+            <label for="length" class="form-label">Length</label>
+            <input type="number" name="length" id="length" class="form-control" min="1" max="10"
+                value="{{ $university->length ?? '' }}" placeholder="e.g., 6">
+        </div>
+
         <!-- Logo Upload -->
         <div class="col-md-6">
             <label for="logo" class="form-label">Logo</label>

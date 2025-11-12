@@ -84,6 +84,8 @@ class RoleController extends Controller
 
       $role = Role::find($id);
       $allotedPermissions = $role->permissions->pluck('id')->toArray();
+
+    //   dd($allotedPermissions);
       return view('user.role.edit', compact(['role', 'allotedPermissions', 'permissionData']));
     }else {
       return response()->view('errors.403', [], 403);

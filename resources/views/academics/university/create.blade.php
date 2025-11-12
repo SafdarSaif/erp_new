@@ -14,7 +14,17 @@
             <input type="text" name="name" id="name" class="form-control" placeholder="Enter university name" required>
         </div>
 
+  <!-- Prefix -->
+        <div class="col-md-3">
+            <label for="prefix" class="form-label">Prefix</label>
+            <input type="text" name="prefix" id="prefix" class="form-control" maxlength="10" placeholder="e.g., HM">
+        </div>
 
+        <!-- Length -->
+        <div class="col-md-3">
+            <label for="length" class="form-label">Length</label>
+            <input type="number" name="length" id="length" class="form-control" min="1" max="10" placeholder="e.g., 6">
+        </div>
 
 
 
