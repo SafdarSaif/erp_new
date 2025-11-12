@@ -90,7 +90,7 @@ Route::prefix('settings')->group(function () {
     Route::get('/coursetypes/status/{id}', [CourseTypeController::class, 'status'])->name('coursetypes.status');
     Route::delete('/coursetypes/delete/{id}', [CourseTypeController::class, 'destroy'])->name('coursetypes.delete');
 
-    // admission mode
+    // Admission mode
     Route::get('/admissionmodes', [AdmissionModeController::class, 'index'])->name('admissionmodes');
     Route::post('/admissionmodes', [AdmissionModeController::class, 'store'])->name('admissionmodes.store');
     Route::get('/admissionmodes/create', [AdmissionModeController::class, 'create'])->name('admissionmodes.create');
@@ -99,7 +99,7 @@ Route::prefix('settings')->group(function () {
     Route::get('/admissionmodes/status/{id}', [AdmissionModeController::class, 'status'])->name('admissionmodes.status');
     Route::delete('/admissionmodes/delete/{id}', [AdmissionModeController::class, 'destroy'])->name('admissionmodes.delete');
 
-    // course mode
+    // Course mode
     Route::get('coursemodes', [CourseModeController::class, 'index'])->name('coursemodes');
     Route::get('coursemodes/create', [CourseModeController::class, 'create'])->name('coursemodes.create');
     Route::post('coursemodes/store', [CourseModeController::class, 'store'])->name('coursemodes.store');
@@ -153,7 +153,7 @@ Route::prefix('settings')->group(function () {
     Route::delete('status/delete/{id}', [StatusController::class, 'destroy'])->name('status.delete');
     Route::get('status/status/{id}', [StatusController::class, 'status'])->name('status.status');
 
-    //queryhead
+    //Queryhead
     Route::get('queryhead', [QueryHeadController::class, 'index'])->name('queryhead.index');
     Route::get('queryhead/create', [QueryHeadController::class, 'create'])->name('queryhead.create');
     Route::post('queryhead/store', [QueryHeadController::class, 'store'])->name('queryhead.store');
@@ -255,6 +255,7 @@ Route::prefix('academics')->group(function () {
     Route::delete('/subcourse/destroy/{id}', [SubCourseController::class, 'destroy'])->name('subcourse.destroy');
     Route::get('/subcourse/status/{id}', [SubCourseController::class, 'status'])->name('subcourse.status');
     Route::get('course/by-university/{id}', [SubCourseController::class, 'getCoursesByUniversity'])->name('courses.byUniversity');
+
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -270,7 +271,6 @@ Route::prefix('academics')->group(function () {
 // Students CRUD routes (outside the academics group)
 Route::prefix('students')->group(function () {
     Route::get('/', [StudentController::class, 'index'])->name('students.index');           // List all students
-
     Route::get('/create', [StudentController::class, 'create'])->name('students.create');   // Show form
     // Fetch courses based on university
     Route::get('/get-courses/{university}', [StudentController::class, 'getCourses'])->name('get.courses');
@@ -282,7 +282,7 @@ Route::prefix('students')->group(function () {
     Route::get('/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');    // Edit student
     Route::put('/update/{id}', [StudentController::class, 'update'])->name('students.update'); // Update
     Route::delete('/destroy/{id}', [StudentController::class, 'destroy'])->name('students.destroy'); // Delete
-    Route::get('/status/{id}', [StudentController::class, 'updateStatus'])->name('students.status');     // Toggle status
+    Route::get('/status/{id}', [StudentController::class, 'updateStatus'])->name('students.status');     // Toggle Status
     Route::get('/view/{id}', [StudentController::class, 'show'])->name('students.view');
     Route::get('/{id}/print', [StudentController::class, 'print'])->name('students.print');
     Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');
@@ -301,6 +301,7 @@ Route::prefix('accounts')->group(function () {
     Route::post('/university-fee/update-fee/{studentId}', [UniversityFeesController::class, 'updateFee'])->name('university-fee.updateFee');
     Route::get('/university-payments', [UniversityFeesController::class, 'UnversityFeeTransactionHistory'])
         ->name('university-payments.index');
+        
     // Student Fee Management
     Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
     Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');
