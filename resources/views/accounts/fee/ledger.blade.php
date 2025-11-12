@@ -100,8 +100,11 @@
                                 ->where('student_fee_id', $sem['id'] ?? 0)
                                 ->where('transaction_type', 'credit')
                                 ->sum('amount');
-                                $discount = isset($sem['discount'])??0;
+                                // $discount = isset($sem['discount'])??0;
+                                $discount = $sem['discount'] ?? 0;
+
                                 $balance = $sem['amount'] - $discount - $paid;
+                                // dd($discount);
                                 @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -115,7 +118,7 @@
                                     </td>
                                     <td>
                                         <input type="number" class="form-control text-center" name="discount[]"
-                                            value="{{$discount}}" step="0.01" required>
+                                            value="{{$discount}}" step="0.01" >
                                     </td>
                                     <td>
                                         <span class="fw-bold text-danger">₹{{ number_format($balance, 2) }}</span>
@@ -156,7 +159,7 @@
                                 onclick="add('{{route('accounts.miscellaneous',$student->id )}}','modal-lg')">
                                 <i class="bi bi-check-circle"></i> Add Miscellaneous Fee
                             </button>
-                        
+
                             <button type="button" class="btn btn-primary"
                                 onclick="add('{{route('accounts.discount',$student->id )}}','modal-lg')">
                                 <i class="bi bi-check-circle"></i> Add Disount
