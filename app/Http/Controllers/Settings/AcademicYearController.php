@@ -20,7 +20,7 @@ class AcademicYearController extends Controller
                     ->addIndexColumn()
                     ->make(true);
                 }
-                return view('settings.index');
+                return view('Settings.index');
             }catch(Exception $e){
                 Log::warning('something wrong',[$e->getMessage()]);
                 return response()->view('errors.403', [], 403);
@@ -30,7 +30,7 @@ class AcademicYearController extends Controller
     public function create(){
         try{
             if(Auth::user()->hasPermissionTo('create academic years')){
-                return view('settings.create');
+                return view('Settings.create');
             }else{
                 return response()->view('errors.403', [], 403);
             }
@@ -70,7 +70,7 @@ class AcademicYearController extends Controller
         try{
             if(Auth::user()->hasPermissionTo('edit academic years')){
                 $academicYear = AcademicYear::findOrFail($id);
-                return view('settings.edit',compact('academicYear'));
+                return view('Settings.edit',compact('academicYear'));
             }else{
                 return response()->view('errors.403', [], 403);
             }
