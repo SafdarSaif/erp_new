@@ -80,6 +80,7 @@ class RoleController extends Controller
       foreach ($permissions as $permission) {
         $permissionName = explode(" ", $permission->name);
         $permissionData[$permissionName[1]][$permission->id] = ucwords($permissionName[0]);
+        // dd($permissionData);
       }
 
       $role = Role::find($id);

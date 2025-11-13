@@ -32,10 +32,172 @@ class StudentController extends Controller
 
 
 
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+
+    //         $students = Student::with([
+    //             'academicYear',
+    //             'university',
+    //             'courseType',
+    //             'course',
+    //             'subCourse',
+    //             'mode',
+    //             'courseMode',
+    //             'language',
+    //             'bloodGroup',
+    //             'religion',
+    //             'category',
+    //             'status'
+    //         ])->orderBy('id', 'desc');
+
+    //         // dd($students);
+
+    //         return DataTables::of($students)
+    //             ->addIndexColumn()
+    //             ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-') // ✅ Add this line
+    //             ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
+    //             ->addColumn('university', fn($row) => $row->university?->name ?? '-')
+    //             ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
+    //             ->addColumn('course', fn($row) => $row->course?->name ?? '-')
+    //             ->addColumn('sub_course', fn($row) => $row->subCourse?->name ?? '-')
+    //             ->addColumn('mode', fn($row) => $row->mode?->name ?? '-')
+    //             ->addColumn('course_mode', fn($row) => $row->courseMode?->name ?? '-')
+    //             ->addColumn('language', fn($row) => $row->language?->name ?? '-')
+    //             ->addColumn('blood_group', fn($row) => $row->bloodGroup?->name ?? '-')
+    //             ->addColumn('religion', fn($row) => $row->religion?->name ?? '-')
+    //             ->addColumn('category', fn($row) => $row->category?->name ?? '-')
+    //             ->addColumn('status', fn($row) => $row->status?->name ?? '-') // ✅ status_id column now used
+    //             ->filter(function ($query) use ($request) {
+
+    //                 // 🔍 Filter by Full Name
+    //                 if (!empty($request->columns[1]['search']['value'])) {
+    //                     $query->where('full_name', 'like', '%' . $request->columns[1]['search']['value'] . '%');
+    //                 }
+
+    //                 // 🔍 Filter by Email
+    //                 if (!empty($request->columns[2]['search']['value'])) {
+    //                     $query->where('email', 'like', '%' . $request->columns[2]['search']['value'] . '%');
+    //                 }
+
+    //                 // 🔍 Filter by Mobile
+    //                 if (!empty($request->columns[3]['search']['value'])) {
+    //                     $query->where('mobile', 'like', '%' . $request->columns[3]['search']['value'] . '%');
+    //                 }
+
+    //                 // 🔍 Filter by Academic Year
+    //                 if (!empty($request->columns[4]['search']['value'])) {
+    //                     $query->whereHas('academicYear', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[4]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by University
+    //                 if (!empty($request->columns[5]['search']['value'])) {
+    //                     $query->whereHas('university', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[5]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Course Type
+    //                 if (!empty($request->columns[6]['search']['value'])) {
+    //                     $query->whereHas('courseType', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[6]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Course
+    //                 if (!empty($request->columns[7]['search']['value'])) {
+    //                     $query->whereHas('course', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[7]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Sub Course
+    //                 if (!empty($request->columns[8]['search']['value'])) {
+    //                     $query->whereHas('subCourse', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[8]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Mode
+    //                 if (!empty($request->columns[9]['search']['value'])) {
+    //                     $query->whereHas('mode', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[9]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Course Mode
+    //                 if (!empty($request->columns[10]['search']['value'])) {
+    //                     $query->whereHas('courseMode', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[10]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Language
+    //                 if (!empty($request->columns[11]['search']['value'])) {
+    //                     $query->whereHas('language', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[11]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Blood Group
+    //                 if (!empty($request->columns[12]['search']['value'])) {
+    //                     $query->whereHas('bloodGroup', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[12]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Religion
+    //                 if (!empty($request->columns[13]['search']['value'])) {
+    //                     $query->whereHas('religion', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[13]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // 🔍 Filter by Category
+    //                 if (!empty($request->columns[14]['search']['value'])) {
+    //                     $query->whereHas('category', function ($q) use ($request) {
+    //                         $q->where('name', 'like', '%' . $request->columns[14]['search']['value'] . '%');
+    //                     });
+    //                 }
+
+    //                 // // 🔍 Filter by Status
+    //                 // if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
+    //                 //     $query->where('status', $request->columns[15]['search']['value']);
+    //                 // }
+    //                 // 🔍 Filter by Status (status_id)
+    //                 if (!empty($request->columns[15]['search']['value'])) {
+    //                     $query->where('status_id', $request->columns[15]['search']['value']);
+    //                 }
+
+    //                 // 🔍 Filter by Unique ID
+    //                 if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
+    //                     $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
+    //                 }
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('students.index', [
+    //         'academicYears' => AcademicYear::all(),
+    //         'universities' => University::all(),
+    //         'courseTypes' => CourseType::all(),
+    //         'courses' => Course::all(),
+    //         'subCourses' => SubCourse::all(),
+    //         'modes' => AdmissionMode::all(),
+    //         'courseModes' => CourseMode::all(),
+    //         'languages' => Language::all(),
+    //         'bloodGroups' => BloodGroup::all(),
+    //         'religions' => Religion::all(),
+    //         'categories' => Category::all(),
+    //         'statuses' => Status::all(),
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-
             $students = Student::with([
                 'academicYear',
                 'university',
@@ -51,11 +213,9 @@ class StudentController extends Controller
                 'status'
             ])->orderBy('id', 'desc');
 
-            // dd($students);
-
             return DataTables::of($students)
                 ->addIndexColumn()
-                ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-') // ✅ Add this line
+                ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-')
                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
                 ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
@@ -67,113 +227,117 @@ class StudentController extends Controller
                 ->addColumn('blood_group', fn($row) => $row->bloodGroup?->name ?? '-')
                 ->addColumn('religion', fn($row) => $row->religion?->name ?? '-')
                 ->addColumn('category', fn($row) => $row->category?->name ?? '-')
-                ->addColumn('status', fn($row) => $row->status?->name ?? '-') // ✅ status_id column now used
+                ->addColumn('status', fn($row) => $row->status?->name ?? '-')
                 ->filter(function ($query) use ($request) {
 
-                    // 🔍 Filter by Full Name
-                    if (!empty($request->columns[1]['search']['value'])) {
-                        $query->where('full_name', 'like', '%' . $request->columns[1]['search']['value'] . '%');
+                    $columns = $request->columns;
+
+                    if (!empty($columns[1]['search']['value'])) {
+                        $query->where('full_name', 'like', '%' . $columns[1]['search']['value'] . '%');
                     }
 
-                    // 🔍 Filter by Email
-                    if (!empty($request->columns[2]['search']['value'])) {
-                        $query->where('email', 'like', '%' . $request->columns[2]['search']['value'] . '%');
+                    if (!empty($columns[2]['search']['value'])) {
+                        $query->where('email', 'like', '%' . $columns[2]['search']['value'] . '%');
                     }
 
-                    // 🔍 Filter by Mobile
-                    if (!empty($request->columns[3]['search']['value'])) {
-                        $query->where('mobile', 'like', '%' . $request->columns[3]['search']['value'] . '%');
+                    if (!empty($columns[3]['search']['value'])) {
+                        $query->where('mobile', 'like', '%' . $columns[3]['search']['value'] . '%');
                     }
 
-                    // 🔍 Filter by Academic Year
-                    if (!empty($request->columns[4]['search']['value'])) {
-                        $query->whereHas('academicYear', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[4]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[4]['search']['value'])) {
+                        $query->where('student_unique_id', 'like', '%' . $columns[4]['search']['value'] . '%');
                     }
 
-                    // 🔍 Filter by University
-                    if (!empty($request->columns[5]['search']['value'])) {
-                        $query->whereHas('university', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[5]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[5]['search']['value'])) {
+                        $query->whereHas(
+                            'academicYear',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[5]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Course Type
-                    if (!empty($request->columns[6]['search']['value'])) {
-                        $query->whereHas('courseType', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[6]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[6]['search']['value'])) {
+                        $query->whereHas(
+                            'university',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[6]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Course
-                    if (!empty($request->columns[7]['search']['value'])) {
-                        $query->whereHas('course', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[7]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[7]['search']['value'])) {
+                        $query->whereHas(
+                            'courseType',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[7]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Sub Course
-                    if (!empty($request->columns[8]['search']['value'])) {
-                        $query->whereHas('subCourse', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[8]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[8]['search']['value'])) {
+                        $query->whereHas(
+                            'course',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[8]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Mode
-                    if (!empty($request->columns[9]['search']['value'])) {
-                        $query->whereHas('mode', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[9]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[9]['search']['value'])) {
+                        $query->whereHas(
+                            'subCourse',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[9]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Course Mode
-                    if (!empty($request->columns[10]['search']['value'])) {
-                        $query->whereHas('courseMode', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[10]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[10]['search']['value'])) {
+                        $query->whereHas(
+                            'mode',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[10]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Language
-                    if (!empty($request->columns[11]['search']['value'])) {
-                        $query->whereHas('language', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[11]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[11]['search']['value'])) {
+                        $query->whereHas(
+                            'courseMode',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[11]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Blood Group
-                    if (!empty($request->columns[12]['search']['value'])) {
-                        $query->whereHas('bloodGroup', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[12]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[12]['search']['value'])) {
+                        $query->whereHas(
+                            'language',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[12]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Religion
-                    if (!empty($request->columns[13]['search']['value'])) {
-                        $query->whereHas('religion', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[13]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[13]['search']['value'])) {
+                        $query->whereHas(
+                            'bloodGroup',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[13]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Category
-                    if (!empty($request->columns[14]['search']['value'])) {
-                        $query->whereHas('category', function ($q) use ($request) {
-                            $q->where('name', 'like', '%' . $request->columns[14]['search']['value'] . '%');
-                        });
+                    if (!empty($columns[14]['search']['value'])) {
+                        $query->whereHas(
+                            'religion',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[14]['search']['value'] . '%')
+                        );
                     }
 
-                    // // 🔍 Filter by Status
-                    // if (isset($request->columns[15]['search']['value']) && $request->columns[15]['search']['value'] !== '') {
-                    //     $query->where('status', $request->columns[15]['search']['value']);
-                    // }
-                    // 🔍 Filter by Status (status_id)
-                    if (!empty($request->columns[15]['search']['value'])) {
-                        $query->where('status_id', $request->columns[15]['search']['value']);
+                    if (!empty($columns[15]['search']['value'])) {
+                        $query->whereHas(
+                            'category',
+                            fn($q) =>
+                            $q->where('name', 'like', '%' . $columns[15]['search']['value'] . '%')
+                        );
                     }
 
-                    // 🔍 Filter by Unique ID
-                    if (!empty($request->columns[4]['search']['value'])) { // adjust column index if needed
-                        $query->where('student_unique_id', 'like', '%' . $request->columns[4]['search']['value'] . '%');
+                    if (!empty($columns[16]['search']['value'])) {
+                        $query->where('status_id', $columns[16]['search']['value']);
                     }
                 })
                 ->make(true);
@@ -194,6 +358,7 @@ class StudentController extends Controller
             'statuses' => Status::all(),
         ]);
     }
+
 
 
 
@@ -279,30 +444,30 @@ class StudentController extends Controller
 
 
 
-  private function generateStudentUniqueId($student)
-{
-    $university = University::find($student->university_id);
+    private function generateStudentUniqueId($student)
+    {
+        $university = University::find($student->university_id);
 
-    // Use university prefix or fallback
-    $prefix = $university && !empty($university->prefix)
-        ? strtoupper($university->prefix)
-        : 'UNI'; // default prefix if not set
+        // Use university prefix or fallback
+        $prefix = $university && !empty($university->prefix)
+            ? strtoupper($university->prefix)
+            : 'UNI'; // default prefix if not set
 
-    // Determine total length of serial digits (default 4 if not set)
-    $length = $university && $university->length > 0 ? $university->length : 4;
+        // Determine total length of serial digits (default 4 if not set)
+        $length = $university && $university->length > 0 ? $university->length : 4;
 
-    // Get current year
-    $year = date('Y');
+        // Get current year
+        $year = date('Y');
 
-    // Get count of existing students for that university
-    $count = Student::where('university_id', $student->university_id)->count() + 1;
+        // Get count of existing students for that university
+        $count = Student::where('university_id', $student->university_id)->count() + 1;
 
-    // Pad serial number according to university length
-    $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
+        // Pad serial number according to university length
+        $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
 
-    // Final format: PREFIXYEARU000001
-    return "{$prefix}{$serial}";
-}
+        // Final format: PREFIXYEARU000001
+        return "{$prefix}{$serial}";
+    }
 
 
 

@@ -60,6 +60,9 @@
                         <tr>
                             <th>#</th>
                             <th>Student</th>
+                            <th>University</th>
+                            <th>Course</th>
+                            <th>Sub-Course</th>
                             <th>Semester Balances</th>
                             <th>Miscellaneous Balances</th>
                             <th>Total Pending</th>
@@ -78,7 +81,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 <script>
-// function loadPendingFees() {
+    // function loadPendingFees() {
 //     let university = $('#university').val();
 //     let course = $('#course').val();
 //     let student = $('#student').val();
@@ -137,6 +140,9 @@ function loadPendingFees() {
                         <tr>
                             <td>${index + 1}</td>
                             <td>${item.student.full_name}</td>
+                            <td>${item.university_name}</td>
+                            <td>${item.course_name}</td>
+                            <td>${item.subcourse_name}</td>
                             <td>${semesterStr || '-'}</td>
                             <td>${miscStr || '-'}</td>
                             <td>₹${item.total_due.toFixed(2)}</td>
