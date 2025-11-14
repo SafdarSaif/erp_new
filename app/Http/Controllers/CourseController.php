@@ -75,7 +75,7 @@ class CourseController extends Controller
         $validator = Validator::make($request->all(), [
             'department_id' => 'required|exists:departments,id',
             'university_id' => 'required|exists:universities,id',
-            'course_type_id' => 'required|exists:departments,id', // Fixed validation
+            'course_type_id' => 'required|exists:course_types,id', // Fixed validation
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Image validation
@@ -147,7 +147,7 @@ class CourseController extends Controller
         $validator = Validator::make($request->all(), [
             'department_id' => 'required|exists:departments,id',
             'university_id' => 'required|exists:universities,id',
-            'course_type_id' => 'required|exists:departments,id', // corrected validation
+            'course_type_id' => 'required|exists:course_types,id', // corrected validation
             'name' => 'required|string|max:100',
             'short_name' => 'required|string|max:50',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
