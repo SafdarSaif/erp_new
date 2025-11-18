@@ -17,6 +17,7 @@ use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
 use App\Models\Settings\Status;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\StudentQualification;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -403,7 +404,9 @@ class StudentController extends Controller
             return response()->json([
                 'course_mode_id'   => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null), // ✅ Added line
                 'course_mode_name' => $subCourse->courseMode->name ?? '',
-                'course_duration'  => $subCourse->duration ?? ''
+                'course_duration'  => $subCourse->duration ?? '',
+                'eligibility' => $subCourse->eligibility, // this is an array from the cast
+
             ]);
         }
 
@@ -476,85 +479,358 @@ class StudentController extends Controller
      */
 
 
+    // public function store(Request $request)
+    // {
+    //     // Validate incoming request
+    //     $validatedData = $request->validate([
+    //         'full_name'         => 'required|string|max:255',
+    //         'father_name'       => 'nullable|string|max:255',
+    //         'mother_name'       => 'nullable|string|max:255',
+    //         'aadhaar_no'        => 'nullable|string|max:20',
+    //         'email'             => 'nullable|email|max:255|unique:students,email',
+    //         'mobile'            => 'nullable|string|max:20',
+    //         'dob'               => 'nullable|date',
+    //         'gender'            => 'nullable|in:Male,Female,Other',
+    //         'academic_year_id'  => 'required|exists:academic_years,id',
+    //         'university_id'     => 'required|exists:universities,id',
+    //         'course_type_id'    => 'required|exists:course_types,id',
+    //         'course_id'         => 'required|exists:courses,id',
+    //         'sub_course_id'     => 'required|exists:sub_courses,id',
+    //         'mode_id'           => 'required|exists:admission_modes,id',
+    //         'course_mode_id'    => 'required|exists:course_modes,id',
+    //         'semester'          => 'nullable|string|max:50',
+    //         'course_duration'   => 'nullable|string|max:50',
+    //         'language_id'       => 'nullable|exists:languages,id',
+    //         'blood_group_id'    => 'nullable|exists:blood_groups,id',
+    //         'religion_id'       => 'nullable|exists:religions,id',
+    //         'category_id'       => 'nullable|exists:categories,id',
+    //         'income'            => 'nullable|numeric|min:0',
+    //         'total_fee'         => 'nullable|numeric|min:0',
+    //         'permanent_address' => 'nullable|string|max:500',
+    //         'current_address'   => 'nullable|string|max:500',
+    //         'status'            => 'nullable',
+    //     ]);
+
+    //     try {
+    //         // Create student record
+    //         $student = Student::create([
+    //             'full_name'         => $validatedData['full_name'],
+    //             'father_name'       => $validatedData['father_name'] ?? null,
+    //             'mother_name'       => $validatedData['mother_name'] ?? null,
+    //             'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
+    //             'email'             => $validatedData['email'] ?? null,
+    //             'mobile'            => $validatedData['mobile'] ?? null,
+    //             'dob'               => $validatedData['dob'] ?? null,
+    //             'gender'            => $validatedData['gender'] ?? null,
+    //             'academic_year_id'  => $validatedData['academic_year_id'],
+    //             'university_id'     => $validatedData['university_id'],
+    //             'course_type_id'    => $validatedData['course_type_id'],
+    //             'course_id'         => $validatedData['course_id'],
+    //             'sub_course_id'     => $validatedData['sub_course_id'],
+    //             'admissionmode_id'  => $validatedData['mode_id'],
+    //             'course_mode_id'    => $validatedData['course_mode_id'],
+    //             'semester'          => $validatedData['semester'] ?? null,
+    //             'course_duration'   => $validatedData['course_duration'] ?? null,
+    //             'language_id'       => $validatedData['language_id'] ?? null,
+    //             'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
+    //             'religion_id'       => $validatedData['religion_id'] ?? null,
+    //             'category_id'       => $validatedData['category_id'] ?? null,
+    //             'income'            => $validatedData['income'] ?? null,
+    //             'total_fee'         => $validatedData['total_fee'] ?? null,
+    //             'permanent_address' => $validatedData['permanent_address'] ?? null,
+    //             'current_address'   => $validatedData['current_address'] ?? null,
+    //             'status'            => $validatedData['status'] ?? 1,
+    //         ]);
+
+    //         // ✅ Generate unique Student ID after creation
+    //         $student->student_unique_id = $this->generateStudentUniqueId($student);
+    //         $student->save();
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'Student has been added successfully.',
+    //             'data'    => $student
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    
+
+    // public function store(Request $request)
+    // {
+    //     // ----------------------------
+    //     // VALIDATION
+    //     // ----------------------------
+    //     $validatedData = $request->validate([
+    //         'full_name'         => 'required|string|max:255',
+    //         'father_name'       => 'nullable|string|max:255',
+    //         'mother_name'       => 'nullable|string|max:255',
+    //         'aadhaar_no'        => 'nullable|string|max:20',
+    //         'email'             => 'nullable|email|max:255|unique:students,email',
+    //         'mobile'            => 'nullable|string|max:20',
+    //         'dob'               => 'nullable|date',
+    //         'gender'            => 'nullable|in:Male,Female,Other',
+    //         'academic_year_id'  => 'required|exists:academic_years,id',
+    //         'university_id'     => 'required|exists:universities,id',
+    //         'course_type_id'    => 'required|exists:course_types,id',
+    //         'course_id'         => 'required|exists:courses,id',
+    //         'sub_course_id'     => 'required|exists:sub_courses,id',
+    //         'mode_id'           => 'required|exists:admission_modes,id',
+    //         'course_mode_id'    => 'required|exists:course_modes,id',
+    //         'semester'          => 'nullable|string|max:50',
+    //         'course_duration'   => 'nullable|string|max:50',
+    //         'language_id'       => 'nullable|exists:languages,id',
+    //         'blood_group_id'    => 'nullable|exists:blood_groups,id',
+    //         'religion_id'       => 'nullable|exists:religions,id',
+    //         'category_id'       => 'nullable|exists:categories,id',
+    //         'income'            => 'nullable|numeric|min:0',
+    //         'total_fee'         => 'nullable|numeric|min:0',
+    //         'permanent_address' => 'nullable|string|max:500',
+    //         'current_address'   => 'nullable|string|max:500',
+    //         'status'            => 'nullable',
+
+    //         // --------------------------
+    //         // Qualification Validation
+    //         // --------------------------
+    //         'prev_qualification' => 'nullable|string|max:255',
+    //         'prev_board'         => 'nullable|string|max:255',
+    //         'prev_passing_year'  => 'nullable|string|max:10',
+    //         'prev_marks'         => 'nullable|string|max:50',
+    //         'prev_result'        => 'nullable|string|max:20',
+    //         'prev_document'      => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    //     ]);
+
+    //     try {
+
+    //         // ----------------------------
+    //         // 1. CREATE STUDENT
+    //         // ----------------------------
+    //         $student = Student::create([
+    //             'full_name'         => $validatedData['full_name'],
+    //             'father_name'       => $validatedData['father_name'] ?? null,
+    //             'mother_name'       => $validatedData['mother_name'] ?? null,
+    //             'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
+    //             'email'             => $validatedData['email'] ?? null,
+    //             'mobile'            => $validatedData['mobile'] ?? null,
+    //             'dob'               => $validatedData['dob'] ?? null,
+    //             'gender'            => $validatedData['gender'] ?? null,
+    //             'academic_year_id'  => $validatedData['academic_year_id'],
+    //             'university_id'     => $validatedData['university_id'],
+    //             'course_type_id'    => $validatedData['course_type_id'],
+    //             'course_id'         => $validatedData['course_id'],
+    //             'sub_course_id'     => $validatedData['sub_course_id'],
+    //             'admissionmode_id'  => $validatedData['mode_id'],
+    //             'course_mode_id'    => $validatedData['course_mode_id'],
+    //             'semester'          => $validatedData['semester'] ?? null,
+    //             'course_duration'   => $validatedData['course_duration'] ?? null,
+    //             'language_id'       => $validatedData['language_id'] ?? null,
+    //             'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
+    //             'religion_id'       => $validatedData['religion_id'] ?? null,
+    //             'category_id'       => $validatedData['category_id'] ?? null,
+    //             'income'            => $validatedData['income'] ?? null,
+    //             'total_fee'         => $validatedData['total_fee'] ?? null,
+    //             'permanent_address' => $validatedData['permanent_address'] ?? null,
+    //             'current_address'   => $validatedData['current_address'] ?? null,
+    //             'status'            => $validatedData['status'] ?? 1,
+    //         ]);
+
+    //         // ----------------------------
+    //         // 2. Generate Unique ID
+    //         // ----------------------------
+    //         $student->student_unique_id = $this->generateStudentUniqueId($student);
+    //         $student->save();
+
+    //         // ----------------------------
+    //         // 3. Upload Qualification Document
+    //         // ----------------------------
+    //         // $documentPath = null;
+
+    //         // if ($request->hasFile('prev_document')) {
+    //         //     $document = $request->file('prev_document');
+    //         //     $documentPath = $document->store('qualification_documents', 'public');
+    //         // }
+
+    //         // Upload Previous Qualification Document
+    //         $documentPath = null;
+
+    //         if ($request->hasFile('prev_document')) {
+    //             $file = $request->file('prev_document');
+
+    //             // Create unique filename
+    //             $filename = time() . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
+
+    //             // Move file to public/uploads/qualification_documents/
+    //             $file->move(public_path('uploads/qualification_documents'), $filename);
+
+    //             // Save file path
+    //             $documentPath = 'uploads/qualification_documents/' . $filename;
+    //         }
+
+
+    //         // ----------------------------
+    //         // 4. Save Qualification
+    //         // ----------------------------
+    //         StudentQualification::create([
+    //             'student_id'    => $student->id,
+    //             'qualification' => $request->prev_qualification,
+    //             'board'         => $request->prev_board,
+    //             'passing_year'  => $request->prev_passing_year,
+    //             'marks'         => $request->prev_marks,
+    //             'result'        => $request->prev_result,
+    //             'document'      => $documentPath,
+    //         ]);
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'Student has been added successfully.',
+    //             'data'    => $student
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
+
     public function store(Request $request)
-    {
-        // Validate incoming request
-        $validatedData = $request->validate([
-            'full_name'         => 'required|string|max:255',
-            'father_name'       => 'nullable|string|max:255',
-            'mother_name'       => 'nullable|string|max:255',
-            'aadhaar_no'        => 'nullable|string|max:20',
-            'email'             => 'nullable|email|max:255|unique:students,email',
-            'mobile'            => 'nullable|string|max:20',
-            'dob'               => 'nullable|date',
-            'gender'            => 'nullable|in:Male,Female,Other',
-            'academic_year_id'  => 'required|exists:academic_years,id',
-            'university_id'     => 'required|exists:universities,id',
-            'course_type_id'    => 'required|exists:course_types,id',
-            'course_id'         => 'required|exists:courses,id',
-            'sub_course_id'     => 'required|exists:sub_courses,id',
-            'mode_id'           => 'required|exists:admission_modes,id',
-            'course_mode_id'    => 'required|exists:course_modes,id',
-            'semester'          => 'nullable|string|max:50',
-            'course_duration'   => 'nullable|string|max:50',
-            'language_id'       => 'nullable|exists:languages,id',
-            'blood_group_id'    => 'nullable|exists:blood_groups,id',
-            'religion_id'       => 'nullable|exists:religions,id',
-            'category_id'       => 'nullable|exists:categories,id',
-            'income'            => 'nullable|numeric|min:0',
-            'total_fee'         => 'nullable|numeric|min:0',
-            'permanent_address' => 'nullable|string|max:500',
-            'current_address'   => 'nullable|string|max:500',
-            'status'            => 'nullable',
+{
+    // ----------------------------
+    // VALIDATION
+    // ----------------------------
+    $validatedData = $request->validate([
+        'full_name'         => 'required|string|max:255',
+        'father_name'       => 'nullable|string|max:255',
+        'mother_name'       => 'nullable|string|max:255',
+        'aadhaar_no'        => 'nullable|string|max:20',
+        'email'             => 'nullable|email|max:255|unique:students,email',
+        'mobile'            => 'nullable|string|max:20',
+        'dob'               => 'nullable|date',
+        'gender'            => 'nullable|in:Male,Female,Other',
+        'academic_year_id'  => 'required|exists:academic_years,id',
+        'university_id'     => 'required|exists:universities,id',
+        'course_type_id'    => 'required|exists:course_types,id',
+        'course_id'         => 'required|exists:courses,id',
+        'sub_course_id'     => 'required|exists:sub_courses,id',
+        'mode_id'           => 'required|exists:admission_modes,id',
+        'course_mode_id'    => 'required|exists:course_modes,id',
+        'semester'          => 'nullable|string|max:50',
+        'course_duration'   => 'nullable|string|max:50',
+        'language_id'       => 'nullable|exists:languages,id',
+        'blood_group_id'    => 'nullable|exists:blood_groups,id',
+        'religion_id'       => 'nullable|exists:religions,id',
+        'category_id'       => 'nullable|exists:categories,id',
+        'income'            => 'nullable|numeric|min:0',
+        'total_fee'         => 'nullable|numeric|min:0',
+        'permanent_address' => 'nullable|string|max:500',
+        'current_address'   => 'nullable|string|max:500',
+        'status'            => 'nullable',
+
+        // --------------------------
+        // Qualification Validation (Arrays)
+        // --------------------------
+        'prev_qualification' => 'nullable|array',
+        'prev_board'         => 'nullable|array',
+        'prev_passing_year'  => 'nullable|array',
+        'prev_marks'         => 'nullable|array',
+        'prev_result'        => 'nullable|array',
+        'prev_document.*'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    ]);
+
+    try {
+
+        // ----------------------------
+        // 1. CREATE STUDENT
+        // ----------------------------
+        $student = Student::create([
+            'full_name'         => $validatedData['full_name'],
+            'father_name'       => $validatedData['father_name'] ?? null,
+            'mother_name'       => $validatedData['mother_name'] ?? null,
+            'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
+            'email'             => $validatedData['email'] ?? null,
+            'mobile'            => $validatedData['mobile'] ?? null,
+            'dob'               => $validatedData['dob'] ?? null,
+            'gender'            => $validatedData['gender'] ?? null,
+            'academic_year_id'  => $validatedData['academic_year_id'],
+            'university_id'     => $validatedData['university_id'],
+            'course_type_id'    => $validatedData['course_type_id'],
+            'course_id'         => $validatedData['course_id'],
+            'sub_course_id'     => $validatedData['sub_course_id'],
+            'admissionmode_id'  => $validatedData['mode_id'],
+            'course_mode_id'    => $validatedData['course_mode_id'],
+            'semester'          => $validatedData['semester'] ?? null,
+            'course_duration'   => $validatedData['course_duration'] ?? null,
+            'language_id'       => $validatedData['language_id'] ?? null,
+            'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
+            'religion_id'       => $validatedData['religion_id'] ?? null,
+            'category_id'       => $validatedData['category_id'] ?? null,
+            'income'            => $validatedData['income'] ?? null,
+            'total_fee'         => $validatedData['total_fee'] ?? null,
+            'permanent_address' => $validatedData['permanent_address'] ?? null,
+            'current_address'   => $validatedData['current_address'] ?? null,
+            'status'            => $validatedData['status'] ?? 1,
         ]);
 
-        try {
-            // Create student record
-            $student = Student::create([
-                'full_name'         => $validatedData['full_name'],
-                'father_name'       => $validatedData['father_name'] ?? null,
-                'mother_name'       => $validatedData['mother_name'] ?? null,
-                'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
-                'email'             => $validatedData['email'] ?? null,
-                'mobile'            => $validatedData['mobile'] ?? null,
-                'dob'               => $validatedData['dob'] ?? null,
-                'gender'            => $validatedData['gender'] ?? null,
-                'academic_year_id'  => $validatedData['academic_year_id'],
-                'university_id'     => $validatedData['university_id'],
-                'course_type_id'    => $validatedData['course_type_id'],
-                'course_id'         => $validatedData['course_id'],
-                'sub_course_id'     => $validatedData['sub_course_id'],
-                'admissionmode_id'  => $validatedData['mode_id'],
-                'course_mode_id'    => $validatedData['course_mode_id'],
-                'semester'          => $validatedData['semester'] ?? null,
-                'course_duration'   => $validatedData['course_duration'] ?? null,
-                'language_id'       => $validatedData['language_id'] ?? null,
-                'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
-                'religion_id'       => $validatedData['religion_id'] ?? null,
-                'category_id'       => $validatedData['category_id'] ?? null,
-                'income'            => $validatedData['income'] ?? null,
-                'total_fee'         => $validatedData['total_fee'] ?? null,
-                'permanent_address' => $validatedData['permanent_address'] ?? null,
-                'current_address'   => $validatedData['current_address'] ?? null,
-                'status'            => $validatedData['status'] ?? 1,
-            ]);
+        // ----------------------------
+        // 2. Generate Unique ID
+        // ----------------------------
+        $student->student_unique_id = $this->generateStudentUniqueId($student);
+        $student->save();
 
-            // ✅ Generate unique Student ID after creation
-            $student->student_unique_id = $this->generateStudentUniqueId($student);
-            $student->save();
+        // ----------------------------
+        // 3. SAVE MULTIPLE QUALIFICATIONS
+        // ----------------------------
+        $qualifications = $request->prev_qualification ?? [];
+        $boards         = $request->prev_board ?? [];
+        $years          = $request->prev_passing_year ?? [];
+        $marks          = $request->prev_marks ?? [];
+        $results        = $request->prev_result ?? [];
+        $documents      = $request->file('prev_document') ?? [];
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Student has been added successfully.',
-                'data'    => $student
+        foreach ($qualifications as $i => $qualification) {
+
+            // Upload document if exists
+            $documentPath = null;
+            if (isset($documents[$i]) && $documents[$i]) {
+                $file = $documents[$i];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('uploads/qualification_documents'), $filename);
+                $documentPath = 'uploads/qualification_documents/' . $filename;
+            }
+
+            StudentQualification::create([
+                'student_id'    => $student->id,
+                'qualification' => $qualification,
+                'board'         => $boards[$i] ?? null,
+                'passing_year'  => $years[$i] ?? null,
+                'marks'         => $marks[$i] ?? null,
+                'result'        => $results[$i] ?? null,
+                'document'      => $documentPath,
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Something went wrong: ' . $e->getMessage()
-            ], 500);
         }
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Student has been added successfully.',
+            'data'    => $student
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Something went wrong: ' . $e->getMessage()
+        ], 500);
     }
+}
+
+
 
 
     /**
@@ -562,7 +838,9 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        $student = Student::findOrFail($id);
+        // $student = Student::findOrFail($id);
+     $student = Student::with('qualifications')->findOrFail($id);
+
 
         // Load related data for select fields
         $academicYears = AcademicYear::all();

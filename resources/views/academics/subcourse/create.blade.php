@@ -1,4 +1,5 @@
 <div class="modal-body">
+
     <div class="text-center mb-3">
         <h3 class="mb-2 text-primary">Add Sub Course</h3>
         <p class="text-muted">Fill in the sub course details below</p>
@@ -40,9 +41,31 @@
         <!-- Duration -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration <span class="text-danger">*</span></label>
-            <input type="text" name="duration" id="duration" class="form-control" placeholder="e.g. 3 Years, 6 Months"
-                required>
+            <input type="text" name="duration" id="duration" class="form-control" placeholder="e.g. 3, 6" required>
         </div>
+
+        <!-- Eligibility Criteria (Multi Select) -->
+        <div class="col-md-12">
+            <label for="eligibility" class="form-label">Eligibility Criteria <span class="text-danger">*</span></label>
+            <select name="eligibility[]" id="eligibility" class="form-select" multiple required>
+                <option value="10th Passed">10th Passed</option>
+                <option value="12th Passed">12th Passed</option>
+                <option value="Graduation Completed">Graduation Completed</option>
+                <option value="Post Graduation">Post Graduation</option>
+                <option value="Diploma">Diploma</option>
+                <option value="Any Stream Allowed">Any Stream Allowed</option>
+            </select>
+            <small class="text-muted">You can select multiple criteria</small>
+        </div>
+
+
+
+
+
+
+
+
+
 
         <!-- Sub Course Name -->
         <div class="col-md-6">
@@ -76,8 +99,46 @@
     </form>
 </div>
 
+
+
+
+
 <script>
-  $(function() {
+    $(document).on("input", "#duration", function () {
+        this.value = this.value.replace(/[^0-9]/g, "");
+    });
+</script>
+
+
+
+
+
+
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+    // Eligibility Multi Select With Close Button
+    new Choices('#eligibility', {
+        removeItemButton: true,
+        placeholder: true,
+        placeholderValue: "Select eligibility criteria",
+        searchEnabled: true
+    });
+
+    // (Optional) Demo Choices initialization
+    new Choices('#choices-multiple-close-icon', {
+        removeItemButton: true
+    });
+
+});
+</script> --}}
+
+
+
+
+
+<script>
+    $(function() {
     $('#university_id').on('change', function() {
         var universityId = $(this).val();
         var courseSelect = $('#course_id');

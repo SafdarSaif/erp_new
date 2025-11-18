@@ -22,7 +22,13 @@ class SubCourse extends Model
         'duration',
         'university_fee',
         'university_id',
+        'eligibility',
     ];
+
+     protected $casts = [
+        'eligibility' => 'array',   // ✅ Convert JSON to array
+    ];
+
 
     public function course()
     {

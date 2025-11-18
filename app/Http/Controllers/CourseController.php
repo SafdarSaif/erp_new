@@ -132,7 +132,7 @@ class CourseController extends Controller
         $departments = Department::where('status', 1)->get();
         $courseTypes = SettingsCourseType::where('status', 1)->get();
         $universities = University::where('status', 1)->get();
-        return view('academics.course.edit', compact('course', 'departments', 'courseTypes','universities'));
+        return view('academics.course.edit', compact('course', 'departments', 'courseTypes', 'universities'));
     }
 
     /**

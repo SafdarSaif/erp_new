@@ -73,6 +73,22 @@
                 placeholder="Enter duration" required>
         </div>
 
+
+        <!-- Eligibility Criteria (Multi Select) -->
+<div class="col-md-12">
+    <label for="eligibility" class="form-label">Eligibility Criteria <span class="text-danger">*</span></label>
+    <select name="eligibility[]" id="eligibility" class="form-select" multiple required>
+        <option value="10th Passed">10th Passed</option>
+        <option value="12th Passed">12th Passed</option>
+        <option value="Graduation Completed">Graduation Completed</option>
+        <option value="Post Graduation">Post Graduation</option>
+        <option value="Diploma">Diploma</option>
+        <option value="Any Stream Allowed">Any Stream Allowed</option>
+    </select>
+    <small class="text-muted">You can select multiple criteria</small>
+</div>
+
+
         <!-- Logo Upload -->
         <div class="col-md-6">
             <label for="logo" class="form-label">Logo</label>
@@ -93,6 +109,47 @@
         </div>
     </form>
 </div>
+
+
+{{-- <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const existingEligibility = @json($subcourse->eligibility ?? []);
+
+    // Destroy old instance if exists (prevent duplicate init)
+    if (window.eligibilityChoices) {
+        window.eligibilityChoices.destroy();
+    }
+
+    // STEP 1 — Preselect options BEFORE initializing Choices
+    $("#eligibility option").each(function () {
+        if (existingEligibility.includes($(this).val())) {
+            $(this).prop("selected", true);
+        }
+    });
+
+    // STEP 2 — Initialize Choices
+    window.eligibilityChoices = new Choices("#eligibility", {
+        removeItemButton: true,
+        searchEnabled: true,
+        placeholderValue: "Select eligibility criteria",
+    });
+
+});
+</script> --}}
+
+<script>
+    const existingEligibility = @json($subcourse->eligibility ?? []);
+
+$("#eligibility option").each(function () {
+    if (existingEligibility.includes($(this).val())) {
+        $(this).prop("selected", true);
+    }
+});
+
+</script>
+
+
 
 <script>
     $(function() {

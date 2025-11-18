@@ -91,6 +91,8 @@ class SubCourseController extends Controller
             'university_fee' => 'nullable|string|max:50',
             'university_id' => 'required|exists:universities,id',
             'duration'  => 'required|string|max:100',
+            'eligibility'      => 'required|array',          // ✅ Must be an array
+            'eligibility.*'    => 'string|max:255',          // ✅ Each item must be string
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -109,6 +111,7 @@ class SubCourseController extends Controller
             'short_name' => $request->short_name,
             'duration'  => $request->duration,
             'university_fee' => $request->university_fee,
+             'eligibility'    => $request->eligibility,       // ✅ Save array directly (cast handled in model)
             'status' => $request->input('status', 1),
         ];
 
@@ -168,6 +171,8 @@ class SubCourseController extends Controller
             'duration'  => 'required|string|max:100',         // Validate duration
             'university_fee' => 'nullable|string|max:50',
             'university_id' => 'required|exists:universities,id',
+            'eligibility' => 'required|array',        // ✅ Validate array
+            'eligibility.*' => 'string|max:255',      // ✅ Each item string
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -185,6 +190,10 @@ class SubCourseController extends Controller
         $subcourse->university_fee = $request->university_fee;
         $subcourse->university_id = $request->university_id;
         $subcourse->duration   = $request->duration;  // Save duration
+
+
+         // ✅ Handle eligibility
+    $subcourse->eligibility = $request->eligibility;
 
 
         // Handle new image

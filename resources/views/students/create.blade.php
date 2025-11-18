@@ -88,29 +88,31 @@
                         <label class="form-label">Course <span class="text-danger">*</span></label>
                         <select name="course_id" class="form-select" required>
                             <option value="">-- Select Course --</option>
-                            @foreach($courses as $course)
+                            {{-- @foreach($courses as $course)
                             <option value="{{ $course->id }}">{{ $course->name }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Sub Course <span class="text-danger">*</span></label>
                         <select name="sub_course_id" class="form-select" required>
                             <option value="">-- Select Sub Course --</option>
-                            @foreach($subCourses as $sub)
+                            {{-- @foreach($subCourses as $sub)
                             <option value="{{ $sub->id }}">{{ $sub->name }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Mode <span class="text-danger">*</span></label>
+                        <label class="form-label">Admission Mode <span class="text-danger">*</span></label>
                         <select name="mode_id" class="form-select" required>
-                            <option value="">-- Select Mode --</option>
+                            <option value="">-- Select Admission Mode --</option>
                             @foreach($modes as $mode)
                             <option value="{{ $mode->id }}">{{ $mode->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
+
                     {{-- <div class="col-md-6">
                         <label class="form-label">Course Mode <span class="text-danger">*</span></label>
                         <select name="course_mode_id" class="form-select" required>
@@ -136,7 +138,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Semester</label>
+                        <label class="form-label">Enrolled Semester</label>
                         <input type="text" name="semester" class="form-control" placeholder="Enter semester">
                     </div>
                     <div class="col-md-6">
@@ -200,6 +202,73 @@
                         <label class="form-label">Current Address</label>
                         <textarea name="current_address" class="form-control" rows="2"></textarea>
                     </div>
+
+
+                    <!-- Previous Education Qualification -->
+                    {{-- <h5 class="mt-4 mb-3 text-secondary">
+                        <i class="bi bi-journal-text me-2"></i>Previous Education Qualification
+                    </h5>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Qualification</label>
+                        <select name="prev_qualification" class="form-select">
+                            <option value="">-- Select Qualification --</option>
+                            <option value="10th">10th</option>
+                            <option value="12th">12th</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="Graduation">Graduation</option>
+                            <option value="Post Graduation">Post Graduation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Board / University</label>
+                        <input type="text" name="prev_board" class="form-control"
+                            placeholder="Enter Board / University">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Passing Year</label>
+                        <input type="text" name="prev_passing_year" class="form-control" placeholder="e.g., 2020">
+                    </div>
+
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">Obtained Marks</label>
+                        <input type="text" name="prev_marks" class="form-control" placeholder="Enter obtained marks">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Result</label>
+                        <select name="prev_result" class="form-select">
+                            <option value="">-- Select Result --</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                        </select>
+                    </div>
+
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Upload Marksheet / Certificate
+                            <small class="text-muted">(Optional)</small>
+                        </label>
+                        <input type="file" name="prev_document" class="form-control" accept="image/*,.pdf">
+                    </div> --}}
+
+
+                    <!-- Previous Education Qualification -->
+                    <h5 class="mt-4 mb-3 text-secondary">
+                        <i class="bi bi-journal-text me-2"></i>Previous Education Qualification
+                    </h5>
+
+                    <div id="prev-education-container">
+                        <!-- Dynamic fields will be injected here -->
+                    </div>
+
 
 
                     <!-- Submit Button -->
@@ -268,7 +337,7 @@
 
 
 
-<script>
+{{-- <script>
     $(document).ready(function() {
 
     // =======================
@@ -322,13 +391,10 @@ $('select[name="sub_course_id"]').on('change', function() {
             // Show the course mode name visibly
             courseModeSelect.html('<option value="' + data.course_mode_id + '" selected>' + data.course_mode_name + '</option>');
 
-            // Store only ID in hidden input
             hiddenCourseModeInput.val(data.course_mode_id);
 
-            // Set duration
             courseDurationInput.val(data.course_duration);
 
-            // ✅ Debug: confirm value set ho gayi hai
             console.log('Hidden Course Mode ID set:', data.course_mode_id);
         });
     } else {
@@ -339,6 +405,71 @@ $('select[name="sub_course_id"]').on('change', function() {
     }
 });
 
+
+// On subcourse change
+//     $('select[name="sub_course_id"]').on("change", function () {
+//       var subCourseId = $(this).val();
+//       var container = $("#prev-education-container");
+
+//       container.html(""); // clear previous fields
+
+//       if (subCourseId) {
+//         $.get(
+//           "/students/get-subcourse-details/" + subCourseId,
+//           function (data) {
+//             // data.eligibility is assumed to be an array
+//             if (data.eligibility && data.eligibility.length > 0) {
+
+//             data.eligibility.forEach(function(qual, index) {
+//     var fieldHtml = `
+//         <div class="row mb-4 p-3 border rounded">
+//             <div class="col-12 mb-2">
+//                 <h6 class="text-primary">${qual}</h6>
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Qualification</label>
+//                 <input type="text" name="prev_qualification[]" class="form-control" value="${qual}" readonly>
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Board / University</label>
+//                 <input type="text" name="prev_board[]" class="form-control" placeholder="Enter Board / University">
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Passing Year</label>
+//                 <input type="text" name="prev_passing_year[]" class="form-control" placeholder="e.g., 2020">
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Obtained Marks</label>
+//                 <input type="text" name="prev_marks[]" class="form-control" placeholder="Enter obtained marks">
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Result</label>
+//                 <select name="prev_result[]" class="form-select">
+//                     <option value="">-- Select Result --</option>
+//                     <option value="Pass">Pass</option>
+//                     <option value="Fail">Fail</option>
+//                 </select>
+//             </div>
+
+//             <div class="col-md-6">
+//                 <label class="form-label">Upload Marksheet / Certificate <small class="text-muted">(Optional)</small></label>
+//                 <input type="file" name="prev_document[]" class="form-control" accept="image/*,.pdf">
+//             </div>
+//         </div>
+//     `;
+//     container.append(fieldHtml);
+// });
+
+//             }
+//           }
+//         );
+//       }
+//     });
     // =======================
     // Student Form Submission
     // =======================
@@ -385,5 +516,168 @@ $('select[name="sub_course_id"]').on('change', function() {
     });
 
 });
+</script> --}}
+
+<script>
+$(document).ready(function() {
+
+    // =======================
+    // Dependent Dropdowns
+    // =======================
+
+    // On university change, fetch courses
+    $('select[name="university_id"]').on('change', function() {
+        var universityId = $(this).val();
+        var courseSelect = $('select[name="course_id"]');
+        var subCourseSelect = $('select[name="sub_course_id"]');
+
+        courseSelect.html('<option value="">-- Select Course --</option>');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (universityId) {
+            $.get('/students/get-courses/' + universityId, function(data) {
+                $.each(data, function(key, course) {
+                    courseSelect.append('<option value="'+course.id+'">'+course.name+'</option>');
+                });
+            });
+        }
+    });
+
+    // On course change, fetch sub courses
+    $('select[name="course_id"]').on('change', function() {
+        var courseId = $(this).val();
+        var subCourseSelect = $('select[name="sub_course_id"]');
+        subCourseSelect.html('<option value="">-- Select Sub Course --</option>');
+
+        if (courseId) {
+            $.get('/students/get-subcourses/' + courseId, function(data) {
+                $.each(data, function(key, sub) {
+                    subCourseSelect.append('<option value="'+sub.id+'">'+sub.name+'</option>');
+                });
+            });
+        }
+    });
+
+    // =======================
+    // On sub-course change
+    // =======================
+    $('select[name="sub_course_id"]').on('change', function() {
+        var subCourseId = $(this).val();
+
+        var courseModeSelect = $('#course_mode_display'); // visible dropdown
+        var hiddenCourseModeInput = $('#course_mode_id'); // hidden input
+        var courseDurationInput = $('input[name="course_duration"]'); // duration input
+        var container = $("#prev-education-container"); // dynamic prev edu container
+
+        // Reset fields first
+        courseModeSelect.html('<option value="">Select Course Mode</option>');
+        hiddenCourseModeInput.val('');
+        courseDurationInput.val('');
+        container.html("");
+
+        if (subCourseId) {
+            $.get('/students/get-subcourse-details/' + subCourseId, function(data) {
+
+                // --- 1. Course Mode & Duration ---
+                if(data.course_mode_id && data.course_mode_name) {
+                    courseModeSelect.html('<option value="' + data.course_mode_id + '" selected>' + data.course_mode_name + '</option>');
+                    hiddenCourseModeInput.val(data.course_mode_id);
+                }
+
+                if(data.course_duration) {
+                    courseDurationInput.val(data.course_duration);
+                }
+
+                // --- 2. Previous Education Qualification ---
+                if(data.eligibility && data.eligibility.length > 0) {
+                    data.eligibility.forEach(function(qual) {
+                        var fieldHtml = `
+                            <div class="row mb-4 p-3 border rounded">
+                                <div class="col-12 mb-2">
+                                    <h6 class="text-primary">${qual}</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Qualification</label>
+                                    <input type="text" name="prev_qualification[]" class="form-control" value="${qual}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Board / University</label>
+                                    <input type="text" name="prev_board[]" class="form-control" placeholder="Enter Board / University">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Passing Year</label>
+                                    <input type="text" name="prev_passing_year[]" class="form-control" placeholder="e.g., 2020">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Obtained Marks</label>
+                                    <input type="text" name="prev_marks[]" class="form-control" placeholder="Enter obtained marks">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Result</label>
+                                    <select name="prev_result[]" class="form-select">
+                                        <option value="">-- Select Result --</option>
+                                        <option value="Pass">Pass</option>
+                                        <option value="Fail">Fail</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Upload Marksheet / Certificate <small class="text-muted">(Optional)</small></label>
+                                    <input type="file" name="prev_document[]" class="form-control" accept="image/*,.pdf">
+                                </div>
+                            </div>
+                        `;
+                        container.append(fieldHtml);
+                    });
+                }
+
+            });
+        }
+    });
+
+
+    // =======================
+    // Student Form Submission
+    // =======================
+    $("#student-form").submit(function(e) {
+        e.preventDefault();
+        $(':input[type="submit"]').prop('disabled', true);
+
+        var formData = new FormData(this);
+        formData.append("_token", "{{ csrf_token() }}");
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                $(':input[type="submit"]').prop('disabled', false);
+
+                if(response.status === 'success') {
+                    toastr.success(response.message);
+                    $("#student-form")[0].reset();
+                    window.location.href = "{{ route('students.index') }}";
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function(xhr) {
+                $(':input[type="submit"]').prop('disabled', false);
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong!');
+                }
+            }
+        });
+    });
+
+});
 </script>
+
 @endsection

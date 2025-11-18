@@ -54,7 +54,9 @@
 
 <!-- JAVASCRIPT -->
 <script src="{{ asset('assets/js/sidebar.js') }}"></script>
-<script src="{{ asset('assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+{{-- <script src="{{ asset('assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{ asset('assets/js/pages/scroll-top.init.js') }}"></script>
@@ -92,3 +94,6 @@
 {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
 
 {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
+
+{{-- <script src="{{ asset('assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script> --}}
+

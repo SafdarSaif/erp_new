@@ -126,4 +126,11 @@ class Student extends Model
     return $this->hasMany(StudentQuery::class, 'student_id', 'id');
 }
 
+
+public function qualifications()
+{
+    return $this->hasMany(StudentQualification::class, 'student_id');
+}
+
+
 }

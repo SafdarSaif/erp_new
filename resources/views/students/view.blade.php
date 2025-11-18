@@ -54,9 +54,10 @@
                     {{-- <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm">
                         <i class="bi bi-id-card"></i> ID Card
                     </a> --}}
-                    <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm" target="_blank">
-    <i class="bi bi-id-card"></i> ID Card
-</a>
+                    <a href="{{ route('students.idcard', $student->id) }}" class="btn btn-secondary btn-sm"
+                        target="_blank">
+                        <i class="bi bi-id-card"></i> ID Card
+                    </a>
 
 
                 </div>
@@ -91,6 +92,13 @@
                             <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents"
                                 type="button" role="tab">Documents</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="previous-tab" data-bs-toggle="tab" data-bs-target="#previous"
+                                type="button" role="tab">
+                                Previous Education Qualification
+                            </button>
+                        </li>
+
                     </ul>
 
                     <div class="tab-content" id="studentTabContent">
@@ -153,6 +161,49 @@
                         <div class="tab-pane fade" id="documents" role="tabpanel">
                             <p>No documents uploaded.</p>
                         </div>
+
+                        <!-- Previous Education Qualification -->
+                       <div class="tab-pane fade" id="previous" role="tabpanel">
+
+    @if($student->qualifications->isEmpty())
+        <p class="text-muted">No previous qualifications added.</p>
+    @else
+        @foreach ($student->qualifications as $q)
+            <div class=" p-3 mb-3 ">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Qualification:</strong> {{ $q->qualification }}</p>
+                        <p><strong>Board / University:</strong> {{ $q->board }}</p>
+                        <p><strong>Passing Year:</strong> {{ $q->passing_year }}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p><strong>Marks:</strong> {{ $q->marks }}</p>
+                        <p><strong>Result:</strong> {{ $q->result }}</p>
+
+                        <p>
+                            <strong>Document:</strong><br>
+
+                            @if ($q->document)
+                                <a href="{{ asset($q->document) }}" target="_blank"
+                                   class="btn btn-sm btn-outline-primary mt-1">
+                                    <i class="bi bi-file-earmark-arrow-down"></i> View Document
+                                </a>
+                            @else
+                                <span class="text-muted">No document uploaded</span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        @endforeach
+    @endif
+
+</div>
+
+
                     </div>
 
                 </div>

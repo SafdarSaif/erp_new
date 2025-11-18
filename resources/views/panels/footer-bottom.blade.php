@@ -196,7 +196,6 @@
 </script>
 
 <script>
-
     function allot(url, modal) {
         alert(url);
         $.ajax({
@@ -208,6 +207,30 @@
             }
         })
     }
+</script>
+
+
+
+<script>
+    let eligibilityChoices = null;
+
+$(document).on('shown.bs.modal', function () {
+
+    if (document.querySelector('#eligibility')) {
+
+        if (eligibilityChoices) {
+            eligibilityChoices.destroy();
+        }
+
+        eligibilityChoices = new Choices('#eligibility', {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: "Select eligibility criteria",
+            searchEnabled: true
+        });
+    }
+
+});
 </script>
 
 

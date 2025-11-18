@@ -30,7 +30,9 @@
     <script src="{{ asset('assets/js/layout/layout.js') }}"></script>
 
     <!-- Choice Css -->
-    <link rel="stylesheet" href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+
     <!-- Simplebar Css -->
     <link href="{{ asset('assets/libs/simplebar/simplebar.min.css') }}" rel="stylesheet">
     <!--icons css-->
@@ -51,6 +53,14 @@
     {{-- <link rel="stylesheet" href="assets/libs/toastr/toastr.css" > --}}
 
     <link rel="stylesheet" href="{{ asset('assets/libs/toastr/toastr.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}"> --}}
+
+    {{-- C:\xampp\htdocs\erp_new\public\assets\libs\choices.js\public\assets\styles\choices.min.css --}}
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
 
 
