@@ -231,6 +231,25 @@ $(document).on('shown.bs.modal', function () {
     }
 
 });
+    let universityChoices = null;
+
+$(document).on('shown.bs.modal', function () {
+
+    if (document.querySelector('#university_id')) {
+
+        if (documentChoices) {
+            documentChoices.destroy();
+        }
+
+        documentChoices = new Choices('#university_id', {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: "Select University",
+            searchEnabled: true
+        });
+    }
+
+});
 </script>
 
 
