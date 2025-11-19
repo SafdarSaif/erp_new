@@ -111,7 +111,7 @@ class SubCourseController extends Controller
             'short_name' => $request->short_name,
             'duration'  => $request->duration,
             'university_fee' => $request->university_fee,
-             'eligibility'    => $request->eligibility,       // ✅ Save array directly (cast handled in model)
+            'eligibility'    => $request->eligibility,       // ✅ Save array directly (cast handled in model)
             'status' => $request->input('status', 1),
         ];
 
@@ -150,10 +150,9 @@ class SubCourseController extends Controller
         $courses  = Course::where('status', 1)->get();
         $courseModes = CourseMode::where('status', 1)->get(); // Pass course modes to view
         $universities = University::where('status', 1)->get();
-                // dd($subcourse);
+        // dd($subcourse);
 
         return view('academics.subcourse.edit', compact('subcourse', 'courses', 'courseModes', 'universities'));
-
     }
 
     /**
@@ -192,8 +191,8 @@ class SubCourseController extends Controller
         $subcourse->duration   = $request->duration;  // Save duration
 
 
-         // ✅ Handle eligibility
-    $subcourse->eligibility = $request->eligibility;
+        // ✅ Handle eligibility
+        $subcourse->eligibility = $request->eligibility;
 
 
         // Handle new image

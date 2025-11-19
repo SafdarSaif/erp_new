@@ -396,26 +396,69 @@ class StudentController extends Controller
     }
 
 
-    public function getSubCourseDetails($subCourseId)
-    {
-        $subCourse = SubCourse::with('courseMode')->find($subCourseId);
+    // public function getSubCourseDetails($subCourseId)
+    // {
+    //     $subCourse = SubCourse::with('courseMode')->find($subCourseId);
 
-        if ($subCourse) {
-            return response()->json([
-                'course_mode_id'   => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null), // ✅ Added line
-                'course_mode_name' => $subCourse->courseMode->name ?? '',
-                'course_duration'  => $subCourse->duration ?? '',
-                'eligibility' => $subCourse->eligibility, // this is an array from the cast
+    //     if ($subCourse) {
+    //         return response()->json([
+    //             'course_mode_id'   => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null), // ✅ Added line
+    //             'course_mode_name' => $subCourse->courseMode->name ?? '',
+    //             'course_duration'  => $subCourse->duration ?? '',
+    //             'eligibility' => $subCourse->eligibility, // this is an array from the cast
 
-            ]);
-        }
+    //         ]);
+    //     }
 
+    //     return response()->json([
+    //         'course_mode_id'   => '',
+    //         'course_mode_name' => '',
+    //         'course_duration'  => ''
+    //     ]);
+    // }
+
+
+ public function getSubCourseDetails($subCourseId, Request $request)
+{
+    $subCourse = SubCourse::with('courseMode')->find($subCourseId);
+
+    if (!$subCourse) {
         return response()->json([
-            'course_mode_id'   => '',
+            'course_mode_id' => '',
             'course_mode_name' => '',
-            'course_duration'  => ''
+            'course_duration' => '',
+            'eligibility' => [],
+            'prev_educations' => []
         ]);
     }
+
+    $prevEducations = [];
+    if ($request->student_id) {
+        $student = \App\Models\Student::find($request->student_id);
+        if ($student) {
+            $prevEducations = $student->qualifications()->get()->map(function($q) {
+                return [
+                    'qualification' => $q->qualification,
+                    'board' => $q->board,
+                    'passing_year' => $q->passing_year,
+                    'marks' => $q->marks,
+                    'result' => $q->result,
+                    'document' => $q->document
+                ];
+            })->toArray();
+        }
+    }
+
+    return response()->json([
+        'course_mode_id' => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null),
+        'course_mode_name' => $subCourse->courseMode->name ?? '',
+        'course_duration' => $subCourse->duration ?? '',
+        'eligibility' => $subCourse->eligibility ?? [],
+        'prev_educations' => $prevEducations
+    ]);
+}
+
+
 
 
 
@@ -559,7 +602,7 @@ class StudentController extends Controller
     //     }
     // }
 
-    
+
 
     // public function store(Request $request)
     // {
@@ -701,134 +744,133 @@ class StudentController extends Controller
 
 
     public function store(Request $request)
-{
-    // ----------------------------
-    // VALIDATION
-    // ----------------------------
-    $validatedData = $request->validate([
-        'full_name'         => 'required|string|max:255',
-        'father_name'       => 'nullable|string|max:255',
-        'mother_name'       => 'nullable|string|max:255',
-        'aadhaar_no'        => 'nullable|string|max:20',
-        'email'             => 'nullable|email|max:255|unique:students,email',
-        'mobile'            => 'nullable|string|max:20',
-        'dob'               => 'nullable|date',
-        'gender'            => 'nullable|in:Male,Female,Other',
-        'academic_year_id'  => 'required|exists:academic_years,id',
-        'university_id'     => 'required|exists:universities,id',
-        'course_type_id'    => 'required|exists:course_types,id',
-        'course_id'         => 'required|exists:courses,id',
-        'sub_course_id'     => 'required|exists:sub_courses,id',
-        'mode_id'           => 'required|exists:admission_modes,id',
-        'course_mode_id'    => 'required|exists:course_modes,id',
-        'semester'          => 'nullable|string|max:50',
-        'course_duration'   => 'nullable|string|max:50',
-        'language_id'       => 'nullable|exists:languages,id',
-        'blood_group_id'    => 'nullable|exists:blood_groups,id',
-        'religion_id'       => 'nullable|exists:religions,id',
-        'category_id'       => 'nullable|exists:categories,id',
-        'income'            => 'nullable|numeric|min:0',
-        'total_fee'         => 'nullable|numeric|min:0',
-        'permanent_address' => 'nullable|string|max:500',
-        'current_address'   => 'nullable|string|max:500',
-        'status'            => 'nullable',
-
-        // --------------------------
-        // Qualification Validation (Arrays)
-        // --------------------------
-        'prev_qualification' => 'nullable|array',
-        'prev_board'         => 'nullable|array',
-        'prev_passing_year'  => 'nullable|array',
-        'prev_marks'         => 'nullable|array',
-        'prev_result'        => 'nullable|array',
-        'prev_document.*'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-    ]);
-
-    try {
-
+    {
         // ----------------------------
-        // 1. CREATE STUDENT
+        // VALIDATION
         // ----------------------------
-        $student = Student::create([
-            'full_name'         => $validatedData['full_name'],
-            'father_name'       => $validatedData['father_name'] ?? null,
-            'mother_name'       => $validatedData['mother_name'] ?? null,
-            'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
-            'email'             => $validatedData['email'] ?? null,
-            'mobile'            => $validatedData['mobile'] ?? null,
-            'dob'               => $validatedData['dob'] ?? null,
-            'gender'            => $validatedData['gender'] ?? null,
-            'academic_year_id'  => $validatedData['academic_year_id'],
-            'university_id'     => $validatedData['university_id'],
-            'course_type_id'    => $validatedData['course_type_id'],
-            'course_id'         => $validatedData['course_id'],
-            'sub_course_id'     => $validatedData['sub_course_id'],
-            'admissionmode_id'  => $validatedData['mode_id'],
-            'course_mode_id'    => $validatedData['course_mode_id'],
-            'semester'          => $validatedData['semester'] ?? null,
-            'course_duration'   => $validatedData['course_duration'] ?? null,
-            'language_id'       => $validatedData['language_id'] ?? null,
-            'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
-            'religion_id'       => $validatedData['religion_id'] ?? null,
-            'category_id'       => $validatedData['category_id'] ?? null,
-            'income'            => $validatedData['income'] ?? null,
-            'total_fee'         => $validatedData['total_fee'] ?? null,
-            'permanent_address' => $validatedData['permanent_address'] ?? null,
-            'current_address'   => $validatedData['current_address'] ?? null,
-            'status'            => $validatedData['status'] ?? 1,
+        $validatedData = $request->validate([
+            'full_name'         => 'required|string|max:255',
+            'father_name'       => 'nullable|string|max:255',
+            'mother_name'       => 'nullable|string|max:255',
+            'aadhaar_no'        => 'nullable|string|max:20',
+            'email'             => 'nullable|email|max:255|unique:students,email',
+            'mobile'            => 'nullable|string|max:20',
+            'dob'               => 'nullable|date',
+            'gender'            => 'nullable|in:Male,Female,Other',
+            'academic_year_id'  => 'required|exists:academic_years,id',
+            'university_id'     => 'required|exists:universities,id',
+            'course_type_id'    => 'required|exists:course_types,id',
+            'course_id'         => 'required|exists:courses,id',
+            'sub_course_id'     => 'required|exists:sub_courses,id',
+            'mode_id'           => 'required|exists:admission_modes,id',
+            'course_mode_id'    => 'required|exists:course_modes,id',
+            'semester'          => 'nullable|string|max:50',
+            'course_duration'   => 'nullable|string|max:50',
+            'language_id'       => 'nullable|exists:languages,id',
+            'blood_group_id'    => 'nullable|exists:blood_groups,id',
+            'religion_id'       => 'nullable|exists:religions,id',
+            'category_id'       => 'nullable|exists:categories,id',
+            'income'            => 'nullable|numeric|min:0',
+            'total_fee'         => 'nullable|numeric|min:0',
+            'permanent_address' => 'nullable|string|max:500',
+            'current_address'   => 'nullable|string|max:500',
+            'status'            => 'nullable',
+
+            // --------------------------
+            // Qualification Validation (Arrays)
+            // --------------------------
+            'prev_qualification' => 'nullable|array',
+            'prev_board'         => 'nullable|array',
+            'prev_passing_year'  => 'nullable|array',
+            'prev_marks'         => 'nullable|array',
+            'prev_result'        => 'nullable|array',
+            'prev_document.*'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        // ----------------------------
-        // 2. Generate Unique ID
-        // ----------------------------
-        $student->student_unique_id = $this->generateStudentUniqueId($student);
-        $student->save();
+        try {
 
-        // ----------------------------
-        // 3. SAVE MULTIPLE QUALIFICATIONS
-        // ----------------------------
-        $qualifications = $request->prev_qualification ?? [];
-        $boards         = $request->prev_board ?? [];
-        $years          = $request->prev_passing_year ?? [];
-        $marks          = $request->prev_marks ?? [];
-        $results        = $request->prev_result ?? [];
-        $documents      = $request->file('prev_document') ?? [];
+            // ----------------------------
+            // 1. CREATE STUDENT
+            // ----------------------------
+            $student = Student::create([
+                'full_name'         => $validatedData['full_name'],
+                'father_name'       => $validatedData['father_name'] ?? null,
+                'mother_name'       => $validatedData['mother_name'] ?? null,
+                'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
+                'email'             => $validatedData['email'] ?? null,
+                'mobile'            => $validatedData['mobile'] ?? null,
+                'dob'               => $validatedData['dob'] ?? null,
+                'gender'            => $validatedData['gender'] ?? null,
+                'academic_year_id'  => $validatedData['academic_year_id'],
+                'university_id'     => $validatedData['university_id'],
+                'course_type_id'    => $validatedData['course_type_id'],
+                'course_id'         => $validatedData['course_id'],
+                'sub_course_id'     => $validatedData['sub_course_id'],
+                'admissionmode_id'  => $validatedData['mode_id'],
+                'course_mode_id'    => $validatedData['course_mode_id'],
+                'semester'          => $validatedData['semester'] ?? null,
+                'course_duration'   => $validatedData['course_duration'] ?? null,
+                'language_id'       => $validatedData['language_id'] ?? null,
+                'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
+                'religion_id'       => $validatedData['religion_id'] ?? null,
+                'category_id'       => $validatedData['category_id'] ?? null,
+                'income'            => $validatedData['income'] ?? null,
+                'total_fee'         => $validatedData['total_fee'] ?? null,
+                'permanent_address' => $validatedData['permanent_address'] ?? null,
+                'current_address'   => $validatedData['current_address'] ?? null,
+                'status'            => $validatedData['status'] ?? 1,
+            ]);
 
-        foreach ($qualifications as $i => $qualification) {
+            // ----------------------------
+            // 2. Generate Unique ID
+            // ----------------------------
+            $student->student_unique_id = $this->generateStudentUniqueId($student);
+            $student->save();
 
-            // Upload document if exists
-            $documentPath = null;
-            if (isset($documents[$i]) && $documents[$i]) {
-                $file = $documents[$i];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads/qualification_documents'), $filename);
-                $documentPath = 'uploads/qualification_documents/' . $filename;
+            // ----------------------------
+            // 3. SAVE MULTIPLE QUALIFICATIONS
+            // ----------------------------
+            $qualifications = $request->prev_qualification ?? [];
+            $boards         = $request->prev_board ?? [];
+            $years          = $request->prev_passing_year ?? [];
+            $marks          = $request->prev_marks ?? [];
+            $results        = $request->prev_result ?? [];
+            $documents      = $request->file('prev_document') ?? [];
+
+            foreach ($qualifications as $i => $qualification) {
+
+                // Upload document if exists
+                $documentPath = null;
+                if (isset($documents[$i]) && $documents[$i]) {
+                    $file = $documents[$i];
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('uploads/qualification_documents'), $filename);
+                    $documentPath = 'uploads/qualification_documents/' . $filename;
+                }
+
+                StudentQualification::create([
+                    'student_id'    => $student->id,
+                    'qualification' => $qualification,
+                    'board'         => $boards[$i] ?? null,
+                    'passing_year'  => $years[$i] ?? null,
+                    'marks'         => $marks[$i] ?? null,
+                    'result'        => $results[$i] ?? null,
+                    'document'      => $documentPath,
+                ]);
             }
 
-            StudentQualification::create([
-                'student_id'    => $student->id,
-                'qualification' => $qualification,
-                'board'         => $boards[$i] ?? null,
-                'passing_year'  => $years[$i] ?? null,
-                'marks'         => $marks[$i] ?? null,
-                'result'        => $results[$i] ?? null,
-                'document'      => $documentPath,
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Student has been added successfully.',
+                'data'    => $student
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Student has been added successfully.',
-            'data'    => $student
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'Something went wrong: ' . $e->getMessage()
-        ], 500);
     }
-}
 
 
 
@@ -839,7 +881,7 @@ class StudentController extends Controller
     public function show($id)
     {
         // $student = Student::findOrFail($id);
-     $student = Student::with('qualifications')->findOrFail($id);
+        $student = Student::with('qualifications')->findOrFail($id);
 
 
         // Load related data for select fields
@@ -975,6 +1017,38 @@ class StudentController extends Controller
      * Show the form for editing the specified resource.
      */
 
+    // public function edit($id)
+    // {
+    //     $student = Student::findOrFail($id);
+    //     $academicYears = AcademicYear::all();
+    //     $universities = University::all();
+    //     $courseTypes = CourseType::all();
+    //     $courses = Course::all();
+    //     $subCourses = SubCourse::all();
+    //     $modes = AdmissionMode::all();
+    //     $courseModes = CourseMode::all();
+    //     $languages = Language::all();
+    //     $bloodGroups = BloodGroup::all();
+    //     $religions = Religion::all();
+    //     $categories = Category::all();
+
+    //     return view('students.edit', compact(
+    //         'student',
+    //         'academicYears',
+    //         'universities',
+    //         'courseTypes',
+    //         'courses',
+    //         'subCourses',
+    //         'modes',
+    //         'courseModes',
+    //         'languages',
+    //         'bloodGroups',
+    //         'religions',
+    //         'categories'
+    //     ));
+    // }
+
+
     public function edit($id)
     {
         $student = Student::findOrFail($id);
@@ -990,6 +1064,14 @@ class StudentController extends Controller
         $religions = Religion::all();
         $categories = Category::all();
 
+        // Get the selected sub-course to access eligibility directly
+        $selectedSubCourse = $student->sub_course_id
+            ? SubCourse::find($student->sub_course_id)
+            : null;
+
+        // Get student qualifications (previous education)
+        $studentQualifications = $student->qualifications()->get(); // Assuming a hasMany relation in Student model
+
         return view('students.edit', compact(
             'student',
             'academicYears',
@@ -1002,9 +1084,13 @@ class StudentController extends Controller
             'languages',
             'bloodGroups',
             'religions',
-            'categories'
+            'categories',
+            'selectedSubCourse',   // SubCourse eligibility
+            'studentQualifications' // Student's saved qualifications
         ));
     }
+
+
 
 
     /**
