@@ -26,6 +26,7 @@ use App\Http\Controllers\Accounts\StudentFeeStructureController;
 use App\Http\Controllers\StudentLedgerController;
 use App\Http\Controllers\UniversityFeesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Settings\DocumentsController;
 use App\Http\Controllers\MiscellaneousFeeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Settings\StatusController;
@@ -170,6 +171,11 @@ Route::prefix('settings')->group(function () {
     Route::get('expensecategory/edit/{id}', [ExpenseCategoryController::class, 'edit'])->name('expensecategory.edit');
     Route::delete('expensecategory/delete/{id}', [ExpenseCategoryController::class, 'destroy'])->name('expensecategory.delete');
     Route::get('expensecategory/status/{id}', [ExpenseCategoryController::class, 'status'])->name('expensecategory.status');
+
+    // Document
+    Route::get('document',[DocumentsController::class,'index'])->name('document.index');
+    Route::get('document/create',[DocumentsController::class,'create'])->name('document.create');
+    Route::put('document/store',[DocumentsController::class,'store'])->name('documents.store');
 });
 
 

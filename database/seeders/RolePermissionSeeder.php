@@ -176,6 +176,9 @@ class RolePermissionSeeder extends Seeder
             'view payment',
             'approve payment',
 
+            'create document',
+            'edit document'
+
         ];
 
         // Create permissions

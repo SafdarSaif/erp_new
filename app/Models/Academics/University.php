@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Academics\Course;;
 use App\Models\Academics\SubCourse;
 use App\Models\Student;
+use Dom\Document;
 
 class University extends Model
 {
@@ -39,8 +40,12 @@ class University extends Model
     }
 
     public function students()
-{
-    return $this->hasMany(Student::class);
-}
+    {
+        return $this->hasMany(Student::class);
+    }
+
+    public function documents(){
+        return $this->hasMany(Document::class);
+    }
 
 }
