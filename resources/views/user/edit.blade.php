@@ -72,7 +72,7 @@
         {{-- Reporting Person --}}
         <div class="col-md-6">
             <label for="role_id" class="form-label">Reporting Manager <span class="text-danger">*</span></label>
-            <select name="reporting_user_id" id="reporting_user_id" class="form-select" required>
+            <select name="reporting_user_id" id="reporting_user_id" class="form-select">
                 <option value="">Choose Reporting Manager</option>
                 @foreach($users as $user)
                     <option value="{{ $user->id }}" {{ $user->id ==$reportingId ? 'selected' : '' }}>{{ $user->name }}</option>

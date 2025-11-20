@@ -167,15 +167,21 @@ Route::prefix('settings')->group(function () {
     Route::get('expensecategory', [ExpenseCategoryController::class, 'index'])->name('expensecategory.index');
     Route::get('expensecategory/create', [ExpenseCategoryController::class, 'create'])->name('expensecategory.create');
     Route::post('expensecategory/store', [ExpenseCategoryController::class, 'store'])->name('expensecategory.store');
-    Route::post('expensecategory/update/{id}', [ExpenseCategoryController::class, 'update'])->name('expensecategory.update');
+    Route::put('expensecategory/update/{id}', [ExpenseCategoryController::class, 'update'])->name('expensecategory.update');
     Route::get('expensecategory/edit/{id}', [ExpenseCategoryController::class, 'edit'])->name('expensecategory.edit');
     Route::delete('expensecategory/delete/{id}', [ExpenseCategoryController::class, 'destroy'])->name('expensecategory.delete');
     Route::get('expensecategory/status/{id}', [ExpenseCategoryController::class, 'status'])->name('expensecategory.status');
 
     // Document
-    Route::get('document',[DocumentsController::class,'index'])->name('document.index');
-    Route::get('document/create',[DocumentsController::class,'create'])->name('document.create');
-    Route::put('document/store',[DocumentsController::class,'store'])->name('documents.store');
+    Route::get('document', [DocumentsController::class, 'index'])->name('documents.index');
+    Route::get('document/create', [DocumentsController::class, 'create'])->name('documents.create');
+    Route::post('document/store', [DocumentsController::class, 'store'])->name('documents.store');
+    Route::get('document/edit/{id}', [DocumentsController::class, 'edit'])->name('documents.edit');
+    Route::put('document/update/{id}', [DocumentsController::class, 'update'])->name('documents.update');
+    Route::delete('document/delete/{id}', [DocumentsController::class, 'destroy'])->name('documents.delete');
+    Route::get('document/status/{id}', [DocumentsController::class, 'status'])->name('documents.status');
+
+
 });
 
 
@@ -294,6 +300,10 @@ Route::prefix('students')->group(function () {
     Route::get('/{id}/pdf', [StudentController::class, 'pdf'])->name('students.pdf');
     Route::get('/{id}/idcard', [StudentController::class, 'idCard'])->name('students.idcard');
     Route::get('/idcardpdf/{id}', [StudentController::class, 'generateIdCardPDF'])->name('students.idcardpdf');
+
+
+        Route::get('/get-documents-by-university/{university_id}', [StudentController::class, 'getDocuments']);
+
 });
 
 
@@ -307,7 +317,7 @@ Route::prefix('accounts')->group(function () {
     Route::post('/university-fee/update-fee/{studentId}', [UniversityFeesController::class, 'updateFee'])->name('university-fee.updateFee');
     Route::get('/university-payments', [UniversityFeesController::class, 'UnversityFeeTransactionHistory'])
         ->name('university-payments.index');
-        
+
     // Student Fee Management
     Route::get('/fees', [StudentFeeStructureController::class, 'index'])->name('fees.index');
     Route::get('/fees/create', [StudentFeeStructureController::class, 'create'])->name('fees.create');

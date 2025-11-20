@@ -133,4 +133,9 @@ public function qualifications()
 }
 
 
+public function studentDocuments()
+{
+    return $this->hasMany(StudentDocument::class, 'student_id');
+
+}
 }

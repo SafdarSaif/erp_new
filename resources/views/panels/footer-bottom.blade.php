@@ -212,44 +212,106 @@
 
 
 <script>
-    let eligibilityChoices = null;
+    //     let eligibilityChoices = null;
+
+// $(document).on('shown.bs.modal', function () {
+
+//     if (document.querySelector('#eligibility')) {
+
+//         if (eligibilityChoices) {
+//             eligibilityChoices.destroy();
+//         }
+
+//         eligibilityChoices = new Choices('#eligibility', {
+//             removeItemButton: true,
+//             placeholder: true,
+//             placeholderValue: "Select eligibility criteria",
+//             searchEnabled: true
+//         });
+//     }
+
+// });
+//     let universityChoices = null;
+
+
+
+
+let eligibilityChoices = null;
+let universityChoices = null;
+let universityChoicesEdit = null;
+let acceptableTypeChoices = null;
+let acceptableTypeChoicesEdit = null;
 
 $(document).on('shown.bs.modal', function () {
 
+    /** --------------------------
+     *  ELIGIBILITY
+     * -------------------------- */
     if (document.querySelector('#eligibility')) {
-
-        if (eligibilityChoices) {
-            eligibilityChoices.destroy();
-        }
+        if (eligibilityChoices) eligibilityChoices.destroy();
 
         eligibilityChoices = new Choices('#eligibility', {
             removeItemButton: true,
             placeholder: true,
-            placeholderValue: "Select eligibility criteria",
             searchEnabled: true
         });
     }
 
-});
-    let universityChoices = null;
-
-$(document).on('shown.bs.modal', function () {
-
+    /** --------------------------
+     *  UNIVERSITY - CREATE
+     * -------------------------- */
     if (document.querySelector('#university_id')) {
+        if (universityChoices) universityChoices.destroy();
 
-        if (documentChoices) {
-            documentChoices.destroy();
-        }
-
-        documentChoices = new Choices('#university_id', {
+        universityChoices = new Choices('#university_id', {
             removeItemButton: true,
-            placeholder: true,
-            placeholderValue: "Select University",
+            searchEnabled: true
+        });
+    }
+
+    /** --------------------------
+     *  UNIVERSITY - EDIT
+     * -------------------------- */
+    if (document.querySelector('#edit_university_id')) {
+        if (universityChoicesEdit) universityChoicesEdit.destroy();
+
+        universityChoicesEdit = new Choices('#edit_university_id', {
+            removeItemButton: true,
+            searchEnabled: true
+        });
+    }
+
+    /** --------------------------
+     *  ACCEPTABLE TYPES - CREATE
+     * -------------------------- */
+    if (document.querySelector('#acceptable_type')) {
+        if (acceptableTypeChoices) acceptableTypeChoices.destroy();
+
+        acceptableTypeChoices = new Choices('#acceptable_type', {
+            removeItemButton: true,
+            searchEnabled: true
+        });
+    }
+
+    /** --------------------------
+     *  ACCEPTABLE TYPES - EDIT
+     * -------------------------- */
+    if (document.querySelector('#edit_acceptable_type')) {
+        if (acceptableTypeChoicesEdit) acceptableTypeChoicesEdit.destroy();
+
+        acceptableTypeChoicesEdit = new Choices('#edit_acceptable_type', {
+            removeItemButton: true,
             searchEnabled: true
         });
     }
 
 });
+
+
+
+
+
+
 </script>
 
 

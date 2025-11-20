@@ -164,7 +164,7 @@
         <div class="watermark">{{ $theme }}</div>
 
         <!-- Header with logo on left, name/address on right -->
-        <div class="header">
+        <div class="header" style="display: flex; align-items: center;">
             <div class="logo">
                 <img src="{{ $logo }}" alt="Logo" style="height: 60px; max-width: 200px; object-fit: contain;">
             </div>

@@ -260,6 +260,19 @@
                     </div> --}}
 
 
+
+
+                    {{-- //others realted documents by university --}}
+                    <h5 class="mt-4 mb-3 text-secondary">
+                        <i class="bi bi-folder-check me-2"></i>Required Documents
+                    </h5>
+
+                    <div id="required-documents-box" class="border rounded p-3 bg-light">
+                        <p class="text-muted">Select a university to load required documents.</p>
+                    </div>
+
+
+
                     <!-- Previous Education Qualification -->
                     <h5 class="mt-4 mb-3 text-secondary">
                         <i class="bi bi-journal-text me-2"></i>Previous Education Qualification
@@ -268,6 +281,9 @@
                     <div id="prev-education-container">
                         <!-- Dynamic fields will be injected here -->
                     </div>
+
+
+
 
 
 
@@ -518,8 +534,180 @@ $('select[name="sub_course_id"]').on('change', function() {
 });
 </script> --}}
 
+
+
+@section('scripts')
+
+
 <script>
 $(document).ready(function() {
+
+    $('select[name="university_id"]').on('change', function() {
+        let uni_id = $(this).val();
+
+        $("#required-documents-box").html(
+            "<p class='text-info'>Loading documents...</p>"
+        );
+
+        if (!uni_id) {
+            $("#required-documents-box").html(
+                "<p class='text-muted'>Select a university to load required documents.</p>"
+            );
+            return;
+        }
+
+        $.ajax({
+            url: "get-documents-by-university/" + uni_id,
+            type: "GET",
+            success: function(response) {
+                if (response.status === "success") {
+                    let docs = response.data;
+
+                    if (docs.length === 0) {
+                        $("#required-documents-box").html(
+                            "<p class='text-danger'>No documents found for this university.</p>"
+                        );
+                        return;
+                    }
+
+                    let html = '';
+                    docs.forEach(doc => {
+
+                        html += `
+                            <div class="p-3 mb-3 border rounded bg-white">
+                                <h6 class="fw-bold mb-2">${doc.name}</h6>
+
+                                <div class="mb-2">
+                                    <strong>Accepted Types:</strong>
+                                    ${doc.acceptable_type.join(", ")}
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Max Size:</strong> ${doc.max_size} MB
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Required:</strong>
+                                    ${doc.is_required ? "<span class='text-danger'>Yes</span>" : "No"}
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Multiple Upload Allowed:</strong>
+                                    ${doc.is_multiple == 1 ? "<span class='text-success'>Yes</span>" : "No"}
+                                </div>
+
+                                <!-- Upload Input Field -->
+                                <div class="mb-2">
+                                    <label class="form-label">Upload ${doc.name}</label>
+                                    <input type="file"
+                                           name="documents[${doc.id}]${doc.is_multiple == 1 ? '[]' : ''}"
+                                           class="form-control"
+                                           ${doc.is_multiple == 1 ? 'multiple' : ''}
+                                           ${doc.is_required ? 'required' : ''}>
+                                </div>
+
+                                <!-- Hidden Fields -->
+                                <input type="hidden" name="doc_meta[${doc.id}][name]" value="${doc.name}">
+                                <input type="hidden" name="doc_meta[${doc.id}][max_size]" value="${doc.max_size}">
+                                <input type="hidden" name="doc_meta[${doc.id}][acceptable_type]" value='${JSON.stringify(doc.acceptable_type)}'>
+                                <input type="hidden" name="doc_meta[${doc.id}][is_required]" value="${doc.is_required}">
+                                <input type="hidden" name="doc_meta[${doc.id}][is_multiple]" value="${doc.is_multiple}">
+                            </div>
+                        `;
+                    });
+
+                    $("#required-documents-box").html(html);
+                }
+            }
+        });
+    });
+
+});
+</script>
+
+{{-- <script>
+    $(document).ready(function() {
+
+    $('select[name="university_id"]').on('change', function() {
+        let uni_id = $(this).val();
+
+        $("#required-documents-box").html(
+            "<p class='text-info'>Loading documents...</p>"
+        );
+
+        if (!uni_id) {
+            $("#required-documents-box").html(
+                "<p class='text-muted'>Select a university to load required documents.</p>"
+            );
+            return;
+        }
+
+        $.ajax({
+            url: "get-documents-by-university/" + uni_id,
+            type: "GET",
+            success: function(response) {
+                if (response.status === "success") {
+                    let docs = response.data;
+
+                    if (docs.length === 0) {
+                        $("#required-documents-box").html(
+                            "<p class='text-danger'>No documents found for this university.</p>"
+                        );
+                        return;
+                    }
+
+                    let html = '';
+                    docs.forEach(doc => {
+
+                        html += `
+                            <div class="p-3 mb-3 border rounded bg-white">
+                                <h6 class="fw-bold mb-2">${doc.name}</h6>
+
+                                <div class="mb-2">
+                                    <strong>Accepted Types:</strong>
+                                    ${doc.acceptable_type.join(", ")}
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Max Size:</strong> ${doc.max_size} MB
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Required:</strong>
+                                    ${doc.is_required ? "<span class='text-danger'>Yes</span>" : "No"}
+                                </div>
+
+                                <!-- Upload Input Field -->
+                                <div class="mb-2">
+                                    <label class="form-label">Upload ${doc.name}</label>
+                                    <input type="file"
+                                           name="documents[${doc.id}]"
+                                           class="form-control"
+                                           ${doc.is_required ? "required" : ""}>
+                                </div>
+
+                                <!-- Hidden Field: Metadata -->
+                                <input type="hidden" name="doc_meta[${doc.id}][name]" value="${doc.name}">
+                                <input type="hidden" name="doc_meta[${doc.id}][max_size]" value="${doc.max_size}">
+                                <input type="hidden" name="doc_meta[${doc.id}][acceptable_type]" value='${JSON.stringify(doc.acceptable_type)}'>
+                                <input type="hidden" name="doc_meta[${doc.id}][is_required]" value="${doc.is_required}">
+                            </div>
+                        `;
+                    });
+
+                    $("#required-documents-box").html(html);
+                }
+            }
+        });
+    });
+
+});
+</script> --}}
+
+
+
+<script>
+    $(document).ready(function() {
 
     // =======================
     // Dependent Dropdowns

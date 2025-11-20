@@ -9,9 +9,19 @@ use Symfony\Component\CssSelector\Node\FunctionNode;
 class Documents extends Model
 {
     protected $table = 'documents';
-    protected $fillable = ['name','acceptable_type','max_size','is_required','university_id'];
+    protected $fillable = ['name', 'acceptable_type', 'max_size', 'is_required', 'is_multiple', 'university_id'];
 
-    public function university(){
+
+    protected $casts = [
+        'acceptable_type' => 'array',
+        'university_id'   => 'array',
+    ];
+
+
+    public function university()
+    {
         return $this->belongsTo(University::class);
     }
+
+    
 }

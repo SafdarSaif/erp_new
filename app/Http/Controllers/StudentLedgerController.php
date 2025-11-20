@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf; // if using barryvdh/laravel-dompdf
+use Auth;
 
 
 
@@ -649,36 +650,76 @@ class StudentLedgerController extends Controller
 
 
 
+    // public function downloadReceipt($id)
+    // {
+    //     //    $user = auth()->user();
+    //     //     dd($user);
+    //     $ledger = StudentLedger::with('feeStructure', 'student')->findOrFail($id);
+
+    //     $student = Student::find($ledger->student_id);
+    //     //    dd($student);
+    //     // $themeName = Theme::where('is_active', 1)->value('name')->first();
+    //     $themeName = Theme::where('is_active', 1)->value('name');
+    //     // dd($themeName);
+    //     $courseName = $student->course->name ?? 'N/A';
+
+    //     $data = [
+    //         'student_name'     => $student->full_name,
+    //         'application_id'   => $student->id ?? '-',
+    //         'email'            => $student->email ?? '-',
+    //         'course'           => $courseName,
+    //         'semester'         => $ledger->feeStructure->semester ?? '-',
+    //         'amount'           => number_format($ledger->amount, 2),
+    //         'mode'             => $ledger->payment_mode,
+    //         'transaction_id'   => $ledger->utr_no ?? '-',
+    //         'date'             => $ledger->created_at->format('d M Y'),
+    //         'theme'            => $themeName,
+    //     ];
+
+    //     $pdf = Pdf::loadView('accounts.ledger.receipt', $data);
+
+    //     return $pdf->download('Payment_Receipt_' . $student->full_name . '.pdf');
+    // }
+
+
     public function downloadReceipt($id)
     {
-    //    $user = auth()->user();
-    //     dd($user);
+        // Get ledger and student
         $ledger = StudentLedger::with('feeStructure', 'student')->findOrFail($id);
+        $student = $ledger->student;
 
-        $student = Student::find($ledger->student_id);
-    //    dd($student);
-    // $themeName = Theme::where('is_active', 1)->value('name')->first();
-    $themeName= Theme::where('is_active', 1)->value('name');
-    // dd($themeName);
-        $courseName = $student->course->name ?? 'N/A';
+        // Get the institute details from users table
+        $user = auth()->user(); // or any specific user
 
+        $fullAddress = $user->address ?? "";
+
+        // Split address into two lines
+        $parts = explode(',', $fullAddress, 3); // max 3 parts
+        $address = trim($parts[0]) . ',' . trim($parts[1]) . '<br>' . trim($parts[2]);
+        $instituteName = $user->name ?? '';
+        $logo          = $user->profile_photo_path ?? 'https://via.placeholder.com/150x60?text=Logo';
+
+        // Prepare PDF data
         $data = [
             'student_name'     => $student->full_name,
             'application_id'   => $student->id ?? '-',
             'email'            => $student->email ?? '-',
-            'course'           => $courseName,
+            'course'           => $student->course->name ?? 'N/A',
             'semester'         => $ledger->feeStructure->semester ?? '-',
             'amount'           => number_format($ledger->amount, 2),
             'mode'             => $ledger->payment_mode,
             'transaction_id'   => $ledger->utr_no ?? '-',
             'date'             => $ledger->created_at->format('d M Y'),
-             'theme'            => $themeName,
+            'theme'            => $instituteName,
+            'address'          => $address,
+            'logo'             => $logo,
         ];
 
         $pdf = Pdf::loadView('accounts.ledger.receipt', $data);
 
         return $pdf->download('Payment_Receipt_' . $student->full_name . '.pdf');
     }
+
 
 
 

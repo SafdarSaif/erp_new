@@ -15,9 +15,11 @@ use App\Models\Academics\Course;
 use App\Models\Academics\SubCourse;
 use App\Models\Settings\AdmissionMode;
 use App\Models\Settings\CourseMode;
+use App\Models\Settings\Documents;
 use App\Models\Settings\Status;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\StudentQualification;
+use App\Models\StudentDocument;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -383,6 +385,26 @@ class StudentController extends Controller
         ]);
     }
 
+
+
+    public function getDocuments($university_id)
+    {
+        try {
+            $documents = Documents::whereJsonContains('university_id', (string)$university_id)->get();
+
+            // dd($documents);
+
+            return response()->json([
+                'status' => 'success',
+                'data'   => $documents
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function getCourses($universityId)
     {
         $courses = Course::where('university_id', $universityId)->get();
@@ -418,45 +440,45 @@ class StudentController extends Controller
     // }
 
 
- public function getSubCourseDetails($subCourseId, Request $request)
-{
-    $subCourse = SubCourse::with('courseMode')->find($subCourseId);
+    public function getSubCourseDetails($subCourseId, Request $request)
+    {
+        $subCourse = SubCourse::with('courseMode')->find($subCourseId);
 
-    if (!$subCourse) {
+        if (!$subCourse) {
+            return response()->json([
+                'course_mode_id' => '',
+                'course_mode_name' => '',
+                'course_duration' => '',
+                'eligibility' => [],
+                'prev_educations' => []
+            ]);
+        }
+
+        $prevEducations = [];
+        if ($request->student_id) {
+            $student = \App\Models\Student::find($request->student_id);
+            if ($student) {
+                $prevEducations = $student->qualifications()->get()->map(function ($q) {
+                    return [
+                        'qualification' => $q->qualification,
+                        'board' => $q->board,
+                        'passing_year' => $q->passing_year,
+                        'marks' => $q->marks,
+                        'result' => $q->result,
+                        'document' => $q->document
+                    ];
+                })->toArray();
+            }
+        }
+
         return response()->json([
-            'course_mode_id' => '',
-            'course_mode_name' => '',
-            'course_duration' => '',
-            'eligibility' => [],
-            'prev_educations' => []
+            'course_mode_id' => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null),
+            'course_mode_name' => $subCourse->courseMode->name ?? '',
+            'course_duration' => $subCourse->duration ?? '',
+            'eligibility' => $subCourse->eligibility ?? [],
+            'prev_educations' => $prevEducations
         ]);
     }
-
-    $prevEducations = [];
-    if ($request->student_id) {
-        $student = \App\Models\Student::find($request->student_id);
-        if ($student) {
-            $prevEducations = $student->qualifications()->get()->map(function($q) {
-                return [
-                    'qualification' => $q->qualification,
-                    'board' => $q->board,
-                    'passing_year' => $q->passing_year,
-                    'marks' => $q->marks,
-                    'result' => $q->result,
-                    'document' => $q->document
-                ];
-            })->toArray();
-        }
-    }
-
-    return response()->json([
-        'course_mode_id' => $subCourse->course_mode_id ?? ($subCourse->courseMode->id ?? null),
-        'course_mode_name' => $subCourse->courseMode->name ?? '',
-        'course_duration' => $subCourse->duration ?? '',
-        'eligibility' => $subCourse->eligibility ?? [],
-        'prev_educations' => $prevEducations
-    ]);
-}
 
 
 
@@ -859,6 +881,90 @@ class StudentController extends Controller
                 ]);
             }
 
+
+
+
+            // -----------------------------------------------------
+            // 4. SAVE REQUIRED DOCUMENTS (Single + Multiple Upload)
+            // -----------------------------------------------------
+
+            $requiredDocuments = $request->documents ?? [];  // Uploaded files
+            $docMeta           = $request->doc_meta ?? [];   // Hidden metadata fields
+
+            foreach ($docMeta as $docId => $meta) {
+
+                // ---- Metadata Fields ----
+                $docName         = $meta['name'] ?? '';
+                $maxSize         = $meta['max_size'] ?? null;
+                $acceptableTypes = $meta['acceptable_type'] ?? '[]';
+                $isRequired      = $meta['is_required'] ?? 0;
+                $isMultiple      = $meta['is_multiple'] ?? 0;
+
+                // ---- Check Required Document ----
+                if ($isRequired && empty($requiredDocuments[$docId])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "Required document missing: $docName"
+                    ], 422);
+                }
+
+                // ---- Skip if no upload ----
+                if (empty($requiredDocuments[$docId])) {
+                    continue;
+                }
+
+                $files = $requiredDocuments[$docId];
+
+                // -------------------------------------------------------
+                // MULTIPLE UPLOAD MODE
+                // -------------------------------------------------------
+                if ($isMultiple == 1) {
+
+                    // Ensure it's always treated as an array
+                    if (!is_array($files)) {
+                        $files = [$files];
+                    }
+
+                    $storedFiles = [];
+
+                    foreach ($files as $file) {
+
+                        $fileName = time() . '_' . $file->getClientOriginalName();
+                        $file->move(public_path('uploads/student_documents'), $fileName);
+
+                        $storedFiles[] = 'uploads/student_documents/' . $fileName;
+                    }
+
+                    // Store JSON file paths
+                    StudentDocument::create([
+                        'student_id'       => $student->id,
+                        'document_id'      => $docId,
+                        'path'            => $storedFiles,  // JSON array
+
+                    ]);
+                }
+
+                // -------------------------------------------------------
+                // SINGLE UPLOAD MODE
+                // -------------------------------------------------------
+                else {
+
+                    $file = is_array($files) ? $files[0] : $files;
+
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('uploads/student_documents'), $fileName);
+
+                    StudentDocument::create([
+                        'student_id'       => $student->id,
+                        'document_id'      => $docId,
+                        'path'             => 'uploads/student_documents/' . $fileName,
+
+                    ]);
+                }
+            }
+
+
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Student has been added successfully.',
@@ -878,13 +984,50 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
+    // public function show($id)
+    // {
+    //     // $student = Student::findOrFail($id);
+    //     $student = Student::with('qualifications')->findOrFail($id);
+
+
+    //     // Load related data for select fields
+    //     $academicYears = AcademicYear::all();
+    //     $universities = University::all();
+    //     $courseTypes  = CourseType::all();
+    //     $courses      = Course::all();
+    //     $subCourses   = SubCourse::all();
+    //     $modes        = AdmissionMode::all();
+    //     $courseModes  = CourseMode::all();
+    //     $languages    = Language::all();
+    //     $bloodGroups  = BloodGroup::all();
+    //     $religions    = Religion::all();
+    //     $categories   = Category::all();
+
+    //     return view('students.view', compact(
+    //         'student',
+    //         'academicYears',
+    //         'universities',
+    //         'courseTypes',
+    //         'courses',
+    //         'subCourses',
+    //         'modes',
+    //         'courseModes',
+    //         'languages',
+    //         'bloodGroups',
+    //         'religions',
+    //         'categories'
+    //     ));
+    // }
+
+
     public function show($id)
     {
-        // $student = Student::findOrFail($id);
-        $student = Student::with('qualifications')->findOrFail($id);
+        $student = Student::with([
+            'qualifications',
+        'studentDocuments.document'  // FIXED HERE
+        ])->findOrFail($id);
 
-
-        // Load related data for select fields
+        // Load related data
         $academicYears = AcademicYear::all();
         $universities = University::all();
         $courseTypes  = CourseType::all();
@@ -912,6 +1055,7 @@ class StudentController extends Controller
             'categories'
         ));
     }
+
 
 
     public function print($id)
