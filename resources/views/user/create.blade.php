@@ -16,17 +16,29 @@
         <!-- Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter Name" oninput="createInitials()" required>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Enter Name"
+                oninput="createInitials()" required>
         </div>
 
         <!-- Avatar -->
         <div class="col-md-6">
             <label for="avatar" class="form-label">Avatar</label>
-            <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*" onchange="previewAvatar(event)">
+            <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*"
+                onchange="previewAvatar(event)">
             <div class="mt-2 d-flex align-items-center">
-                <span id="nameInitials" class="avatar-initial rounded-circle bg-label-success" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">UN</span>
-                <img id="avatarImage" src="" alt="Avatar" class="rounded-circle" style="width:40px;height:40px;display:none;">
+                <span id="nameInitials" class="avatar-initial rounded-circle bg-label-success"
+                    style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">UN</span>
+                <img id="avatarImage" src="" alt="Avatar" class="rounded-circle"
+                    style="width:40px;height:40px;display:none;">
             </div>
+        </div>
+
+
+        <!-- Address -->
+        <div class="col-md-12">
+            <label for="address" class="form-label">Address</label>
+            <textarea name="address" id="address" class="form-control" placeholder="Enter Address"
+                rows="2">{{ old('address') }}</textarea>
         </div>
 
         <!-- Email -->
@@ -41,13 +53,15 @@
             <input type="tel" name="mobile" id="mobile" class="form-control" placeholder="Enter Mobile" required>
         </div>
 
+
+
         <!-- Role -->
         <div class="col-md-6">
             <label for="role_id" class="form-label">Role <span class="text-danger">*</span></label>
             <select name="role_id" id="role_id" class="form-select" required>
                 <option value="">Choose Role</option>
                 @foreach($roles as $role)
-                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                <option value="{{ $role->id }}">{{ $role->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -57,7 +71,7 @@
             <select name="reporting_user_id" id="reporting_user_id" class="form-select" required>
                 <option value="">Choose Reporting Manager</option>
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -66,7 +80,8 @@
         <div class="col-md-6 form-password-toggle">
             <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
             <div class="input-group input-group-merge">
-                <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password" required minlength="8">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password"
+                    required minlength="8">
                 <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
             </div>
         </div>

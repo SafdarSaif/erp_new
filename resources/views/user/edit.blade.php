@@ -39,6 +39,12 @@
             </div>
         </div>
 
+
+        <!-- Address -->
+        <div class="col-md-12">
+            <label for="address" class="form-label">Address</label>
+            <textarea name="address" id="address" class="form-control" placeholder="Enter Address" rows="2">{{ $user->address }}</textarea>
+        </div>
         <!-- Email -->
         <div class="col-md-6">
             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>

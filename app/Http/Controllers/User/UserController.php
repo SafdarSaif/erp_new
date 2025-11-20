@@ -70,6 +70,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'mobile' => $request->mobile,
+                'address' => $request->address ?? null, // <-- Add address here
                 'password' => Hash::make($request->password),
             ]);
 
@@ -161,6 +162,8 @@ class UserController extends Controller
             'password' => 'nullable|min:6',
             'role_id' => 'nullable|exists:roles,id',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate `avatar`
+            'address' => 'nullable|string|max:500', // Added address validation
+            'reporting_user_id' => 'nullable|exists:users,id',
         ]);
 
         try {
@@ -185,6 +188,8 @@ class UserController extends Controller
                 'email' => $request->email,
                 'mobile' => $request->mobile,
                 'profile_photo_path' => $user->profile_photo_path, // Store as `profile_photo_path`
+                'address' => $request->address ?? null, // Update address
+                
             ]);
 
             ReportingManager::updateOrCreate(
