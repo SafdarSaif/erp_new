@@ -27,6 +27,8 @@ class UserDataObserver
         $model::addGlobalScope('added_by_scope', function (Builder $builder) {
             if (Auth::check()) {
                 $user = Auth::user();
+
+                // dd($user->id);
                 $downlineUserIds = $user->getAllDownlineUserIds();
                 array_push($downlineUserIds,$user->id);
                 // dd($downlineUserIds);
@@ -37,4 +39,12 @@ class UserDataObserver
             }
         });
     }
+
+
+
+
+
+
+
+
 }

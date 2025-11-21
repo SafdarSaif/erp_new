@@ -9,7 +9,7 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-         $menus = [
+        $menus = [
             [
                 "id" => 1,
                 "added_by" => null,
@@ -57,7 +57,7 @@ class MenuSeeder extends Seeder
                 "parent_id" => "4",
                 "is_parent" => "0",
                 "url" => "/menu",
-                 "icon" => null,
+                "icon" => null,
                 "position" => "1",
                 "permission" => null,
                 "is_active" => "1",
@@ -349,7 +349,7 @@ class MenuSeeder extends Seeder
                 "is_active" => "1",
                 "is_searchable" => "0",
             ],
-             [
+            [
                 "id" => 34,
                 "added_by" => null,
                 "name" => "Reports",
@@ -521,7 +521,7 @@ class MenuSeeder extends Seeder
             ],
 
 
-              // New menus
+            // New menus
             [
                 "id" => 43,
                 "added_by" => null,
@@ -558,6 +558,20 @@ class MenuSeeder extends Seeder
                 "icon" => null,
                 "position" => 4,
                 "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
+
+            [
+                "id" => 46, // Make sure this ID is unique
+                "added_by" => null,
+                "name" => " Student Documents",
+                "parent_id" => 1,
+                "is_parent" => "0",
+                "url" => "/settings/document",
+                "icon" => null,
+                "position" => 12, // Adjust the position according to your menu order
+                "permission" => null, // Optional, if using permissions
                 "is_active" => "1",
                 "is_searchable" => "0",
             ],
