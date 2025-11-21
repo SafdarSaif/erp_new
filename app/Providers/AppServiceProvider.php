@@ -25,7 +25,7 @@ use App\Models\{
     Voucher,
 };
 use App\Observers\UserDataObserver;
-
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        if (!Auth::check()) {
+            redirect()->to('/login')->send();
+        }
+
         View::composer('*', function ($view) {
 
             $menus = Menu::whereNull('parent_id')
