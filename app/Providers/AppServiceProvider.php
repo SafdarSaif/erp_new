@@ -44,9 +44,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        if (!Auth::check()) {
-            redirect()->to('/login')->send();
-        }
+        // if (!Auth::check()) {
+        //     redirect()->to('/login')->send();
+        // }
 
         View::composer('*', function ($view) {
 
