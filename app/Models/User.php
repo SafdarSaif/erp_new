@@ -28,7 +28,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-               'name', 'email', 'password','code','mobile','profile_photo_path','status','user_type', 'address'
+               'name', 'email', 'password','code','mobile','profile_photo_path','status','user_type', 'address','gst'
 
     ];
 
@@ -90,4 +90,40 @@ class User extends Authenticatable
     {
         return $this->hasMany(ReportingManager::class, 'reporting_user_id');
     }
+
+
+     // ---------------------------------------------
+    // Roles downline (recursive)
+    // ---------------------------------------------
+    public function getAllDownlineRoleIds(): array
+    {
+        $roleIds = [];
+
+        $myRoles = $this->roles()->pluck('id')->toArray(); // get all roles of user
+
+        foreach ($myRoles as $roleId) {
+            $roleIds[] = $roleId; // include own role
+            $roleIds = array_merge($roleIds, $this->getChildRoles($roleId));
+        }
+
+        return array_unique($roleIds);
+    }
+
+    // Recursive helper for child roles
+    private function getChildRoles(int $parentRoleId): array
+    {
+        $childRoles = RoleReporting::where('parent_id', $parentRoleId)->pluck('role_id')->toArray();
+        $all = [];
+
+        foreach ($childRoles as $childRoleId) {
+            $all[] = $childRoleId;
+            $all = array_merge($all, $this->getChildRoles($childRoleId));
+        }
+
+        return $all;
+    }
+
+
+
+
 }

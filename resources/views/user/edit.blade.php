@@ -45,6 +45,11 @@
             <label for="address" class="form-label">Address</label>
             <textarea name="address" id="address" class="form-control" placeholder="Enter Address" rows="2">{{ $user->address }}</textarea>
         </div>
+        <!-- GST Number -->
+<div class="col-md-6">
+    <label for="gst" class="form-label">GST Number</label>
+    <input type="text" name="gst" id="gst" class="form-control" placeholder="Enter GST Number" value="{{ $user->gst }}">
+</div>
         <!-- Email -->
         <div class="col-md-6">
             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>

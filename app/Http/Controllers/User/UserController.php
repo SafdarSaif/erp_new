@@ -71,6 +71,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'mobile' => $request->mobile,
                 'address' => $request->address ?? null, // <-- Add address here
+                'gst' => $request->gst ?? null,         // GST number
                 'password' => Hash::make($request->password),
             ]);
 
@@ -163,6 +164,7 @@ class UserController extends Controller
             'role_id' => 'nullable|exists:roles,id',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate `avatar`
             'address' => 'nullable|string|max:500', // Added address validation
+            'gst' => 'nullable|string|max:50', // Added GST validation
             'reporting_user_id' => 'nullable|exists:users,id',
         ]);
 
@@ -189,7 +191,8 @@ class UserController extends Controller
                 'mobile' => $request->mobile,
                 'profile_photo_path' => $user->profile_photo_path, // Store as `profile_photo_path`
                 'address' => $request->address ?? null, // Update address
-                
+                'gst' => $request->gst ?? null,         // Update GST number
+
             ]);
 
             ReportingManager::updateOrCreate(

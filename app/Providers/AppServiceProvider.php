@@ -23,6 +23,7 @@ use App\Models\{
     UniversityFees,
     StudentQuery,
     Voucher,
+    // User,
 };
 use App\Observers\UserDataObserver;
 use Illuminate\Support\Facades\Auth;
@@ -74,12 +75,16 @@ class AppServiceProvider extends ServiceProvider
             UniversityFees::class,
             StudentQuery::class,
             Voucher::class,
+            // User::class
         ];
-
+        // dd($models);
         foreach ($models as $model) {
             $model::observe(UserDataObserver::class);
 
             UserDataObserver::addGlobalScope($model);
         }
+
+
+
     }
 }

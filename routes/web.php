@@ -35,6 +35,7 @@ use App\Http\Controllers\Settings\ThemeSettingsController;
 use App\Http\Controllers\StudentQueryController;
 use App\Http\Controllers\Settings\ExpenseCategoryController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\RoleReportingController;
 
 
 
@@ -225,6 +226,13 @@ Route::get('/users/roles/create', [RoleController::class, 'create'])->name('user
 Route::post('/users/roles', [RoleController::class, 'store'])->name('users.roles');
 Route::get('/users/roles/edit/{id}', [RoleController::class, 'edit'])->name('users.roles.edit');
 Route::post('/users/roles/update', [RoleController::class, 'update'])->name('users.roles.update');
+
+
+// Roles Reporting
+
+Route::get('/users/rolesReport/create', [RoleReportingController::class, 'create'])->name('users.rolesReport.create');
+Route::post('/users/rolesReport', [RoleReportingController::class, 'store'])->name('users.rolesReport.store');
+
 
 
 

