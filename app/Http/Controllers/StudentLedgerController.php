@@ -721,49 +721,51 @@ class StudentLedgerController extends Controller
     // }
 
 
-
- public function downloadReceipt($id)
+public function downloadReceipt($id)
 {
-    // Get ledger and student
+    // Get ledger and student with related data
     $ledger = StudentLedger::with('feeStructure', 'student.university', 'student.course')->findOrFail($id);
     $student = $ledger->student;
 
-    // Get the institute details from users table
-    $user = auth()->user(); // or any specific user
+    // Get institute details from authenticated user
+    $user = auth()->user();
 
-    $fullAddress = $user->address ?? "";
-
-    // Split address into two lines
+    // Full address split into two lines, fallback to '-'
+    $fullAddress = $user->address ?? '-';
     $parts = explode(',', $fullAddress, 3);
-    $address = trim($parts[0]) . ',' . trim($parts[1]) . '<br>' . trim($parts[2]);
-    $instituteName = $user->name ?? '';
+    $address = (isset($parts[0]) ? trim($parts[0]) : '-')
+             . ',' . (isset($parts[1]) ? trim($parts[1]) : '-')
+             . '<br>' . (isset($parts[2]) ? trim($parts[2]) : '-');
+
+    $instituteName = $user->name ?? '-';
     $logo = $user->profile_photo_path ?? 'https://via.placeholder.com/150x60?text=Logo';
 
-    // Prepare PDF data
+    // Prepare PDF data, use default values if any field is null
     $data = [
-        'student_name'      => $student->full_name,
+        'student_name'      => $student->full_name ?? '-',
         'application_id'    => $student->id ?? '-',
-        'student_unique_id' => $student->student_unique_id ?? '-', // unique ID
-        'phone'             => $student->mobile ?? '-', // student phone
+        'student_unique_id' => $student->student_unique_id ?? '-',
+        'phone'             => $student->mobile ?? '-',
         'email'             => $student->email ?? '-',
         'course'            => $student->course->name ?? 'N/A',
         'semester'          => $ledger->feeStructure->semester ?? '-',
-        'amount'            => number_format($ledger->amount, 2),
-        'mode'              => $ledger->payment_mode,
+        'amount'            => $ledger->amount ? number_format($ledger->amount, 2) : '0.00',
+        'mode'              => $ledger->payment_mode ?? '-',
         'transaction_id'    => $ledger->utr_no ?? '-',
-        'receipt_no'        => $ledger->id ?? '-', // receipt number
-        'university_name'   => $student->university->name ?? '-', // get university name from student
-        'date'              => $ledger->created_at->format('d M Y'),
+        'receipt_no'        => $ledger->id ?? '-',
+        'university_name'   => $student->university->name ?? '-',
+        'date'              => $ledger->created_at ? $ledger->created_at->format('d M Y') : '-',
         'theme'             => $instituteName,
         'address'           => $address,
         'logo'              => $logo,
-        'user_gst'          => $user->gst ?? '-', // user GST
+        'user_gst'          => $user->gst ?? '-',
     ];
 
     $pdf = Pdf::loadView('accounts.ledger.receipt', $data);
 
-    return $pdf->download('Payment_Receipt_' . $student->full_name . '.pdf');
+    return $pdf->download('Payment_Receipt_' . ($student->full_name ?? 'student') . '.pdf');
 }
+
 
 
 
