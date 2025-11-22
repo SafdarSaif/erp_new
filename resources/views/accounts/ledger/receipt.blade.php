@@ -214,6 +214,31 @@
             </tbody>
         </table>
 
+
+         <!-- SEMESTER FEE SUMMARY -->
+        <h3 style="margin-top:25px; margin-bottom:10px; color:#000;">Semester Fee Summary</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Semester Fee</th>
+                    <th>Discount</th>
+                    <th>Total Payable</th>
+                    <th>Total Paid</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $semester_fee }}</td>
+                    <td>{{ $semester_discount }}</td>
+                    <td>{{ $semester_total }}</td>
+                    <td>{{ $semester_paid }}</td>
+                    <td><strong style="color:red;">{{ $semester_balance }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
         <!-- Signatures -->
         <div class="signature">
             <div class="sign-box">
