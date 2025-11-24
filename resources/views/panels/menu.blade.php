@@ -581,8 +581,60 @@
                         </span>
                     </button>
                 </div> --}}
+                @php
+                $currentURL = url()->current();
+                $isDashboard = ($currentURL == 'http://127.0.0.1:8000/dashboard' || $currentURL == 'https://devams.edtechinnovate.in/dashboard');
+                @endphp
+                @if ($isDashboard)
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dashboardDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Panels Switch
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dashboardDropdown" id="panelSwitchDropdownMenu">
+                        <li><a class="dropdown-item" href="#">Loading panels...</a></li>
+                    </ul>
+                </div>
+                @endif
+                <!-- @push('scripts')
+                <script>
+                    $(document).ready(function() {
+                        debugger;
+                        $.ajax({
+                            url: "{{ route('panels.tenants') }}",
+                            type: "GET",
+                            success: function(data) {
 
+                                const dropdownMenu = $('#panelSwitchDropdownMenu');
+                                dropdownMenu.empty();
 
+                                if (data.length === 0) {
+                                    dropdownMenu.append('<li><span class="dropdown-item-text">No panels available</span></li>');
+                                } else {
+
+                                    data.forEach(function(tenant) {
+
+                                        // Blade route converted to JS-replaceable pattern
+                                        let switchUrl = "{{ route('switch.panel', ['tenant' => '__ID__']) }}";
+                                        switchUrl = switchUrl.replace('__ID__', tenant.id);
+
+                                        dropdownMenu.append(
+                                            `<li><a class="dropdown-item" href="${switchUrl}">${tenant.name}</a></li>`
+                                        );
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                $('#panelSwitchDropdownMenu').html(
+                                    '<li><span class="dropdown-item-text text-danger">Error loading panels.</span></li>'
+                                );
+                                console.error("Error fetching tenants:", error);
+                            }
+                        });
+
+                    });
+                </script>
+                @endpush -->
 
                 @php
                 $user = Auth::user();

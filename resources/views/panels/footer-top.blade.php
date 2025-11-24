@@ -63,6 +63,62 @@
 <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- jquery cdn -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+
+        $.ajax({
+            url: "{{ route('panels.tenants') }}",
+            type: "GET",
+            success: function(data) {
+
+                const dropdownMenu = $('#panelSwitchDropdownMenu');
+                dropdownMenu.empty();
+
+                if (data.length === 0) {
+                    dropdownMenu.append('<li><span class="dropdown-item-text">No panels available</span></li>');
+                } else {
+
+                    data.forEach(function(tenant) {
+
+                        dropdownMenu.append(`
+                            <li>
+                                <a class="dropdown-item" onclick="switchPanel(${tenant.id})">
+                                    ${tenant.name}
+                                </a>
+                            </li>
+                        `);
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#panelSwitchDropdownMenu').html(
+                    '<li><span class="dropdown-item-text text-danger">Error loading panels.</span></li>'
+                );
+                console.error("Error fetching tenants:", error);
+            }
+        });
+
+    });
+
+    function switchPanel(id) {
+        console.log(id);
+        let url = "{{ route('switch.panel', ['tenant' => '__ID__']) }}";
+        url = url.replace('__ID__', id);
+        window.location.href = url;
+        // $.ajax({
+        //     url: url, // <-- FIXED
+        //     type: "GET",
+        //     success: function(response) {
+        //         console.log("Panel switched:", response);
+        //     },
+        //     error: function(xhr) {
+        //         console.error("Error switching panel:", xhr);
+        //     }
+        // });
+    }
+</script>
+
+
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
 
 
@@ -96,4 +152,3 @@
 {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
 
 {{-- <script src="{{ asset('assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script> --}}
-
