@@ -316,6 +316,90 @@ $(document).on('shown.bs.modal', function () {
 
 
 
+{{-- @if(auth()->check() && isset($sessionExpiry))
+<div id="session-countdown" style="font-weight:bold;color:red;font-size:14px;"></div>
+
+<script>
+    let expiry = {{ $sessionExpiry }} * 1000; // convert to ms
+
+        function countdown() {
+            let now = new Date().getTime();
+            let diff = expiry - now;
+
+            if (diff <= 0) {
+                document.getElementById("session-countdown").innerHTML = "Session Expired";
+                window.location.reload() // auto logout
+                // return;
+            }
+
+            let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("session-countdown").innerHTML =
+                "Session Expires In: " + minutes + "m " + seconds + "s";
+        }
+
+        setInterval(countdown, 1000);
+        countdown();
+</script>
+@endif --}}
+
+
+@if(auth()->check() && isset($sessionExpiry))
+<div id="session-countdown" style="font-weight:bold;color:red;font-size:14px;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let expiry = {{ $sessionExpiry }} * 1000;
+    let now = new Date().getTime();
+    let remaining = expiry - now;
+
+    // 1️⃣ Show POPUP (not toaster) 1 minute before expiry
+    let warningBefore = 60000; // 1 minute
+
+    if (remaining > warningBefore) {
+        setTimeout(function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Session Expiring Soon',
+                text: 'Your session will expire in 1 minute. Please save your work.',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        }, remaining - warningBefore);
+    }
+
+    // 2️⃣ Countdown timer (your original code)
+    function countdown() {
+        let now = new Date().getTime();
+        let diff = expiry - now;
+
+        if (diff <= 0) {
+            document.getElementById("session-countdown").innerHTML = "Session Expired";
+            window.location.reload();
+            return;
+        }
+
+        let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("session-countdown").innerHTML =
+            "Session Expires In: " + minutes + "m " + seconds + "s";
+    }
+
+    setInterval(countdown, 1000);
+    countdown();
+</script>
+@endif
+
+
+
+
+
+
+
 
 </body>
 

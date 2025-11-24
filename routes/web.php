@@ -313,6 +313,10 @@ Route::middleware([
 
 
         Route::get('/get-documents-by-university/{university_id}', [StudentController::class, 'getDocuments']);
+
+        Route::get('/get-student-documents/{id}', [StudentController::class, 'getStudentDocuments']);
+
+        Route::get('/get-student-qualifications/{id}', [StudentController::class, 'getStudentQualifications']);
     });
 
 
