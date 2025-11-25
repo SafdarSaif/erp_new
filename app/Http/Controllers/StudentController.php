@@ -524,104 +524,61 @@ class StudentController extends Controller
 
 
 
-//     private function generateStudentUniqueId($student)
-//     {
-//         $university = University::find($student->university_id);
+    // private function generateStudentUniqueId($student)
+    // {
+    //     $university = University::find($student->university_id);
 
-//         // Use university prefix or fallback
-//         $prefix = $university && !empty($university->prefix)
-//             ? strtoupper($university->prefix)
-//             : 'UNI'; // default prefix if not set
+    //     // Use university prefix or fallback
+    //     $prefix = $university && !empty($university->prefix)
+    //         ? strtoupper($university->prefix)
+    //         : 'UNI'; // default prefix if not set
 
-//         // Determine total length of serial digits (default 4 if not set)
-//         $length = $university && $university->length > 0 ? $university->length : 4;
+    //     // Determine total length of serial digits (default 4 if not set)
+    //     $length = $university && $university->length > 0 ? $university->length : 4;
 
-//         // Get current year
-//         $year = date('Y');
+    //     // Get current year
+    //     $year = date('Y');
 
-//         // Get count of existing students for that university
-//         $count = Student::where('university_id', $student->university_id)->count() + 1;
+    //     // Get count of existing students for that university
+    //     $count = Student::where('university_id', $student->university_id)->count() + 1;
 
-//         // Pad serial number according to university length
-//         $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
+    //     // Pad serial number according to university length
+    //     $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
 
-//         // Final format: PREFIXYEARU000001
-//         return "{$prefix}{$serial}";
-//     }
-
-
-//     public function generateId(Student $student)
-// {
-//     try {
-//         // Check if student already has UniqueID
-//         if ($student->student_unique_id) {
-//             return response()->json([
-//                 'status' => true,
-//                 'unique_id' => $student->student_unique_id,
-//                 'message' => 'Unique ID already exists.'
-//             ]);
-//         }
-
-//         // Generate new UniqueID
-//         $student->student_unique_id = $this->generateStudentUniqueId($student);
-//         $student->save();
-
-//         return response()->json([
-//             'status' => true,
-//             'unique_id' => $student->student_unique_id,
-//             'message' => 'Unique ID generated successfully.'
-//         ]);
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'status' => false,
-//             'message' => 'Failed to generate Unique ID: ' . $e->getMessage()
-//         ]);
-//     }
-// }
+    //     // Final format: PREFIXYEARU000001
+    //     return "{$prefix}{$serial}";
+    // }
 
 
-private function generateStudentUniqueId(Student $student)
+    private function generateStudentUniqueId($student)
 {
     $university = University::find($student->university_id);
-
-    // Use university prefix or fallback
-    $prefix = $university && !empty($university->prefix)
-        ? strtoupper($university->prefix)
-        : 'UNI'; // default prefix if not set
-
-    // Determine total length of serial digits (default 4 if not set)
+    $prefix = $university && !empty($university->prefix) ? strtoupper($university->prefix) : 'UNI';
     $length = $university && $university->length > 0 ? $university->length : 4;
 
-    // Generate unique ID inside a transaction to avoid duplicates
-    return DB::transaction(function () use ($student, $prefix, $length) {
+    // Get last existing ID for this university
+    $lastStudent = Student::where('university_id', $student->university_id)
+        ->where('student_unique_id', 'like', "{$prefix}%")
+        ->orderBy('student_unique_id', 'desc')
+        ->first();
 
-        // Get last student with a unique ID for this university and lock it
-        $lastStudentId = Student::where('university_id', $student->university_id)
-            ->whereNotNull('student_unique_id')
-            ->lockForUpdate()
-            ->orderBy('id', 'desc')
-            ->value('student_unique_id');
+    if ($lastStudent) {
+        preg_match('/(\d+)$/', $lastStudent->student_unique_id, $matches);
+        $number = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
+    } else {
+        $number = 1;
+    }
 
-        // Determine next number
-        if ($lastStudentId) {
-            preg_match('/(\d+)$/', $lastStudentId, $matches);
-            $nextNumber = isset($matches[1]) ? ((int)$matches[1] + 1) : 1;
-        } else {
-            $nextNumber = 1;
-        }
-
-        // Pad with zeros
-        $serial = str_pad($nextNumber, $length, '0', STR_PAD_LEFT);
-
-        return "{$prefix}{$serial}";
-    });
+    $serial = str_pad($number, $length, '0', STR_PAD_LEFT);
+    return "{$prefix}{$serial}";
 }
 
 
-public function generateId(Student $student)
+
+    public function generateId(Student $student)
 {
     try {
-        // If student already has a Unique ID, return it
+        // Check if student already has UniqueID
         if ($student->student_unique_id) {
             return response()->json([
                 'status' => true,
@@ -630,7 +587,7 @@ public function generateId(Student $student)
             ]);
         }
 
-        // Generate a new unique ID safely
+        // Generate new UniqueID
         $student->student_unique_id = $this->generateStudentUniqueId($student);
         $student->save();
 
@@ -646,7 +603,6 @@ public function generateId(Student $student)
         ]);
     }
 }
-
 
 
 
