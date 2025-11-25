@@ -12,7 +12,8 @@
         <!-- Student Form Card -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <form id="student-form" action="{{ route('students.update', $student->id) }}" method="POST" class="row g-4" enctype="multipart/form-data">
+                <form id="student-form" action="{{ route('students.update', $student->id) }}" method="POST"
+                    class="row g-4" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -20,27 +21,33 @@
                     <h5 class="mb-3 text-secondary"><i class="bi bi-person-circle me-2"></i>Personal Details</h5>
                     <div class="col-md-6">
                         <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="full_name" class="form-control" placeholder="Enter full name" required value="{{ old('full_name', $student->full_name) }}">
+                        <input type="text" name="full_name" class="form-control" placeholder="Enter full name" required
+                            value="{{ old('full_name', $student->full_name) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Father Name</label>
-                        <input type="text" name="father_name" class="form-control" placeholder="Enter father name" value="{{ old('father_name', $student->father_name) }}">
+                        <input type="text" name="father_name" class="form-control" placeholder="Enter father name"
+                            value="{{ old('father_name', $student->father_name) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Mother Name</label>
-                        <input type="text" name="mother_name" class="form-control" placeholder="Enter mother name" value="{{ old('mother_name', $student->mother_name) }}">
+                        <input type="text" name="mother_name" class="form-control" placeholder="Enter mother name"
+                            value="{{ old('mother_name', $student->mother_name) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Aadhaar Number</label>
-                        <input type="text" name="aadhaar_no" class="form-control" placeholder="Enter Aadhaar number" value="{{ old('aadhaar_no', $student->aadhaar_no) }}">
+                        <input type="text" name="aadhaar_no" class="form-control" placeholder="Enter Aadhaar number"
+                            value="{{ old('aadhaar_no', $student->aadhaar_no) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter email" value="{{ old('email', $student->email) }}">
+                        <input type="email" name="email" class="form-control" placeholder="Enter email"
+                            value="{{ old('email', $student->email) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Mobile</label>
-                        <input type="text" name="mobile" class="form-control" placeholder="Enter mobile number" value="{{ old('mobile', $student->mobile) }}">
+                        <input type="text" name="mobile" class="form-control" placeholder="Enter mobile number"
+                            value="{{ old('mobile', $student->mobile) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Date of Birth</label>
@@ -50,9 +57,12 @@
                         <label class="form-label">Gender</label>
                         <select name="gender" class="form-select">
                             <option value="">-- Select Gender --</option>
-                            <option value="Male" {{ old('gender', $student->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender', $student->gender) == 'Female' ? 'selected' : '' }}>Female</option>
-                            <option value="Other" {{ old('gender', $student->gender) == 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="Male" {{ old('gender', $student->gender) == 'Male' ? 'selected' : '' }}>Male
+                            </option>
+                            <option value="Female" {{ old('gender', $student->gender) == 'Female' ? 'selected' : ''
+                                }}>Female</option>
+                            <option value="Other" {{ old('gender', $student->gender) == 'Other' ? 'selected' : ''
+                                }}>Other</option>
                         </select>
                     </div>
 
@@ -63,7 +73,8 @@
                         <select name="academic_year_id" class="form-select" required>
                             <option value="">-- Select Academic Year --</option>
                             @foreach($academicYears as $year)
-                            <option value="{{ $year->id }}" {{ old('academic_year_id', $student->academic_year_id) == $year->id ? 'selected' : '' }}>{{ $year->name }}</option>
+                            <option value="{{ $year->id }}" {{ old('academic_year_id', $student->academic_year_id) ==
+                                $year->id ? 'selected' : '' }}>{{ $year->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -72,7 +83,8 @@
                         <select name="university_id" class="form-select" required>
                             <option value="">-- Select University --</option>
                             @foreach($universities as $uni)
-                            <option value="{{ $uni->id }}" {{ old('university_id', $student->university_id) == $uni->id ? 'selected' : '' }}>{{ $uni->name }}</option>
+                            <option value="{{ $uni->id }}" {{ old('university_id', $student->university_id) == $uni->id
+                                ? 'selected' : '' }}>{{ $uni->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -81,7 +93,8 @@
                         <select name="course_type_id" class="form-select" required>
                             <option value="">-- Select Course Type --</option>
                             @foreach($courseTypes as $type)
-                            <option value="{{ $type->id }}" {{ old('course_type_id', $student->course_type_id) == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                            <option value="{{ $type->id }}" {{ old('course_type_id', $student->course_type_id) ==
+                                $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -91,7 +104,8 @@
                             <option value="">-- Select Course --</option>
                             @foreach($courses as $course)
                             @if($course->university_id == $student->university_id)
-                            <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
+                            <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->id ?
+                                'selected' : '' }}>{{ $course->name }}</option>
                             @endif
                             @endforeach
                         </select>
@@ -102,7 +116,8 @@
                             <option value="">-- Select Sub Course --</option>
                             @foreach($subCourses as $subCourse)
                             @if($subCourse->course_id == $student->course_id)
-                            <option value="{{ $subCourse->id }}" {{ old('sub_course_id', $student->sub_course_id) == $subCourse->id ? 'selected' : '' }}>{{ $subCourse->name }}</option>
+                            <option value="{{ $subCourse->id }}" {{ old('sub_course_id', $student->sub_course_id) ==
+                                $subCourse->id ? 'selected' : '' }}>{{ $subCourse->name }}</option>
                             @endif
                             @endforeach
                         </select>
@@ -112,7 +127,8 @@
                         <select name="mode_id" class="form-select" required>
                             <option value="">-- Select Admission Mode --</option>
                             @foreach($modes as $mode)
-                            <option value="{{ $mode->id }}" {{ old('mode_id', $student->admissionmode_id) == $mode->id ? 'selected' : '' }}>{{ $mode->name }}</option>
+                            <option value="{{ $mode->id }}" {{ old('mode_id', $student->admissionmode_id) == $mode->id ?
+                                'selected' : '' }}>{{ $mode->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -121,18 +137,22 @@
                         <select id="course_mode_display" class="form-select" disabled>
                             <option value="">Select Course Mode</option>
                             @if($student->courseMode)
-                            <option value="{{ $student->course_mode_id }}" selected>{{ $student->courseMode->name }}</option>
+                            <option value="{{ $student->course_mode_id }}" selected>{{ $student->courseMode->name }}
+                            </option>
                             @endif
                         </select>
-                        <input type="hidden" name="course_mode_id" id="course_mode_id" value="{{ old('course_mode_id', $student->course_mode_id) }}">
+                        <input type="hidden" name="course_mode_id" id="course_mode_id"
+                            value="{{ old('course_mode_id', $student->course_mode_id) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Enrolled Semester</label>
-                        <input type="text" name="semester" class="form-control" placeholder="Enter semester" value="{{ old('semester', $student->semester) }}">
+                        <input type="text" name="semester" class="form-control" placeholder="Enter semester"
+                            value="{{ old('semester', $student->semester) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Course Duration</label>
-                        <input type="text" name="course_duration" class="form-control" placeholder="Enter duration" value="{{ old('course_duration', $student->course_duration) }}" readonly>
+                        <input type="text" name="course_duration" class="form-control" placeholder="Enter duration"
+                            value="{{ old('course_duration', $student->course_duration) }}" readonly>
                     </div>
 
                     <!-- Additional Details -->
@@ -142,7 +162,8 @@
                         <select name="language_id" class="form-select">
                             <option value="">-- Select Language --</option>
                             @foreach($languages as $lang)
-                            <option value="{{ $lang->id }}" {{ old('language_id', $student->language_id) == $lang->id ? 'selected' : '' }}>{{ $lang->name }}</option>
+                            <option value="{{ $lang->id }}" {{ old('language_id', $student->language_id) == $lang->id ?
+                                'selected' : '' }}>{{ $lang->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -151,7 +172,8 @@
                         <select name="blood_group_id" class="form-select">
                             <option value="">-- Select Blood Group --</option>
                             @foreach($bloodGroups as $bg)
-                            <option value="{{ $bg->id }}" {{ old('blood_group_id', $student->blood_group_id) == $bg->id ? 'selected' : '' }}>{{ $bg->name }}</option>
+                            <option value="{{ $bg->id }}" {{ old('blood_group_id', $student->blood_group_id) == $bg->id
+                                ? 'selected' : '' }}>{{ $bg->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -160,7 +182,8 @@
                         <select name="religion_id" class="form-select">
                             <option value="">-- Select Religion --</option>
                             @foreach($religions as $rel)
-                            <option value="{{ $rel->id }}" {{ old('religion_id', $student->religion_id) == $rel->id ? 'selected' : '' }}>{{ $rel->name }}</option>
+                            <option value="{{ $rel->id }}" {{ old('religion_id', $student->religion_id) == $rel->id ?
+                                'selected' : '' }}>{{ $rel->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -169,25 +192,30 @@
                         <select name="category_id" class="form-select">
                             <option value="">-- Select Category --</option>
                             @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ old('category_id', $student->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" {{ old('category_id', $student->category_id) == $cat->id ?
+                                'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Income</label>
-                        <input type="number" name="income" class="form-control" placeholder="Enter income" step="0.01" value="{{ old('income', $student->income) }}">
+                        <input type="number" name="income" class="form-control" placeholder="Enter income" step="0.01"
+                            value="{{ old('income', $student->income) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Total Fee</label>
-                        <input type="number" name="total_fee" class="form-control" placeholder="Enter total fee" step="0.01" value="{{ old('total_fee', $student->total_fee) }}">
+                        <input type="number" name="total_fee" class="form-control" placeholder="Enter total fee"
+                            step="0.01" value="{{ old('total_fee', $student->total_fee) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Permanent Address</label>
-                        <textarea name="permanent_address" class="form-control" rows="2">{{ old('permanent_address', $student->permanent_address) }}</textarea>
+                        <textarea name="permanent_address" class="form-control"
+                            rows="2">{{ old('permanent_address', $student->permanent_address) }}</textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Current Address</label>
-                        <textarea name="current_address" class="form-control" rows="2">{{ old('current_address', $student->current_address) }}</textarea>
+                        <textarea name="current_address" class="form-control"
+                            rows="2">{{ old('current_address', $student->current_address) }}</textarea>
                     </div>
 
                     <!-- Required Documents -->
@@ -209,7 +237,8 @@
                     <!-- Submit Button -->
                     <div class="col-12 text-center mt-4">
                         <button type="submit" class="btn btn-primary btn-lg px-5">Update Student</button>
-                        <a href="{{ route('students.index') }}" class="btn btn-outline-secondary btn-lg px-4 ms-2">Cancel</a>
+                        <a href="{{ route('students.index') }}"
+                            class="btn btn-outline-secondary btn-lg px-4 ms-2">Cancel</a>
                     </div>
                 </form>
             </div>
