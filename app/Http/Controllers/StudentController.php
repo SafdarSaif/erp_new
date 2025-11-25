@@ -222,14 +222,14 @@ class StudentController extends Controller
             return DataTables::of($students)
                 ->addIndexColumn()
                 // ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-')
-                 ->addColumn('student_unique_id', function ($row) {
-                if ($row->student_unique_id) {
-                    return $row->student_unique_id;
-                }
-                // Show Generate button if UniqueID is missing
-                return '<button class="btn btn-sm btn-warning generateID" data-id="' . $row->id . '">Generate</button>';
-            })
-                        ->rawColumns(['student_unique_id']) // allow HTML for button
+                ->addColumn('student_unique_id', function ($row) {
+                    if ($row->student_unique_id) {
+                        return $row->student_unique_id;
+                    }
+                    // Show Generate button if UniqueID is missing
+                    return '<button class="btn btn-sm btn-warning generateID" data-id="' . $row->id . '">Generate</button>';
+                })
+                ->rawColumns(['student_unique_id']) // allow HTML for button
 
                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
@@ -550,59 +550,84 @@ class StudentController extends Controller
     // }
 
 
+    //     private function generateStudentUniqueId($student)
+    // {
+    //     $university = University::find($student->university_id);
+    //     $prefix = $university && !empty($university->prefix) ? strtoupper($university->prefix) : 'UNI';
+    //     $length = $university && $university->length > 0 ? $university->length : 4;
+
+    //     // Get last existing ID for this university
+    //     $lastStudent = Student::where('university_id', $student->university_id)
+    //         ->where('student_unique_id', 'like', "{$prefix}%")
+    //         ->orderBy('student_unique_id', 'desc')
+    //         ->first();
+
+    //     if ($lastStudent) {
+    //         preg_match('/(\d+)$/', $lastStudent->student_unique_id, $matches);
+    //         $number = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
+    //     } else {
+    //         $number = 1;
+    //     }
+
+    //     $serial = str_pad($number, $length, '0', STR_PAD_LEFT);
+    //     return "{$prefix}{$serial}";
+    // }
+
+
+
     private function generateStudentUniqueId($student)
-{
-    $university = University::find($student->university_id);
-    $prefix = $university && !empty($university->prefix) ? strtoupper($university->prefix) : 'UNI';
-    $length = $university && $university->length > 0 ? $university->length : 4;
+    {
+        $university = University::find($student->university_id);
+        $prefix = $university && !empty($university->prefix) ? strtoupper($university->prefix) : 'UNI';
+        $length = $university && $university->length > 0 ? $university->length : 4;
 
-    // Get last existing ID for this university
-    $lastStudent = Student::where('university_id', $student->university_id)
-        ->where('student_unique_id', 'like', "{$prefix}%")
-        ->orderBy('student_unique_id', 'desc')
-        ->first();
+        // Get last existing ID globally (no university filter)
+        $lastStudent = Student::where('student_unique_id', 'like', "{$prefix}%")
+            ->orderBy('student_unique_id', 'desc')
+            ->first();
 
-    if ($lastStudent) {
-        preg_match('/(\d+)$/', $lastStudent->student_unique_id, $matches);
-        $number = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
-    } else {
-        $number = 1;
+        if ($lastStudent) {
+            preg_match('/(\d+)$/', $lastStudent->student_unique_id, $matches);
+            $number = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
+        } else {
+            $number = 1;
+        }
+
+        $serial = str_pad($number, $length, '0', STR_PAD_LEFT);
+        return "{$prefix}{$serial}";
     }
 
-    $serial = str_pad($number, $length, '0', STR_PAD_LEFT);
-    return "{$prefix}{$serial}";
-}
 
 
 
     public function generateId(Student $student)
-{
-    try {
-        // Check if student already has UniqueID
-        if ($student->student_unique_id) {
+    {
+        try {
+            // Check if student already has UniqueID
+            if ($student->student_unique_id) {
+                return response()->json([
+                    'status' => true,
+                    'unique_id' => $student->student_unique_id,
+                    'message' => 'Unique ID already exists.'
+                ]);
+            }
+
+            // Generate new UniqueID
+            $student->student_unique_id = $this->generateStudentUniqueId($student);
+            $student->save();
+
             return response()->json([
                 'status' => true,
                 'unique_id' => $student->student_unique_id,
-                'message' => 'Unique ID already exists.'
+                'message' => 'Unique ID generated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to generate Unique ID: ' . $e->getMessage()
             ]);
         }
-
-        // Generate new UniqueID
-        $student->student_unique_id = $this->generateStudentUniqueId($student);
-        $student->save();
-
-        return response()->json([
-            'status' => true,
-            'unique_id' => $student->student_unique_id,
-            'message' => 'Unique ID generated successfully.'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Failed to generate Unique ID: ' . $e->getMessage()
-        ]);
     }
-}
 
 
 
@@ -1092,7 +1117,7 @@ class StudentController extends Controller
     {
         $student = Student::with([
             'qualifications',
-        'studentDocuments.document'  // FIXED HERE
+            'studentDocuments.document'  // FIXED HERE
         ])->findOrFail($id);
 
         // Load related data
@@ -1262,99 +1287,99 @@ class StudentController extends Controller
 
 
 
-//     public function getStudentQualifications($id)
-// {
-//     try {
-//         $student = Student::findOrFail($id);
-//         $qualifications = $student->qualifications()->get()->map(function ($q) {
-//             return [
-//                 'qualification' => $q->qualification,
-//                 'board' => $q->board,
-//                 'passing_year' => $q->passing_year,
-//                 'marks' => $q->marks,
-//                 'result' => $q->result,
-//                 'document' => $q->document
-//             ];
-//         })->toArray();
+    //     public function getStudentQualifications($id)
+    // {
+    //     try {
+    //         $student = Student::findOrFail($id);
+    //         $qualifications = $student->qualifications()->get()->map(function ($q) {
+    //             return [
+    //                 'qualification' => $q->qualification,
+    //                 'board' => $q->board,
+    //                 'passing_year' => $q->passing_year,
+    //                 'marks' => $q->marks,
+    //                 'result' => $q->result,
+    //                 'document' => $q->document
+    //             ];
+    //         })->toArray();
 
-//         return response()->json([
-//             'status' => 'success',
-//             'data' => $qualifications
-//         ]);
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => $e->getMessage()
-//         ], 500);
-//     }
-// }
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $qualifications
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
-public function getStudentQualifications($id)
-{
-    try {
-        $student = Student::with('qualifications')->findOrFail($id);
+    public function getStudentQualifications($id)
+    {
+        try {
+            $student = Student::with('qualifications')->findOrFail($id);
 
-        $qualifications = $student->qualifications->map(function ($q) {
-            return [
-                'qualification' => $q->qualification,
-                'board' => $q->board,
-                'passing_year' => $q->passing_year,
-                'marks' => $q->marks,
-                'result' => $q->result,
-                'document' => $q->document
-            ];
-        })->toArray();
+            $qualifications = $student->qualifications->map(function ($q) {
+                return [
+                    'qualification' => $q->qualification,
+                    'board' => $q->board,
+                    'passing_year' => $q->passing_year,
+                    'marks' => $q->marks,
+                    'result' => $q->result,
+                    'document' => $q->document
+                ];
+            })->toArray();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $qualifications
-        ]);
-    } catch (\Exception $e) {
-        \Log::error('Failed to get student qualifications: ' . $e->getMessage());
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'status' => 'success',
+                'data' => $qualifications
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to get student qualifications: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
 
     public function getStudentDocuments($id)
-{
-    try {
-        $studentDocuments = StudentDocument::with('document')
-            ->where('student_id', $id)
-            ->get()
-            ->map(function($sd) {
-                return [
-                    'document_id' => $sd->document_id,
-                    'path' => $sd->path,
-                    'document_name' => $sd->document->name ?? 'Unknown'
-                ];
-            });
+    {
+        try {
+            $studentDocuments = StudentDocument::with('document')
+                ->where('student_id', $id)
+                ->get()
+                ->map(function ($sd) {
+                    return [
+                        'document_id' => $sd->document_id,
+                        'path' => $sd->path,
+                        'document_name' => $sd->document->name ?? 'Unknown'
+                    ];
+                });
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $studentDocuments
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'status' => 'success',
+                'data' => $studentDocuments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
 
     public function edit($id)
     {
         // $student = Student::findOrFail($id);
         $student = Student::with([
-        'qualifications',
-        'studentDocuments.document',
-        'university'
-    ])->findOrFail($id);
+            'qualifications',
+            'studentDocuments.document',
+            'university'
+        ])->findOrFail($id);
         $academicYears = AcademicYear::all();
         $universities = University::all();
         $courseTypes = CourseType::all();
@@ -1481,247 +1506,247 @@ public function getStudentQualifications($id)
 
 
     public function update(Request $request, $id)
-{
-    // Find the student or fail
-    $student = Student::findOrFail($id);
+    {
+        // Find the student or fail
+        $student = Student::findOrFail($id);
 
-    // Validate request - BASIC FIELDS
-    $validatedData = $request->validate([
-        'full_name'         => 'required|string|max:255',
-        'father_name'       => 'nullable|string|max:255',
-        'mother_name'       => 'nullable|string|max:255',
-        'aadhaar_no'        => 'nullable|string|max:20',
-        'email'             => 'nullable|email|max:255|unique:students,email,' . $student->id,
-        'mobile'            => 'nullable|string|max:20',
-        'dob'               => 'nullable|date',
-        'gender'            => 'nullable|in:Male,Female,Other',
-        'academic_year_id'  => 'required|exists:academic_years,id',
-        'university_id'     => 'required|exists:universities,id',
-        'course_type_id'    => 'required|exists:course_types,id',
-        'course_id'         => 'required|exists:courses,id',
-        'sub_course_id'     => 'required|exists:sub_courses,id',
-        'mode_id'           => 'required|exists:admission_modes,id',
-        'course_mode_id'    => 'required|exists:course_modes,id',
-        'semester'          => 'nullable|string|max:50',
-        'course_duration'   => 'nullable|string|max:50',
-        'language_id'       => 'nullable|exists:languages,id',
-        'blood_group_id'    => 'nullable|exists:blood_groups,id',
-        'religion_id'       => 'nullable|exists:religions,id',
-        'category_id'       => 'nullable|exists:categories,id',
-        'income'            => 'nullable|numeric|min:0',
-        'total_fee'         => 'nullable|numeric|min:0',
-        'permanent_address' => 'nullable|string|max:500',
-        'current_address'   => 'nullable|string|max:500',
-        'status'            => 'nullable',
+        // Validate request - BASIC FIELDS
+        $validatedData = $request->validate([
+            'full_name'         => 'required|string|max:255',
+            'father_name'       => 'nullable|string|max:255',
+            'mother_name'       => 'nullable|string|max:255',
+            'aadhaar_no'        => 'nullable|string|max:20',
+            'email'             => 'nullable|email|max:255|unique:students,email,' . $student->id,
+            'mobile'            => 'nullable|string|max:20',
+            'dob'               => 'nullable|date',
+            'gender'            => 'nullable|in:Male,Female,Other',
+            'academic_year_id'  => 'required|exists:academic_years,id',
+            'university_id'     => 'required|exists:universities,id',
+            'course_type_id'    => 'required|exists:course_types,id',
+            'course_id'         => 'required|exists:courses,id',
+            'sub_course_id'     => 'required|exists:sub_courses,id',
+            'mode_id'           => 'required|exists:admission_modes,id',
+            'course_mode_id'    => 'required|exists:course_modes,id',
+            'semester'          => 'nullable|string|max:50',
+            'course_duration'   => 'nullable|string|max:50',
+            'language_id'       => 'nullable|exists:languages,id',
+            'blood_group_id'    => 'nullable|exists:blood_groups,id',
+            'religion_id'       => 'nullable|exists:religions,id',
+            'category_id'       => 'nullable|exists:categories,id',
+            'income'            => 'nullable|numeric|min:0',
+            'total_fee'         => 'nullable|numeric|min:0',
+            'permanent_address' => 'nullable|string|max:500',
+            'current_address'   => 'nullable|string|max:500',
+            'status'            => 'nullable',
 
-        // Qualification validation
-        'prev_qualification' => 'nullable|array',
-        'prev_board'         => 'nullable|array',
-        'prev_passing_year'  => 'nullable|array',
-        'prev_marks'         => 'nullable|array',
-        'prev_result'        => 'nullable|array',
-        'prev_document.*'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            // Qualification validation
+            'prev_qualification' => 'nullable|array',
+            'prev_board'         => 'nullable|array',
+            'prev_passing_year'  => 'nullable|array',
+            'prev_marks'         => 'nullable|array',
+            'prev_result'        => 'nullable|array',
+            'prev_document.*'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
 
-        // Document validation - only validate if files are actually uploaded
-        'delete_documents' => 'nullable|array',
-        'existing_documents' => 'nullable|array',
-    ]);
-
-    // Custom validation for documents - only validate actual uploaded files
-    $validator = Validator::make($request->all(), [
-        'documents.*.*' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
-        ], 422);
-    }
-
-    try {
-        DB::beginTransaction();
-
-        // Update student
-        $student->update([
-            'full_name'         => $validatedData['full_name'],
-            'father_name'       => $validatedData['father_name'] ?? null,
-            'mother_name'       => $validatedData['mother_name'] ?? null,
-            'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
-            'email'             => $validatedData['email'] ?? null,
-            'mobile'            => $validatedData['mobile'] ?? null,
-            'dob'               => $validatedData['dob'] ?? null,
-            'gender'            => $validatedData['gender'] ?? null,
-            'academic_year_id'  => $validatedData['academic_year_id'],
-            'university_id'     => $validatedData['university_id'],
-            'course_type_id'    => $validatedData['course_type_id'],
-            'course_id'         => $validatedData['course_id'],
-            'sub_course_id'     => $validatedData['sub_course_id'],
-            'admissionmode_id'  => $validatedData['mode_id'],
-            'course_mode_id'    => $validatedData['course_mode_id'],
-            'semester'          => $validatedData['semester'] ?? null,
-            'course_duration'   => $validatedData['course_duration'] ?? null,
-            'language_id'       => $validatedData['language_id'] ?? null,
-            'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
-            'religion_id'       => $validatedData['religion_id'] ?? null,
-            'category_id'       => $validatedData['category_id'] ?? null,
-            'income'            => $validatedData['income'] ?? null,
-            'total_fee'         => $validatedData['total_fee'] ?? null,
-            'permanent_address' => $validatedData['permanent_address'] ?? null,
-            'current_address'   => $validatedData['current_address'] ?? null,
-            'status'            => $validatedData['status'] ?? 1,
+            // Document validation - only validate if files are actually uploaded
+            'delete_documents' => 'nullable|array',
+            'existing_documents' => 'nullable|array',
         ]);
 
-        // Handle qualification updates
-        if ($request->has('prev_qualification')) {
-            // Delete existing qualifications
-            StudentQualification::where('student_id', $student->id)->delete();
+        // Custom validation for documents - only validate actual uploaded files
+        $validator = Validator::make($request->all(), [
+            'documents.*.*' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
+        ]);
 
-            $qualifications = $request->prev_qualification ?? [];
-            $boards = $request->prev_board ?? [];
-            $years = $request->prev_passing_year ?? [];
-            $marks = $request->prev_marks ?? [];
-            $results = $request->prev_result ?? [];
-            $documents = $request->file('prev_document') ?? [];
-
-            foreach ($qualifications as $i => $qualification) {
-                $documentPath = null;
-
-                // Check if there's a new file upload for this qualification
-                if (isset($documents[$i]) && $documents[$i]) {
-                    $file = $documents[$i];
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('uploads/qualification_documents'), $filename);
-                    $documentPath = 'uploads/qualification_documents/' . $filename;
-                }
-
-                StudentQualification::create([
-                    'student_id' => $student->id,
-                    'qualification' => $qualification,
-                    'board' => $boards[$i] ?? null,
-                    'passing_year' => $years[$i] ?? null,
-                    'marks' => $marks[$i] ?? null,
-                    'result' => $results[$i] ?? null,
-                    'document' => $documentPath,
-                ]);
-            }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        // Handle document deletion
-        if ($request->delete_documents) {
-            foreach ($request->delete_documents as $docId => $fileIndexes) {
-                $studentDoc = StudentDocument::where('student_id', $student->id)
-                    ->where('document_id', $docId)
-                    ->first();
+        try {
+            DB::beginTransaction();
 
-                if ($studentDoc) {
-                    $paths = is_array($studentDoc->path) ? $studentDoc->path : [$studentDoc->path];
+            // Update student
+            $student->update([
+                'full_name'         => $validatedData['full_name'],
+                'father_name'       => $validatedData['father_name'] ?? null,
+                'mother_name'       => $validatedData['mother_name'] ?? null,
+                'aadhaar_no'        => $validatedData['aadhaar_no'] ?? null,
+                'email'             => $validatedData['email'] ?? null,
+                'mobile'            => $validatedData['mobile'] ?? null,
+                'dob'               => $validatedData['dob'] ?? null,
+                'gender'            => $validatedData['gender'] ?? null,
+                'academic_year_id'  => $validatedData['academic_year_id'],
+                'university_id'     => $validatedData['university_id'],
+                'course_type_id'    => $validatedData['course_type_id'],
+                'course_id'         => $validatedData['course_id'],
+                'sub_course_id'     => $validatedData['sub_course_id'],
+                'admissionmode_id'  => $validatedData['mode_id'],
+                'course_mode_id'    => $validatedData['course_mode_id'],
+                'semester'          => $validatedData['semester'] ?? null,
+                'course_duration'   => $validatedData['course_duration'] ?? null,
+                'language_id'       => $validatedData['language_id'] ?? null,
+                'blood_group_id'    => $validatedData['blood_group_id'] ?? null,
+                'religion_id'       => $validatedData['religion_id'] ?? null,
+                'category_id'       => $validatedData['category_id'] ?? null,
+                'income'            => $validatedData['income'] ?? null,
+                'total_fee'         => $validatedData['total_fee'] ?? null,
+                'permanent_address' => $validatedData['permanent_address'] ?? null,
+                'current_address'   => $validatedData['current_address'] ?? null,
+                'status'            => $validatedData['status'] ?? 1,
+            ]);
 
-                    foreach ($fileIndexes as $index) {
-                        if (isset($paths[$index])) {
-                            // Delete physical file
-                            if (file_exists(public_path($paths[$index]))) {
-                                unlink(public_path($paths[$index]));
+            // Handle qualification updates
+            if ($request->has('prev_qualification')) {
+                // Delete existing qualifications
+                StudentQualification::where('student_id', $student->id)->delete();
+
+                $qualifications = $request->prev_qualification ?? [];
+                $boards = $request->prev_board ?? [];
+                $years = $request->prev_passing_year ?? [];
+                $marks = $request->prev_marks ?? [];
+                $results = $request->prev_result ?? [];
+                $documents = $request->file('prev_document') ?? [];
+
+                foreach ($qualifications as $i => $qualification) {
+                    $documentPath = null;
+
+                    // Check if there's a new file upload for this qualification
+                    if (isset($documents[$i]) && $documents[$i]) {
+                        $file = $documents[$i];
+                        $filename = time() . '_' . $file->getClientOriginalName();
+                        $file->move(public_path('uploads/qualification_documents'), $filename);
+                        $documentPath = 'uploads/qualification_documents/' . $filename;
+                    }
+
+                    StudentQualification::create([
+                        'student_id' => $student->id,
+                        'qualification' => $qualification,
+                        'board' => $boards[$i] ?? null,
+                        'passing_year' => $years[$i] ?? null,
+                        'marks' => $marks[$i] ?? null,
+                        'result' => $results[$i] ?? null,
+                        'document' => $documentPath,
+                    ]);
+                }
+            }
+
+            // Handle document deletion
+            if ($request->delete_documents) {
+                foreach ($request->delete_documents as $docId => $fileIndexes) {
+                    $studentDoc = StudentDocument::where('student_id', $student->id)
+                        ->where('document_id', $docId)
+                        ->first();
+
+                    if ($studentDoc) {
+                        $paths = is_array($studentDoc->path) ? $studentDoc->path : [$studentDoc->path];
+
+                        foreach ($fileIndexes as $index) {
+                            if (isset($paths[$index])) {
+                                // Delete physical file
+                                if (file_exists(public_path($paths[$index]))) {
+                                    unlink(public_path($paths[$index]));
+                                }
+                                // Remove from array
+                                unset($paths[$index]);
                             }
-                            // Remove from array
-                            unset($paths[$index]);
+                        }
+
+                        // Update or delete the record
+                        if (empty($paths)) {
+                            $studentDoc->delete();
+                        } else {
+                            $studentDoc->update(['path' => array_values($paths)]);
                         }
                     }
-
-                    // Update or delete the record
-                    if (empty($paths)) {
-                        $studentDoc->delete();
-                    } else {
-                        $studentDoc->update(['path' => array_values($paths)]);
-                    }
                 }
             }
-        }
 
-        // Handle new document uploads - only process actual uploaded files
-        if ($request->documents) {
-            foreach ($request->documents as $docId => $files) {
-                // Skip if no files were uploaded for this document
-                if (empty($files) || (is_array($files) && empty(array_filter($files)))) {
-                    continue;
-                }
+            // Handle new document uploads - only process actual uploaded files
+            if ($request->documents) {
+                foreach ($request->documents as $docId => $files) {
+                    // Skip if no files were uploaded for this document
+                    if (empty($files) || (is_array($files) && empty(array_filter($files)))) {
+                        continue;
+                    }
 
-                $docMeta = $request->doc_meta[$docId] ?? null;
-                if (!$docMeta) continue;
+                    $docMeta = $request->doc_meta[$docId] ?? null;
+                    if (!$docMeta) continue;
 
-                $isMultiple = $docMeta['is_multiple'] ?? 0;
+                    $isMultiple = $docMeta['is_multiple'] ?? 0;
 
-                if ($isMultiple == 1 && is_array($files)) {
-                    // Multiple files - filter out empty values
-                    $files = array_filter($files);
-                    if (empty($files)) continue;
+                    if ($isMultiple == 1 && is_array($files)) {
+                        // Multiple files - filter out empty values
+                        $files = array_filter($files);
+                        if (empty($files)) continue;
 
-                    $storedFiles = [];
-                    foreach ($files as $file) {
+                        $storedFiles = [];
+                        foreach ($files as $file) {
+                            if ($file && $file->isValid()) {
+                                $fileName = time() . '_' . $file->getClientOriginalName();
+                                $file->move(public_path('uploads/student_documents'), $fileName);
+                                $storedFiles[] = 'uploads/student_documents/' . $fileName;
+                            }
+                        }
+
+                        if (!empty($storedFiles)) {
+                            // Get existing files if any
+                            $existingDoc = StudentDocument::where('student_id', $student->id)
+                                ->where('document_id', $docId)
+                                ->first();
+
+                            if ($existingDoc) {
+                                $existingPaths = is_array($existingDoc->path) ? $existingDoc->path : [$existingDoc->path];
+                                $allPaths = array_merge($existingPaths, $storedFiles);
+                                $existingDoc->update(['path' => $allPaths]);
+                            } else {
+                                StudentDocument::create([
+                                    'student_id' => $student->id,
+                                    'document_id' => $docId,
+                                    'path' => $storedFiles,
+                                ]);
+                            }
+                        }
+                    } else {
+                        // Single file - check if file is valid
+                        $file = is_array($files) ? $files[0] : $files;
+
                         if ($file && $file->isValid()) {
                             $fileName = time() . '_' . $file->getClientOriginalName();
                             $file->move(public_path('uploads/student_documents'), $fileName);
-                            $storedFiles[] = 'uploads/student_documents/' . $fileName;
+
+                            StudentDocument::updateOrCreate(
+                                [
+                                    'student_id' => $student->id,
+                                    'document_id' => $docId,
+                                ],
+                                [
+                                    'path' => 'uploads/student_documents/' . $fileName,
+                                ]
+                            );
                         }
-                    }
-
-                    if (!empty($storedFiles)) {
-                        // Get existing files if any
-                        $existingDoc = StudentDocument::where('student_id', $student->id)
-                            ->where('document_id', $docId)
-                            ->first();
-
-                        if ($existingDoc) {
-                            $existingPaths = is_array($existingDoc->path) ? $existingDoc->path : [$existingDoc->path];
-                            $allPaths = array_merge($existingPaths, $storedFiles);
-                            $existingDoc->update(['path' => $allPaths]);
-                        } else {
-                            StudentDocument::create([
-                                'student_id' => $student->id,
-                                'document_id' => $docId,
-                                'path' => $storedFiles,
-                            ]);
-                        }
-                    }
-                } else {
-                    // Single file - check if file is valid
-                    $file = is_array($files) ? $files[0] : $files;
-
-                    if ($file && $file->isValid()) {
-                        $fileName = time() . '_' . $file->getClientOriginalName();
-                        $file->move(public_path('uploads/student_documents'), $fileName);
-
-                        StudentDocument::updateOrCreate(
-                            [
-                                'student_id' => $student->id,
-                                'document_id' => $docId,
-                            ],
-                            [
-                                'path' => 'uploads/student_documents/' . $fileName,
-                            ]
-                        );
                     }
                 }
             }
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Student has been updated successfully.',
+                'data'    => $student
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Student update error: ' . $e->getMessage());
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
         }
-
-        DB::commit();
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Student has been updated successfully.',
-            'data'    => $student
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Student update error: ' . $e->getMessage());
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'Something went wrong: ' . $e->getMessage()
-        ], 500);
     }
-}
 
 
     /**
