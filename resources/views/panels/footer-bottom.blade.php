@@ -316,33 +316,25 @@ $(document).on('shown.bs.modal', function () {
 
 
 
-{{-- @if(auth()->check() && isset($sessionExpiry))
-<div id="session-countdown" style="font-weight:bold;color:red;font-size:14px;"></div>
-
 <script>
-    let expiry = {{ $sessionExpiry }} * 1000; // convert to ms
+$(document).on("click", ".generateID", function () {
+    let id = $(this).data("id");
+    let btn = $(this);
 
-        function countdown() {
-            let now = new Date().getTime();
-            let diff = expiry - now;
+    btn.html("Please wait...").prop("disabled", true);
 
-            if (diff <= 0) {
-                document.getElementById("session-countdown").innerHTML = "Session Expired";
-                window.location.reload() // auto logout
-                // return;
-            }
-
-            let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById("session-countdown").innerHTML =
-                "Session Expires In: " + minutes + "m " + seconds + "s";
+    $.post(`/students/generate-id/${id}`, {_token: "{{ csrf_token() }}"}, function(response){
+        if(response.status){
+            btn.parent().html(response.unique_id); // replace button with generated ID
+            $('#student-table').DataTable().ajax.reload(null, false);
+        } else {
+            btn.html("Generate").prop("disabled", false);
+            alert(response.message);
         }
+    });
+});
 
-        setInterval(countdown, 1000);
-        countdown();
 </script>
-@endif --}}
 
 
 @if(auth()->check() && isset($sessionExpiry))

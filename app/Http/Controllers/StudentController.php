@@ -221,7 +221,16 @@ class StudentController extends Controller
 
             return DataTables::of($students)
                 ->addIndexColumn()
-                ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-')
+                // ->addColumn('student_unique_id', fn($row) => $row->student_unique_id ?? '-')
+                 ->addColumn('student_unique_id', function ($row) {
+                if ($row->student_unique_id) {
+                    return $row->student_unique_id;
+                }
+                // Show Generate button if UniqueID is missing
+                return '<button class="btn btn-sm btn-warning generateID" data-id="' . $row->id . '">Generate</button>';
+            })
+                        ->rawColumns(['student_unique_id']) // allow HTML for button
+
                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
                 ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
@@ -515,30 +524,130 @@ class StudentController extends Controller
 
 
 
-    private function generateStudentUniqueId($student)
-    {
-        $university = University::find($student->university_id);
+//     private function generateStudentUniqueId($student)
+//     {
+//         $university = University::find($student->university_id);
 
-        // Use university prefix or fallback
-        $prefix = $university && !empty($university->prefix)
-            ? strtoupper($university->prefix)
-            : 'UNI'; // default prefix if not set
+//         // Use university prefix or fallback
+//         $prefix = $university && !empty($university->prefix)
+//             ? strtoupper($university->prefix)
+//             : 'UNI'; // default prefix if not set
 
-        // Determine total length of serial digits (default 4 if not set)
-        $length = $university && $university->length > 0 ? $university->length : 4;
+//         // Determine total length of serial digits (default 4 if not set)
+//         $length = $university && $university->length > 0 ? $university->length : 4;
 
-        // Get current year
-        $year = date('Y');
+//         // Get current year
+//         $year = date('Y');
 
-        // Get count of existing students for that university
-        $count = Student::where('university_id', $student->university_id)->count() + 1;
+//         // Get count of existing students for that university
+//         $count = Student::where('university_id', $student->university_id)->count() + 1;
 
-        // Pad serial number according to university length
-        $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
+//         // Pad serial number according to university length
+//         $serial = str_pad($count, $length, '0', STR_PAD_LEFT);
 
-        // Final format: PREFIXYEARU000001
+//         // Final format: PREFIXYEARU000001
+//         return "{$prefix}{$serial}";
+//     }
+
+
+//     public function generateId(Student $student)
+// {
+//     try {
+//         // Check if student already has UniqueID
+//         if ($student->student_unique_id) {
+//             return response()->json([
+//                 'status' => true,
+//                 'unique_id' => $student->student_unique_id,
+//                 'message' => 'Unique ID already exists.'
+//             ]);
+//         }
+
+//         // Generate new UniqueID
+//         $student->student_unique_id = $this->generateStudentUniqueId($student);
+//         $student->save();
+
+//         return response()->json([
+//             'status' => true,
+//             'unique_id' => $student->student_unique_id,
+//             'message' => 'Unique ID generated successfully.'
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Failed to generate Unique ID: ' . $e->getMessage()
+//         ]);
+//     }
+// }
+
+
+private function generateStudentUniqueId(Student $student)
+{
+    $university = University::find($student->university_id);
+
+    // Use university prefix or fallback
+    $prefix = $university && !empty($university->prefix)
+        ? strtoupper($university->prefix)
+        : 'UNI'; // default prefix if not set
+
+    // Determine total length of serial digits (default 4 if not set)
+    $length = $university && $university->length > 0 ? $university->length : 4;
+
+    // Generate unique ID inside a transaction to avoid duplicates
+    return DB::transaction(function () use ($student, $prefix, $length) {
+
+        // Get last student with a unique ID for this university and lock it
+        $lastStudentId = Student::where('university_id', $student->university_id)
+            ->whereNotNull('student_unique_id')
+            ->lockForUpdate()
+            ->orderBy('id', 'desc')
+            ->value('student_unique_id');
+
+        // Determine next number
+        if ($lastStudentId) {
+            preg_match('/(\d+)$/', $lastStudentId, $matches);
+            $nextNumber = isset($matches[1]) ? ((int)$matches[1] + 1) : 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        // Pad with zeros
+        $serial = str_pad($nextNumber, $length, '0', STR_PAD_LEFT);
+
         return "{$prefix}{$serial}";
+    });
+}
+
+
+public function generateId(Student $student)
+{
+    try {
+        // If student already has a Unique ID, return it
+        if ($student->student_unique_id) {
+            return response()->json([
+                'status' => true,
+                'unique_id' => $student->student_unique_id,
+                'message' => 'Unique ID already exists.'
+            ]);
+        }
+
+        // Generate a new unique ID safely
+        $student->student_unique_id = $this->generateStudentUniqueId($student);
+        $student->save();
+
+        return response()->json([
+            'status' => true,
+            'unique_id' => $student->student_unique_id,
+            'message' => 'Unique ID generated successfully.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to generate Unique ID: ' . $e->getMessage()
+        ]);
     }
+}
+
+
 
 
 

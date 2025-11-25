@@ -317,6 +317,9 @@ Route::middleware([
         Route::get('/get-student-documents/{id}', [StudentController::class, 'getStudentDocuments']);
 
         Route::get('/get-student-qualifications/{id}', [StudentController::class, 'getStudentQualifications']);
+
+        Route::post('/generate-id/{student}', [StudentController::class, 'generateId'])
+    ->name('students.generate-id');
     });
 
 
