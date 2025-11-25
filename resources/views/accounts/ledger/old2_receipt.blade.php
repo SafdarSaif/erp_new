@@ -20,7 +20,6 @@
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
         }
 
-        /* Header styles */
         .header {
             display: flex;
             align-items: center;
@@ -31,7 +30,6 @@
 
         .header .logo {
             flex: 0 0 auto;
-            /* logo takes minimal width */
         }
 
         .header .logo img {
@@ -40,7 +38,6 @@
 
         .header .header-text {
             flex: 1;
-            /* text takes remaining space */
             text-align: right;
         }
 
@@ -68,7 +65,6 @@
             margin-bottom: 25px;
         }
 
-        /* Two-column info layout */
         .info-section {
             display: table;
             width: 100%;
@@ -164,7 +160,7 @@
         <div class="watermark">{{ $theme }}</div>
 
         <!-- Header with logo on left, name/address on right -->
-        <div class="header" style="display: flex; align-items: center;">
+        <div class="header">
             <div class="logo">
                 <img src="{{ $logo }}" alt="Logo" style="height: 60px; max-width: 200px; object-fit: contain;">
             </div>
@@ -173,25 +169,32 @@
                 <p style="font-size: 12px; line-height: 1.4;">
                     {!! $address !!}
                 </p>
-
             </div>
         </div>
 
         <div class="title">Fee Payment Receipt</div>
 
+        <!-- Student and Institute Info -->
         <div class="info-section">
             <div class="info-box">
                 <p><strong>Student Name:</strong> {{ $student_name }}</p>
                 <p><strong>Application ID:</strong> {{ $application_id }}</p>
+                <p><strong>Unique ID:</strong> {{ $student_unique_id }}</p>
+                <p><strong>Phone No:</strong> {{ $phone }}</p>
                 <p><strong>Course:</strong> {{ $course }}</p>
+                <p><strong>University:</strong> {{ $university_name }}</p>
+
             </div>
             <div class="info-box" style="text-align:right;">
                 <p><strong>Email:</strong> {{ $email }}</p>
                 <p><strong>Semester:</strong> {{ $semester }}</p>
                 <p><strong>Date:</strong> {{ $date }}</p>
+                <p><strong>Receipt No:</strong> {{ $receipt_no }}</p>
+                <p><strong>GST:</strong> {{ $user_gst }}</p>
             </div>
         </div>
 
+        <!-- Payment Table -->
         <table>
             <thead>
                 <tr>
@@ -211,6 +214,32 @@
             </tbody>
         </table>
 
+
+         <!-- SEMESTER FEE SUMMARY -->
+        <h3 style="margin-top:25px; margin-bottom:10px; color:#000;">Semester Fee Summary</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Semester Fee</th>
+                    <th>Discount</th>
+                    <th>Total Payable</th>
+                    <th>Total Paid</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $semester_fee }}</td>
+                    <td>{{ $semester_discount }}</td>
+                    <td>{{ $semester_total }}</td>
+                    <td>{{ $semester_paid }}</td>
+                    <td><strong style="color:red;">{{ $semester_balance }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Signatures -->
         <div class="signature">
             <div class="sign-box">
                 <div class="sign-line"></div>
@@ -222,6 +251,7 @@
             </div>
         </div>
 
+        <!-- Footer -->
         <div class="footer">
             <p>This is a computer-generated receipt and does not require a physical signature.</p>
             <p>© {{ date('Y') }} {{ $theme }}. All rights reserved.</p>

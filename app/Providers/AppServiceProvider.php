@@ -57,8 +57,17 @@ class AppServiceProvider extends ServiceProvider
                 ->get()
                 ->toArray();
             $view->with('menus', $menus);
-        });
+        // });
 
+
+
+        // ---- SESSION EXPIRY TIMER ----
+       // ADD SESSION EXPIRY TIME HERE
+        $sessionLifetime = config('session.lifetime'); // minutes
+        $expiryTimestamp = now()->addMinutes($sessionLifetime)->timestamp;
+
+        $view->with('sessionExpiry', $expiryTimestamp);
+    });
 
         $models = [
             // University::class,

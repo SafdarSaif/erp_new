@@ -131,6 +131,13 @@
             </div>
 
             <div class="header-right hstack gap-3">
+
+
+                 @if(auth()->check() && isset($sessionExpiry))
+        <div id="session-countdown"
+             style="font-weight:bold;color:red;font-size:14px;">
+        </div>
+    @endif
                 {{-- <div class="hstack gap-0 gap-sm-1">
                     <!-- Cart -->
                     <div class="dropdown features-dropdown">
