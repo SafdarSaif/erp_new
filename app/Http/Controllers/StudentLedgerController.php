@@ -775,6 +775,10 @@ class StudentLedgerController extends Controller
 
     public function downloadReceipt($id)
 {
+
+     // Get Active Theme
+    $theme = Theme::where('is_active', 1)->first();
+
     // Get ledger + relations
     $ledger = StudentLedger::with('feeStructure', 'student.university', 'student.course')
         ->findOrFail($id);
@@ -783,15 +787,19 @@ class StudentLedgerController extends Controller
     $user = auth()->user();
 
     // Address formatting
-    $fullAddress = $user->address ?? '-';
+    $fullAddress = $theme->address ?? '-';
     $parts = explode(',', $fullAddress, 3);
 
     $address = (isset($parts[0]) ? trim($parts[0]) : '-') . ',' .
         (isset($parts[1]) ? trim($parts[1]) : '-') . '<br>' .
         (isset($parts[2]) ? trim($parts[2]) : '-');
 
-    $logo = $user->profile_photo_path
-        ? public_path($user->profile_photo_path)
+    $gstNumber   = $theme->gst ?? '-';
+
+
+     // Logo from THEME
+    $logo = $theme && $theme->logo
+        ? public_path($theme->logo)
         : public_path('default-logo.png');
 
     // Semester Fee Logic
@@ -804,6 +812,7 @@ class StudentLedgerController extends Controller
         ->sum('amount');
 
     $semesterBalance = $semesterTotal - $semesterPaid;
+
 
     // PDF data
     $data = [
@@ -822,8 +831,9 @@ class StudentLedgerController extends Controller
         'receipt_no'        => $ledger->id ?? '-',
         'date'              => $ledger->created_at ? $ledger->created_at->format('d-m-Y') : '-',
 
-        'theme'             => $user->name ?? '-',
+        'theme'             => $theme->name ?? '-',
         'address'           => $address,
+        'gst'      => $gstNumber,
         'logo'              => $logo,
 
         'semester_fee'      => number_format($semesterFee, 2),
@@ -832,6 +842,9 @@ class StudentLedgerController extends Controller
         'semester_paid'     => number_format($semesterPaid, 2),
         'semester_balance'  => number_format($semesterBalance, 2),
     ];
+
+        // dd($data);
+
 
     // Generate PDF
     $pdf = Pdf::loadView('accounts.ledger.receipt', $data)->setPaper('A4', 'portrait');

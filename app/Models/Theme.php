@@ -19,5 +19,7 @@ class Theme extends Model
         'logo',
         'favicon',
         'is_active',
+        'address',
+        'gst',
     ];
 }

@@ -11,13 +11,16 @@
         <!-- Tabs -->
         <ul class="nav nav-tabs mb-3" id="themeTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button">General</button>
+                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general"
+                    type="button">General</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="colors-tab" data-bs-toggle="tab" data-bs-target="#colors" type="button">Colors</button>
+                <button class="nav-link" id="colors-tab" data-bs-toggle="tab" data-bs-target="#colors"
+                    type="button">Colors</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding" type="button">Branding</button>
+                <button class="nav-link" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding"
+                    type="button">Branding</button>
             </li>
         </ul>
 
@@ -31,7 +34,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="tag_line" class="form-label">Tag Line</label>
-                        <input type="text" name="tag_line" id="tag_line" class="form-control" placeholder="e.g. Empowering Learning">
+                        <input type="text" name="tag_line" id="tag_line" class="form-control"
+                            placeholder="e.g. Empowering Learning">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
@@ -39,6 +43,20 @@
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
                         </select>
+                    </div>
+
+
+                    <!-- ⭐ NEW FIELD: ADDRESS -->
+                    <div class="col-md-12">
+                        <label for="address" class="form-label">Institute Address</label>
+                        <textarea name="address" id="address" rows="2" class="form-control"
+                            placeholder="Enter full institute address"></textarea>
+                    </div>
+
+                    <!-- ⭐ NEW FIELD: GST -->
+                    <div class="col-md-6">
+                        <label for="gst" class="form-label">GST Number</label>
+                        <input type="text" name="gst" id="gst" class="form-control" placeholder="e.g. 07ABCDE1234F1Z5">
                     </div>
                 </div>
             </div>
@@ -48,15 +66,18 @@
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label for="main_color" class="form-label">Main Color</label>
-                        <input type="color" name="main_color" id="main_color" class="form-control form-control-color" value="#3B82F6">
+                        <input type="color" name="main_color" id="main_color" class="form-control form-control-color"
+                            value="#3B82F6">
                     </div>
                     <div class="col-md-4">
                         <label for="top_color" class="form-label">Top Bar Color</label>
-                        <input type="color" name="top_color" id="top_color" class="form-control form-control-color" value="#1E3A8A">
+                        <input type="color" name="top_color" id="top_color" class="form-control form-control-color"
+                            value="#1E3A8A">
                     </div>
                     <div class="col-md-4">
                         <label for="secondary_color" class="form-label">Secondary Color</label>
-                        <input type="color" name="secondary_color" id="secondary_color" class="form-control form-control-color" value="#64748B">
+                        <input type="color" name="secondary_color" id="secondary_color"
+                            class="form-control form-control-color" value="#64748B">
                     </div>
 
                     <hr class="my-3">
@@ -66,14 +87,18 @@
                         <div id="custom-color-fields" class="border rounded p-3 bg-light">
                             <div class="row align-items-center mb-2 custom-color-row">
                                 <div class="col-md-5">
-                                    <input type="text" class="form-control color-key" placeholder="Color Name (e.g. button)">
+                                    <input type="text" class="form-control color-key"
+                                        placeholder="Color Name (e.g. button)">
                                 </div>
                                 <div class="col-md-5 d-flex align-items-center">
-                                    <input type="color" class="form-control form-control-color color-value" value="#000000">
-                                    <span class="ms-2 border rounded-circle" style="width: 25px; height: 25px; background-color:#000000;"></span>
+                                    <input type="color" class="form-control form-control-color color-value"
+                                        value="#000000">
+                                    <span class="ms-2 border rounded-circle"
+                                        style="width: 25px; height: 25px; background-color:#000000;"></span>
                                 </div>
                                 <div class="col-md-2 text-center">
-                                    <button type="button" class="btn btn-danger btn-sm remove-color"><i class="bi bi-trash"></i></button>
+                                    <button type="button" class="btn btn-danger btn-sm remove-color"><i
+                                            class="bi bi-trash"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +140,7 @@
 
 
 <script>
-$(function() {
+    $(function() {
 
     // Handle theme form submission
     $("#theme-form").submit(function(e) {
