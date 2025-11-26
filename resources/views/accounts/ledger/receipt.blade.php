@@ -149,6 +149,8 @@
                 Accountant/Cashier — <strong>{{ $theme }}</strong>
             </p>
         </div>
+        <!-- FOOTER LABEL -->
+        <div class="copy-label">INTERNAL COPY – FOR OFFICE USE ONLY</div>
 
     </div>
 
@@ -272,6 +274,9 @@
                 Accountant/Cashier — <strong>{{ $theme }}</strong>
             </p>
         </div>
+
+        <!-- FOOTER LABEL -->
+        <div class="copy-label">STUDENT COPY – TO BE HANDED TO STUDENT</div>
 
     </div>
 
