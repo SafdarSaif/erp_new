@@ -69,31 +69,32 @@
 
 
             <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
-    <tr>
-        <!-- LEFT: Logo (fixed width) -->
-        <td style="vertical-align:top; width:110px; padding:0;">
-            <img src="{{ $logo }}" alt="Logo" style="display:block; width:140px; height:70px;">
-        </td>
+                <tr>
+                    <!-- LEFT: Logo (fixed width) -->
+                    <td style="vertical-align:top; width:110px; padding:0;">
+                        <img src="{{ $logo }}" alt="Logo" style="display:block; width:140px; height:70px;">
+                    </td>
 
-        <!-- RIGHT: Theme Name + Address + GST -->
-        <td style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.4;">
+                    <!-- RIGHT: Theme Name + Address + GST -->
+                    <td
+                        style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.4;">
 
-            <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
+                        <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
 
-                <!-- THEME NAME -->
-                <div style="font-size:16px; font-weight:bold; margin-bottom:3px;">
-                    {{ $theme }}
-                </div>
+                            <!-- THEME NAME -->
+                            <div style="font-size:16px; font-weight:bold; margin-bottom:3px;">
+                                {{ $theme }}
+                            </div>
 
-                <!-- ADDRESS -->
-                {!! $address !!} <br>
+                            <!-- ADDRESS -->
+                            {!! $address !!} <br>
 
-                <!-- GST -->
-                <strong>GST No:</strong> {{ $gst }}
-            </div>
-        </td>
-    </tr>
-</table>
+                            <!-- GST -->
+                            <strong>GST No:</strong> {{ $gst }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
 
 
@@ -253,24 +254,33 @@
                 </div>
             </div> --}}
             <!-- HEADER (use this for BOTH copies) -->
-            <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
-                <tr>
-                    <!-- LEFT: Logo (fixed width) -->
-                    <td style="vertical-align:top; width:110px; padding:0;">
-                        <img src="{{ $logo }}" alt="Logo" style="display:block; max-width:50px; height:auto;">
-                    </td>
 
-                    <!-- RIGHT: Address + GST (right aligned, wraps) -->
-                    <td
-                        style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.3;">
-                        <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
-                            {!! $address !!}
-                            <br>
-                            <strong>GST No:</strong> {{ $gst }}
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+    <tr>
+        <!-- LEFT: Logo (fixed width) -->
+        <td style="vertical-align:top; width:110px; padding:0;">
+            <img src="{{ $logo }}" alt="Logo" style="display:block; width:140px; height:70px;">
+        </td>
+
+        <!-- RIGHT: Theme Name + Address + GST -->
+        <td style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.4;">
+
+            <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
+
+                <!-- THEME NAME -->
+                <div style="font-size:16px; font-weight:bold; margin-bottom:3px;">
+                    {{ $theme }}
+                </div>
+
+                <!-- ADDRESS -->
+                {!! $address !!} <br>
+
+                <!-- GST -->
+                <strong>GST No:</strong> {{ $gst }}
+            </div>
+        </td>
+    </tr>
+</table>
 
 
 
