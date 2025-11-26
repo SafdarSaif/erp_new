@@ -831,7 +831,7 @@ class StudentLedgerController extends Controller
         'receipt_no'        => $ledger->id ?? '-',
         'date'              => $ledger->created_at ? $ledger->created_at->format('d-m-Y') : '-',
 
-        'theme'             => $user->name ?? '-',
+        'theme'             => $theme->name ?? '-',
         'address'           => $address,
         'gst'      => $gstNumber,
         'logo'              => $logo,
