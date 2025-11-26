@@ -46,7 +46,7 @@
 
 @section('scripts')
 <script>
-$(function() {
+    $(function() {
 
     const addButton = {
         text: 'Add Theme',
@@ -102,7 +102,13 @@ $(function() {
         responsive: true,
         pageLength: 10,
         dom: '<"d-flex justify-content-between mb-2"<"dataTables_filter"f><"add_button"B>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-        buttons: [addButton],
+        // buttons: [addButton],
+        buttons: [
+    @if(!$theme_exists)
+        addButton
+    @endif
+],
+
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search Themes..."
@@ -116,6 +122,7 @@ $(function() {
     .dataTables_wrapper .dataTables_filter {
         margin-bottom: 1rem;
     }
+
     table.dataTable tbody tr.selected {
         background-color: rgba(13, 110, 253, 0.1);
     }

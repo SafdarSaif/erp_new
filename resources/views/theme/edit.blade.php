@@ -33,6 +33,20 @@
                         <label for="edit-tag-line" class="form-label">Tag Line</label>
                         <input type="text" name="tag_line" id="edit-tag-line" class="form-control" value="{{ old('tag_line', $theme->tag_line ?? '') }}">
                     </div>
+
+
+                       <!-- ⭐ NEW FIELD — Address -->
+    <div class="col-md-12">
+        <label for="edit-address" class="form-label">Address</label>
+        <textarea name="address" id="edit-address" class="form-control" rows="2">{{ old('address', $theme->address ?? '') }}</textarea>
+    </div>
+
+    <!-- ⭐ NEW FIELD — GST Number -->
+    <div class="col-md-6">
+        <label for="edit-gst" class="form-label">GST Number</label>
+        <input type="text" name="gst" id="edit-gst" class="form-control"
+            value="{{ old('gst', $theme->gst ?? '') }}">
+    </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
                         <select name="is_active" id="edit-is-active" class="form-select">

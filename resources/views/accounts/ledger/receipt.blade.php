@@ -39,12 +39,36 @@
         <div style="padding-bottom:25px; margin-bottom:25px; border-bottom:1px dashed #000;">
 
             <!-- HEADER -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            {{-- <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <img src="{{ $logo }}" alt="Logo" style="width:50px;">
                 <div style="text-align:right; font-size:13px; line-height:1.3;">
-                    {!! $address !!}
+                    {!! $address !!}<br>
+                    <strong>GST No:</strong> {{ $gst }}
+
                 </div>
-            </div>
+            </div> --}}
+            <!-- HEADER (use this for BOTH copies) -->
+            <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+                <tr>
+                    <!-- LEFT: Logo (fixed width) -->
+                    <td style="vertical-align:top; width:110px; padding:0;">
+                        <img src="{{ $logo }}" alt="Logo" style="display:block; max-width:50px; height:auto;">
+                    </td>
+
+                    <!-- RIGHT: Address + GST (right aligned, wraps) -->
+                    <td
+                        style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.3;">
+                        <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
+                            {!! $address !!}
+                            <br>
+                            <strong>GST No:</strong> {{ $gst }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+
+
 
             <h2 style="text-align:center; font-size:18px; text-decoration:underline; margin:5px 0 15px 0;">
                 <strong>CASH RECEIPT</strong>
@@ -52,7 +76,8 @@
 
             <!-- FIRST ROW -->
 
-            <div style="font-size:14px; margin-bottom:12px; width:100%; justify-content:space-between; display:flex;">
+            {{-- <div
+                style="font-size:14px; margin-bottom:12px; width:100%; justify-content:space-between; display:flex;">
 
                 <div style="display:inline-block; width:20%;">
                     <strong>AdNo:</strong> {{ $application_id }}
@@ -79,7 +104,33 @@
                 </div>
                 <div style="display:inline-block; width:47%;text-align:left;"><strong>University:</strong> {{
                     $university_name }}</div>
-            </div>
+            </div> --}}
+
+
+            <table style="width:100%; font-size:14px; border-collapse:collapse; margin-bottom:12px;">
+                <tr>
+                    <!-- LEFT SIDE -->
+                    <td style="width:60%; vertical-align:top;">
+
+                        <div style="margin-bottom:6px;"><strong>Name:</strong> {{ $student_name }}</div>
+                        <div style="margin-bottom:6px;"><strong>Student ID:</strong> {{ $student_unique_id }}</div>
+                        <div style="margin-bottom:6px;"><strong>Course:</strong> {{ $course }}</div>
+                        <div style="margin-bottom:6px;"><strong>University:</strong> {{ $university_name }}</div>
+
+                    </td>
+
+                    <!-- RIGHT SIDE -->
+                    <td style="width:40%; text-align:right; vertical-align:top;">
+
+                        <div style="margin-bottom:6px;"><strong>Admission No:</strong> {{ $application_id }}</div>
+                        <div style="margin-bottom:6px;"><strong>Receipt No:</strong> {{ $receipt_no }}</div>
+                        <div style="margin-bottom:6px;"><strong>Date:</strong> {{ $date }}</div>
+
+                    </td>
+                </tr>
+            </table>
+
+
 
 
             {{-- <div style="font-size:14px; margin-bottom:12px; display:flex; justify-content:space-between;">
@@ -164,12 +215,36 @@
         <div style="padding-bottom:25px; margin-bottom:25px; border-bottom:1px dashed #000;">
 
             <!-- HEADER -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            {{-- <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <img src="{{ $logo }}" alt="Logo" style="width:50px;">
                 <div style="text-align:right; font-size:13px; line-height:1.3;">
-                    {!! $address !!}
+                    {!! $address !!}<br>
+                    <strong>GST No:</strong> {{ $gst }}
+
                 </div>
-            </div>
+            </div> --}}
+            <!-- HEADER (use this for BOTH copies) -->
+            <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+                <tr>
+                    <!-- LEFT: Logo (fixed width) -->
+                    <td style="vertical-align:top; width:110px; padding:0;">
+                        <img src="{{ $logo }}" alt="Logo" style="display:block; max-width:50px; height:auto;">
+                    </td>
+
+                    <!-- RIGHT: Address + GST (right aligned, wraps) -->
+                    <td
+                        style="vertical-align:top; padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.3;">
+                        <div style="display:inline-block; max-width:640px; word-wrap:break-word; text-align:right;">
+                            {!! $address !!}
+                            <br>
+                            <strong>GST No:</strong> {{ $gst }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+
+
 
             <h2 style="text-align:center; font-size:18px; text-decoration:underline; margin:5px 0 15px 0;">
                 <strong>CASH RECEIPT</strong>
@@ -177,7 +252,8 @@
 
             <!-- FIRST ROW -->
 
-            <div style="font-size:14px; margin-bottom:12px; width:100%; justify-content:space-between; display:flex;">
+            {{-- <div
+                style="font-size:14px; margin-bottom:12px; width:100%; justify-content:space-between; display:flex;">
 
                 <div style="display:inline-block; width:20%;">
                     <strong>AdNo:</strong> {{ $application_id }}
@@ -204,7 +280,33 @@
                 </div>
                 <div style="display:inline-block; width:47%;text-align:left;"><strong>University:</strong> {{
                     $university_name }}</div>
-            </div>
+            </div> --}}
+
+
+            <table style="width:100%; font-size:14px; border-collapse:collapse; margin-bottom:12px;">
+                <tr>
+                    <!-- LEFT SIDE -->
+                    <td style="width:60%; vertical-align:top;">
+
+                        <div style="margin-bottom:6px;"><strong>Name:</strong> {{ $student_name }}</div>
+                        <div style="margin-bottom:6px;"><strong>Student ID:</strong> {{ $student_unique_id }}</div>
+                        <div style="margin-bottom:6px;"><strong>Course:</strong> {{ $course }}</div>
+                        <div style="margin-bottom:6px;"><strong>University:</strong> {{ $university_name }}</div>
+
+                    </td>
+
+                    <!-- RIGHT SIDE -->
+                    <td style="width:40%; text-align:right; vertical-align:top;">
+
+                        <div style="margin-bottom:6px;"><strong>Admission No:</strong> {{ $application_id }}</div>
+                        <div style="margin-bottom:6px;"><strong>Receipt No:</strong> {{ $receipt_no }}</div>
+                        <div style="margin-bottom:6px;"><strong>Date:</strong> {{ $date }}</div>
+
+                    </td>
+                </tr>
+            </table>
+
+
 
 
             {{-- <div style="font-size:14px; margin-bottom:12px; display:flex; justify-content:space-between;">
@@ -223,7 +325,7 @@
 
                 <tbody>
                     <tr>
-                        <td style="border:1px solid #000; padding:10px;">{{ $semester }} Fee</td>
+                        <td style="border:1px solid #000; padding:10px;"> {{ $semester }} Fee</td>
                         <td style="border:1px solid #000; padding:10px;">{{ $amount }}</td>
                     </tr>
 
@@ -276,7 +378,7 @@
         </div>
 
         <!-- FOOTER LABEL -->
-        <div class="copy-label">STUDENT COPY – TO BE HANDED TO STUDENT</div>
+        <div class="copy-label">STUDENT COPY – TO BE HAND OVER TO STUDENT</div>
 
     </div>
 

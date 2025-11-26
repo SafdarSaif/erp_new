@@ -38,7 +38,11 @@ class ThemeController extends Controller
                 ->make(true);
         }
 
-        return view('theme.index');
+        // return view('theme.index');
+        return view('theme.index', [
+    'theme_exists' => Theme::count() > 0
+]);
+
     }
 
     /**
@@ -65,6 +69,9 @@ class ThemeController extends Controller
             'favicon'         => 'nullable|image|mimes:jpeg,png,jpg,svg,ico|max:1024',
             'custom_colors'   => 'nullable|string',
             'is_active'       => 'nullable|boolean',
+            'address'         => 'nullable|string|max:500',
+            'gst'             => 'nullable|string|max:20',
+
         ]);
 
         if ($validator->fails()) {
@@ -106,6 +113,8 @@ class ThemeController extends Controller
                     'logo'            => $logoPath,
                     'favicon'         => $faviconPath,
                     'is_active'       => $request->input('is_active', 1),
+                     'address'         => $request->address,
+                      'gst'             => $request->gst,
                 ]
             );
 
@@ -158,6 +167,8 @@ public function update(Request $request, $id)
         'favicon'         => 'nullable|image|mimes:jpeg,png,jpg,svg,ico|max:1024',
         'custom_colors'   => 'nullable|string',
         'is_active'       => 'nullable|string',
+          'address'         => 'nullable|string|max:500',
+            'gst'             => 'nullable|string|max:20',
     ]);
 
     if ($validator->fails()) {
@@ -199,6 +210,8 @@ public function update(Request $request, $id)
             'logo'            => $logoPath,
             'favicon'         => $faviconPath,
             'is_active'       => $request->input('is_active', '1'),
+            'address'         => $request->address,
+                      'gst'             => $request->gst,
         ]);
 
         return response()->json([
