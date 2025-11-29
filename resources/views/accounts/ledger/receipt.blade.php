@@ -224,7 +224,7 @@
                 <p style="margin:2px 0;"><strong>Issued:</strong> {{ $date }}</p>
             </div>
 
-            <p style="font-style:italic; margin-top:8px; font-size:12px;">NB: Fee not refundable</p>
+            <p style="font-style:italic; margin-top:8px; font-size:12px;">NB: Fee not refundable or transferable</p>
 
             <p style="font-size:14px; font-weight:bold; text-align:right; margin-top:15px;">
                 Accountant/Cashier — <strong>{{ $theme }}</strong>
