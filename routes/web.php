@@ -319,7 +319,7 @@ Route::middleware([
         Route::get('/get-student-qualifications/{id}', [StudentController::class, 'getStudentQualifications']);
 
         Route::post('/generate-id/{student}', [StudentController::class, 'generateId'])
-    ->name('students.generate-id');
+            ->name('students.generate-id');
     });
 
 
@@ -370,7 +370,6 @@ Route::middleware([
             ->name('student.semester.balance');
 
         Route::get('/student/payment/{id}/edit', [StudentLedgerController::class, 'editPayment'])->name('student.editPayment');
-        Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
         Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
             ->name('student.updatePayment');
 
@@ -381,6 +380,25 @@ Route::middleware([
 
         Route::get('discount/{student_id}', [StudentFeeStructureController::class, 'addDiscount'])->name('accounts.discount');
         Route::post('fee/discount/store', [StudentFeeStructureController::class, 'storeDiscount'])->name('fees.discount.store');
+
+
+        //1 this is individual recipt
+        // Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
+
+// 1. Single receipt
+Route::get('/student/payment/{id}/receipt',
+    [StudentLedgerController::class, 'downloadReceipt'])
+    ->name('student.downloadReceipt');
+
+// 2. Semester receipts
+Route::get('/student/{student_id?}/receipt/semester/{semester?}',
+    [StudentLedgerController::class, 'downloadSemesterReceipts'])
+    ->name('receipt.semester');
+
+// 3. All receipts of a student
+Route::get('/student/{student_id}/receipt/all',
+    [StudentLedgerController::class, 'downloadAllReceipts'])
+    ->name('receipt.all');
 
 
 

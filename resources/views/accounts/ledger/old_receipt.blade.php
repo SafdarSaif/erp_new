@@ -2,228 +2,180 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Fee Payment Receipt</title>
+    <meta charset="UTF-8" />
+    <title>Cash Receipt – Double Copy</title>
+
     <style>
         body {
-            font-family: "DejaVu Sans", sans-serif;
-            margin: 40px;
-            font-size: 14px;
-            color: #2c3e50;
+            background: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            max-width: 780px;
+            margin: auto;
+            padding: 30px 35px;
             background: #fff;
         }
 
-        .receipt-container {
-            border: 1px solid #dcdcdc;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-            color: #007bff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            margin: 5px 0 0;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .title {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #000;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
-        }
-
-        /* .info-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .info-box {
-            width: 48%;
-            margin-bottom: 10px;
-        }
-
-        .info-box p {
-            margin: 5px 0;
-            line-height: 1.5;
-        } */
-
-
-        .info-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            gap: 20px;
-        }
-
-        .info-box {
-            flex: 1;
-            width: 48%;
-        }
-
-        .info-box p {
-            margin: 6px 0;
-            line-height: 1.5;
-        }
-
-
-        .info-box strong {
-            color: #000;
+        .page-break {
+            page-break-after: always;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            border-radius: 5px;
-            overflow: hidden;
+            margin-top: 8px;
+            font-size: 14px;
         }
+
+        th,
+        td {
+            /* border: 1px solid #000; */
+            padding: 8px;
+            text-align: left;
+        }
+
+
 
         th {
-            background: #007bff;
-            color: white;
-            font-weight: 600;
-            padding: 10px;
-            text-align: center;
+            background: #f1f1f1;
         }
 
-        td {
-            padding: 10px;
-            border: 1px solid #dcdcdc;
-            text-align: center;
+        .header-logo {
+            width: 140px;
+            height: 70px;
         }
 
-        .amount {
+        .copy-label {
+            text-align: center;
             font-weight: bold;
-            color: #27ae60;
+            margin-top: 10px;
         }
 
-        .footer {
-            margin-top: 40px;
-            border-top: 1px solid #ccc;
-            padding-top: 15px;
-            font-size: 12px;
+        .total-row td {
+            font-weight: bold;
             text-align: center;
-            color: #666;
         }
 
-        .signature {
-            margin-top: 50px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .sign-box {
-            text-align: center;
-            width: 45%;
-        }
-
-        .sign-line {
-            border-top: 1px solid #555;
-            width: 80%;
-            margin: 0 auto 5px;
-        }
-
-        .qr-box {
-            text-align: right;
-        }
-
-        .watermark {
-            position: fixed;
-            top: 45%;
-            left: 30%;
-            opacity: 0.08;
-            font-size: 80px;
-            transform: rotate(-30deg);
-            color: #007bff;
-            z-index: -1;
+        .entries-table td,
+        .entries-table th {
+            border: 1px solid #000 !important;
         }
     </style>
 </head>
 
 <body>
-    <div class="receipt-container">
 
-        <div class="watermark">ABCD</div>
+    @php
+    $entriesList = $entries ?? [$data ?? []];
+    @endphp
 
-        <div class="header">
-            <h1>ABCD</h1>
-            <p>Official Payment Receipt</p>
-        </div>
+    @foreach(['INTERNAL COPY – FOR OFFICE USE ONLY', 'STUDENT COPY – TO BE HAND OVER TO STUDENT'] as $copy_label)
+    <div class="page {{ $loop->last ? '' : 'page-break' }}">
 
-        <div class="title">Fee Payment Receipt</div>
+        <!-- HEADER -->
+        <table style="margin-bottom:10px;">
+            <tr>
+                <td style="width:110px; padding:0;">
+                    <img src="{{ $entriesList[0]['logo'] }}" alt="Logo" class="header-logo">
+                </td>
+                <td style="padding:0 0 0 10px; text-align:right; font-size:13px; line-height:1.4;">
+                    <div style="max-width:640px; text-align:right;">
+                        <div style="font-size:16px; font-weight:bold; margin-bottom:3px;">
+                            {{ $entriesList[0]['theme'] }}
+                        </div>
+                        {!! $entriesList[0]['address'] !!} <br>
+                        <strong>GST No:</strong> {{ $entriesList[0]['gst'] }}
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-        <div class="info-section">
-            <div class="info-box">
-                <p><strong>Student Name:</strong> {{ $student_name }}</p>
-                <p><strong>Application ID:</strong> {{ $application_id }}</p>
-                <p><strong>Course:</strong> {{ $course }}</p>
-            </div>
+        <h2 style="text-align:center; font-size:18px; text-decoration:underline; margin:5px 0 15px;">
+            CASH RECEIPT
+        </h2>
 
-            <div class="info-box">
-                <p><strong>Email:</strong> {{ $email }}</p>
-                <p><strong>Semester:</strong> {{ $semester }}</p>
-                <p><strong>Date:</strong> {{ $date }}</p>
-            </div>
-        </div>
+        <!-- STUDENT INFO -->
+        <table style="margin-bottom:12px;">
+            <tr>
+                <td style="width:60%;">
+                    <div><strong>Name:</strong> {{ $entriesList[0]['student_name'] }}</div>
+                    <div><strong>Student ID:</strong> {{ $entriesList[0]['student_unique_id'] }}</div>
+                    <div><strong>Course:</strong> {{ $entriesList[0]['course'] }}</div>
+                    <div><strong>University:</strong> {{ $entriesList[0]['university_name'] }}</div>
+                </td>
+                <td style="width:40%; text-align:right;">
+                    <div><strong>Admission No:</strong> {{ $entriesList[0]['application_id'] }}</div>
+                    <div><strong>Receipt No:</strong> {{ $entriesList[0]['receipt_no'] }}</div>
+                    <div><strong>Date:</strong> {{ $entriesList[0]['date'] }}</div>
+                </td>
+            </tr>
+        </table>
 
-        <table>
+        <!-- TABLE: ALL ENTRIES -->
+        <table class="entries-table">
             <thead>
                 <tr>
-                    <th>Amount (₹)</th>
-                    <th>Mode</th>
-                    <th>Transaction ID</th>
-                    <th>Status</th>
+                    <th>Semester</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
                 </tr>
             </thead>
             <tbody>
+                @foreach($entriesList as $entry)
                 <tr>
-                    <td class="amount">{{ $amount }}</td>
-                    <td>{{ $mode }}</td>
-                    <td>{{ $transaction_id }}</td>
-                    <td><span style="color:green; font-weight:bold;">Paid</span></td>
+                    <td>{{ $entry['semester'] }}</td>
+                    <td>{{ $entry['semester_total'] }}</td>
+                    <td>{{ $entry['semester_paid'] }}</td>
+                    <td>{{ $entry['semester_balance'] }}</td>
                 </tr>
+                @endforeach
+                @php
+                $totalSemester = collect($entriesList)->sum(function($e){
+                return (float) str_replace([',', '.00'], '', $e['semester_total']);
+                });
+
+                $totalPaid = collect($entriesList)->sum(function($e){
+                return (float) str_replace([',', '.00'], '', $e['semester_paid']);
+                });
+
+                $totalBalance = collect($entriesList)->sum(function($e){
+                return (float) str_replace([',', '.00'], '', $e['semester_balance']);
+                });
+                @endphp
+
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>{{ number_format($totalSemester) }}</td>
+                    <td>{{ number_format($totalPaid) }}</td>
+                    <td>{{ number_format($totalBalance) }}</td>
+                </tr>
+
+
             </tbody>
         </table>
 
-        <div class="signature">
-            <div class="sign-box">
-                <div class="sign-line"></div>
-                <p><strong>Student Signature</strong></p>
-            </div>
-            <div class="sign-box">
-                <div class="sign-line"></div>
-                <p><strong>Authorized Signatory</strong></p>
-            </div>
+        <!-- BANK DETAILS -->
+        <div style="font-size:13px; margin-top:12px;">
+            <p><strong>By:</strong> {{ $entriesList[0]['mode'] }}</p>
+            <p><strong>Transaction ID:</strong> {{ $entriesList[0]['transaction_id'] }}</p>
+            <p><strong>Issued:</strong> {{ $entriesList[0]['date'] }}</p>
         </div>
 
-        <div class="footer">
-            <p>This is a computer-generated receipt and does not require a physical signature.</p>
-            <p>© {{ date('Y') }} ABCD. All rights reserved.</p>
-        </div>
+        <p style="font-style:italic; margin-top:8px; font-size:12px;">NB: Fee not refundable</p>
+        <p style="font-size:14px; font-weight:bold; text-align:right; margin-top:15px;">
+            Accountant/Cashier — <strong>{{ $entriesList[0]['theme'] }}</strong>
+        </p>
+
+        <!-- COPY LABEL -->
+        <div class="copy-label">{{ $copy_label }}</div>
     </div>
+    @endforeach
+
 </body>
 
 </html>

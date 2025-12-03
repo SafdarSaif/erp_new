@@ -317,7 +317,7 @@ $(document).on('shown.bs.modal', function () {
 
 
 <script>
-$(document).on("click", ".generateID", function () {
+    $(document).on("click", ".generateID", function () {
     let id = $(this).data("id");
     let btn = $(this);
 
@@ -325,7 +325,7 @@ $(document).on("click", ".generateID", function () {
 
     $.post(`/students/generate-id/${id}`, {_token: "{{ csrf_token() }}"}, function(response){
         if(response.status){
-            btn.parent().html(response.unique_id); // replace button with generated ID
+            btn.parent().html(response.unique_id);
             $('#student-table').DataTable().ajax.reload(null, false);
         } else {
             btn.html("Generate").prop("disabled", false);
