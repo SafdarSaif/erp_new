@@ -36,12 +36,19 @@ use App\Http\Controllers\StudentQueryController;
 use App\Http\Controllers\Settings\ExpenseCategoryController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\RoleReportingController;
+use App\Http\Controllers\Accounts\FeeReceiptController;
+use App\Http\Controllers\Settings\NotificationHeaderController;
+use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
 | CUSTOM LOGIN PAGE (GUEST ONLY)
 |--------------------------------------------------------------------------
 */
+
+
+
 
 Route::get('/', function () {
     return view('content.index');   // Your custom login page
@@ -185,6 +192,31 @@ Route::middleware([
         Route::put('document/update/{id}', [DocumentsController::class, 'update'])->name('documents.update');
         Route::delete('document/delete/{id}', [DocumentsController::class, 'destroy'])->name('documents.delete');
         Route::get('document/status/{id}', [DocumentsController::class, 'status'])->name('documents.status');
+// Notification Headers
+         Route::get('notificationheader', [NotificationHeaderController::class, 'index'])->name('notificationheader.index');
+        Route::get('notificationheader/create', [NotificationHeaderController::class, 'create'])->name('notificationheader.create');
+        Route::post('notificationheader/store', [NotificationHeaderController::class, 'store'])->name('notificationheader.store');
+        Route::get('notificationheader/edit/{id}', [NotificationHeaderController::class, 'edit'])->name('notificationheader.edit');
+        Route::put('notificationheader/update/{id}', [NotificationHeaderController::class, 'update'])->name('notificationheader.update');
+        Route::delete('notificationheader/delete/{id}', [NotificationHeaderController::class, 'destroy'])->name('notificationheader.delete');
+        Route::get('notificationheader/status/{id}', [NotificationHeaderController::class, 'status'])->name('notificationheader.status');
+    });
+
+    // Notification
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/create', [NotificationController::class, 'create'])->name('notifications.create');
+        Route::post('/store', [NotificationController::class, 'store'])->name('notifications.store');
+        Route::get('/edit/{id}', [NotificationController::class, 'edit'])->name('notifications.edit');
+        Route::put('/update/{id}', [NotificationController::class, 'update'])->name('notifications.update');
+        Route::delete('/delete/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+        Route::get('/status/{id}', [NotificationController::class, 'status'])->name('notifications.status');
+
+        Route::post('/fetch-students', [NotificationController::class, 'fetchStudents'])
+    ->name('notifications.fetchStudents');
+
+
+
     });
 
 
@@ -385,20 +417,26 @@ Route::middleware([
         //1 this is individual recipt
         // Route::get('/student/payment/{id}/receipt', [StudentLedgerController::class, 'downloadReceipt'])->name('student.downloadReceipt');
 
-// 1. Single receipt
-Route::get('/student/payment/{id}/receipt',
-    [StudentLedgerController::class, 'downloadReceipt'])
-    ->name('student.downloadReceipt');
+        // 1. Single receipt
+        Route::get(
+            '/student/payment/{id}/receipt',
+            [StudentLedgerController::class, 'downloadReceipt']
+        )
+            ->name('student.downloadReceipt');
 
-// 2. Semester receipts
-Route::get('/student/{student_id?}/receipt/semester/{semester?}',
-    [StudentLedgerController::class, 'downloadSemesterReceipts'])
-    ->name('receipt.semester');
+        // 2. Semester receipts
+        Route::get(
+            '/student/{student_id?}/receipt/semester/{semester?}',
+            [StudentLedgerController::class, 'downloadSemesterReceipts']
+        )
+            ->name('receipt.semester');
 
-// 3. All receipts of a student
-Route::get('/student/{student_id}/receipt/all',
-    [StudentLedgerController::class, 'downloadAllReceipts'])
-    ->name('receipt.all');
+        // 3. All receipts of a student
+        Route::get(
+            '/student/{student_id}/receipt/all',
+            [StudentLedgerController::class, 'downloadAllReceipts']
+        )
+            ->name('receipt.all');
 
 
 
