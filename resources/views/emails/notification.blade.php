@@ -5,65 +5,86 @@
     <meta charset="UTF-8">
     <title>{{ $title }}</title>
     <style>
+        /* GLOBAL -------------------------- */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
             margin: 0;
-            padding: 20px;
-            color: #333;
+            background: #eef2f7;
+            padding: 35px 15px;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #444;
         }
 
-        .email-container {
-            background-color: #ffffff;
-            max-width: 650px;
-            margin: 40px auto;
-            border-radius: 12px;
-            padding: 35px 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-            border-top: 6px solid #3498db;
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            border-radius: 14px;
             overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
         }
 
-        .category-badge {
+        /* HEADER -------------------------- */
+        .header {
+            background: #ffffff;
+            padding: 35px 30px 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid #e8eef3;
+        }
+
+        .header img.logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .category {
             display: inline-block;
-            background: #3498db;
+            background: #007bff;
             color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 6px 14px;
-            border-radius: 50px;
+            padding: 7px 18px;
+            font-size: 13px;
+            border-radius: 20px;
             margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
+            font-weight: 600;
         }
 
-        .email-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .email-header img {
-            width: 70px;
-            margin-bottom: 12px;
-        }
-
-        h2 {
-            font-size: 28px;
-            margin: 0;
-            color: #2c3e50;
+        h1.title {
+            font-size: 26px;
+            margin: 5px 0;
             font-weight: 700;
+            color: #2c3e50;
         }
 
-        p {
+        .theme-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .theme-address {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        /* BODY CONTENT -------------------------- */
+        .content {
+            padding: 35px 30px;
+        }
+
+        .content p {
             font-size: 16px;
-            line-height: 1.8;
-            color: #555555;
-            margin: 18px 0;
+            line-height: 1.75;
+            color: #555;
+            margin-top: 0;
         }
 
-        .details {
-            background-color: #f9fafc;
-            border-left: 5px solid #3498db;
+        /* DETAILS BOX -------------------------- */
+        .details-box {
+            background: #f7f9fc;
+            border-left: 4px solid #007bff;
             padding: 18px 22px;
             border-radius: 8px;
             margin: 25px 0;
@@ -71,47 +92,53 @@
             font-size: 15px;
         }
 
-        .button {
+        /* BUTTON -------------------------- */
+        .btn-center {
+            text-align: center;
+            margin: 35px 0;
+        }
+
+        .btn {
             display: inline-block;
+            background: #007bff;
+            padding: 14px 35px;
+            color: #fff !important;
             text-decoration: none;
-            background: linear-gradient(90deg, #3498db 0%, #217dbb 100%);
-            color: #fff;
-            padding: 14px 32px;
             border-radius: 8px;
-            font-weight: 600;
             font-size: 16px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: 0.25s;
+            box-shadow: 0 6px 18px rgba(0, 123, 255, 0.25);
         }
 
-        .button:hover {
-            background: linear-gradient(90deg, #217dbb 0%, #1a5a8a 100%);
+        .btn:hover {
+            background: #0067d4;
         }
 
+        /* FOOTER -------------------------- */
         .footer {
             text-align: center;
+            padding: 22px;
+            background: #f8fafc;
             font-size: 13px;
-            color: #888888;
-            margin-top: 35px;
+            color: #777;
+            border-top: 1px solid #e8eef3;
         }
 
-        /* Responsive */
+        /* RESPONSIVE -------------------------- */
         @media (max-width: 600px) {
-            .email-container {
-                padding: 25px 20px;
+
+            .content,
+            .header {
+                padding: 22px 18px;
             }
 
-            h2 {
+            h1.title {
                 font-size: 22px;
             }
 
-            p,
-            .details {
-                font-size: 15px;
-            }
-
-            .button {
-                padding: 12px 24px;
+            .btn {
+                padding: 12px 26px;
                 font-size: 15px;
             }
         }
@@ -119,43 +146,73 @@
 </head>
 
 <body>
-    <div class="email-container">
 
-        <!-- Optional Category Badge -->
-        @if(!empty($header))
-        <div class="category-badge">
-            {{ $header->name ?? $header }}
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+
+            <!-- CATEGORY -->
+            @if(!empty($header))
+            <div class="category">{{ $header->name ?? $header }}</div>
+            @endif
+
+            <!-- TITLE -->
+            <h1 class="title">{{ $title }}</h1>
         </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <p>{{ $description }}</p>
+
+            @if(!empty($details))
+            <div class="details-box">
+                {!! $details !!}
+            </div>
+            @endif
+
+            @if(!empty($action_link))
+            <div class="btn-center">
+                <a href="{{ $action_link }}" class="btn">Take Action</a>
+            </div>
+            @endif
+        </div>
+
+        <!-- FOOTER -->
+       <!-- FOOTER -->
+@php
+    $theme = \App\Models\Theme::where('is_active', 1)->first();
+@endphp
+
+<div class="footer" style="background:#f8fafc; border-top:1px solid #e8eef3; text-align:center; padding:20px 15px; font-size:13px; color:#555; line-height:1.6;">
+
+    @if($theme)
+        {{-- Theme Name --}}
+        <div style="font-weight:600; margin-bottom:3px;">{{ $theme->name }}</div>
+
+        {{-- Address --}}
+        @if($theme->address)
+            <div style="font-size:12px; color:#777; margin-bottom:5px;">
+                {!! $theme->address !!}
+            </div>
         @endif
 
-        <!-- Header with logo -->
-        <div class="email-header">
-            <img src="{{ $logo ?? 'https://via.placeholder.com/70x70?text=Logo' }}" alt="Logo">
-            <h2>{{ $title }}</h2>
+        {{-- Copyright --}}
+        <div style="font-size:12px; color:#777;">
+            © {{ date('Y') }} {{ $theme->name }} — All Rights Reserved.
         </div>
-
-        <!-- Main description -->
-        <p>{{ $description }}</p>
-
-        <!-- Optional Details Box -->
-        @if(!empty($details))
-        <div class="details">
-            {{ $details }}
+    @else
+        <div style="font-size:12px; color:#777;">
+            © {{ date('Y') }} {{ config('app.name') }} — All Rights Reserved.
         </div>
-        @endif
+    @endif
 
-        <!-- Optional Action Button -->
-        @if(!empty($action_link))
-        <p style="text-align:center; margin:30px 0;">
-            <a href="{{ $action_link }}" class="button">Take Action</a>
-        </p>
-        @endif
+</div>
 
-        <!-- Footer -->
-        <div class="footer">
-            &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
-        </div>
+
+
     </div>
+
 </body>
 
 </html>

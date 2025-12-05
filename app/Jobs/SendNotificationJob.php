@@ -18,7 +18,7 @@ class SendNotificationJob implements ShouldQueue, NotTenantAware
 
     public $notificationId;
     public $email;
-
+    protected $tries = 5;
     public function __construct($notificationId, $email)
     {
 

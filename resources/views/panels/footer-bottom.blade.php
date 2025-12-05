@@ -328,14 +328,14 @@ $(document).on('shown.bs.modal', function () {
     /** --------------------------
      *  STUDENT MULTISELECT
      * -------------------------- */
-    // if (document.querySelector('#student_ids')) {
-    //     if (studentChoices) studentChoices.destroy();
-    //     studentChoices = new Choices('#student_ids', {
-    //         removeItemButton: true,
-    //         searchEnabled: true,
-    //         placeholder: true
-    //     });
-    // }
+    if (document.querySelector('#student_ids')) {
+        if (studentChoices) studentChoices.destroy();
+        studentChoices = new Choices('#student_ids', {
+            removeItemButton: true,
+            searchEnabled: true,
+            placeholder: true
+        });
+    }
 
     /** --------------------------
      *  USER MULTISELECT
@@ -348,6 +348,9 @@ $(document).on('shown.bs.modal', function () {
             placeholder: true
         });
     }
+
+
+
 
     /** --------------------------
      *  ACADEMIC YEAR FILTER

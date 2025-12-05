@@ -30,7 +30,7 @@
         <div class="col-12" id="users_section" style="display:none;">
             <label class="form-label">User Target</label>
             <select id="user_type" name="user_type" class="form-control">
-                <option value="all">All Users</option>
+                <option value="All">All Users</option>
                 <option value="individual">Individual Users</option>
             </select>
 
@@ -51,7 +51,7 @@
                 <div class="col-md-3">
                     <label>Academic Year</label>
                     <select id="academic_year" name="academic_year" class="form-control">
-                        <option value="">-- all --</option>
+                        <option value="">-- All --</option>
                         @foreach($years as $y)
                         <option value="{{ $y->id }}">{{ $y->name }}</option>
                         @endforeach
@@ -61,7 +61,7 @@
                 <div class="col-md-3">
                     <label>University</label>
                     <select id="university_id" name="university_id" class="form-control">
-                        <option value="">-- all --</option>
+                        <option value="">-- All --</option>
                         @foreach($universities as $un)
                         <option value="{{ $un->id }}">{{ $un->name }}</option>
                         @endforeach
@@ -71,7 +71,7 @@
                 <div class="col-md-3">
                     <label>Subcourse</label>
                     <select id="subcourse_id" name="subcourse_id" class="form-control">
-                        <option value="">-- all --</option>
+                        <option value="">-- All --</option>
                         @foreach($subcourses as $s)
                         <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
@@ -81,7 +81,7 @@
                 <div class="col-md-3">
                     <label>Student Target</label>
                     <select name="student_type" id="student_type" class="form-control">
-                        <option value="all">All Students</option>
+                        <option value="All">All Students</option>
                         <option value="individual">Individual Students</option>
                     </select>
                 </div>
@@ -121,7 +121,7 @@
 
 
 <script>
-$(function () {
+    $(function () {
 
     /* Show/Hide sections */
     function toggleSections() {
@@ -146,40 +146,99 @@ $(function () {
 
 
     /* Load Students AJAX */
+    // function loadStudents() {
+
+    //     $.post(
+    //         "{{ route('notifications.fetchStudents') }}",
+    //         {
+    //             academic_year: $('#academic_year').val(),
+    //             university_id: $('#university_id').val(),
+    //             subcourse_id: $('#subcourse_id').val(),
+    //             _token: "{{ csrf_token() }}"
+    //         },
+    //         function(res) {
+
+    //             /* Student list */
+    //             let sList = $('#student_ids').empty();
+    //             res.students.forEach(s => {
+    //                 sList.append(`<option value="${s.id}">${s.name} (${s.email ?? ''})</option>`);
+    //             });
+
+    //             /* University dropdown */
+    //             let uni = $('#university_id').empty()
+    //                 .append(`<option value="">-- All --</option>`);
+    //             res.universities.forEach(u => {
+    //                 uni.append(`<option value="${u.id}">${u.name}</option>`);
+    //             });
+
+    //             /* Subcourse dropdown */
+    //             let sub = $('#subcourse_id').empty()
+    //                 .append(`<option value="">-- All --</option>`);
+    //             res.subcourses.forEach(sc => {
+    //                 sub.append(`<option value="${sc.id}">${sc.name}</option>`);
+    //             });
+    //         }
+    //     );
+    // }
+
+
     function loadStudents() {
 
-        $.post(
-            "{{ route('notifications.fetchStudents') }}",
-            {
-                academic_year: $('#academic_year').val(),
-                university_id: $('#university_id').val(),
-                subcourse_id: $('#subcourse_id').val(),
-                _token: "{{ csrf_token() }}"
-            },
-            function(res) {
+    $.post(
+        "{{ route('notifications.fetchStudents') }}",
+        {
+            academic_year: $('#academic_year').val(),
+            university_id: $('#university_id').val(),
+            subcourse_id: $('#subcourse_id').val(),
+            _token: "{{ csrf_token() }}"
+        },
+        function (res) {
 
-                /* Student list */
-                let sList = $('#student_ids').empty();
-                res.students.forEach(s => {
-                    sList.append(`<option value="${s.id}">${s.name} (${s.email ?? ''})</option>`);
-                });
-
-                /* University dropdown */
-                let uni = $('#university_id').empty()
-                    .append(`<option value="">-- all --</option>`);
-                res.universities.forEach(u => {
-                    uni.append(`<option value="${u.id}">${u.name}</option>`);
-                });
-
-                /* Subcourse dropdown */
-                let sub = $('#subcourse_id').empty()
-                    .append(`<option value="">-- all --</option>`);
-                res.subcourses.forEach(sc => {
-                    sub.append(`<option value="${sc.id}">${sc.name}</option>`);
-                });
+            /** ------------------------------
+             *   UPDATE STUDENT LIST
+             * ------------------------------ */
+            if (studentChoices) {
+                studentChoices.destroy();    // Destroy old instance
             }
-        );
-    }
+
+            let sList = $('#student_ids').empty();  // add new options
+            res.students.forEach(s => {
+                sList.append(`<option value="${s.id}">${s.name} (${s.email ?? ''})</option>`);
+            });
+
+            // Reinitialize Choices
+            studentChoices = new Choices('#student_ids', {
+                removeItemButton: true,
+                searchEnabled: true,
+                placeholder: true
+            });
+
+
+            /** ------------------------------
+             *   UPDATE UNIVERSITY DROPDOWN
+             * ------------------------------ */
+            if (filterUniversityChoices) filterUniversityChoices.destroy();
+            let uni = $('#university_id').empty().append(`<option value="">-- All --</option>`);
+            res.universities.forEach(u => {
+                uni.append(`<option value="${u.id}">${u.name}</option>`);
+            });
+            filterUniversityChoices = new Choices('#university_id');
+
+
+            /** ------------------------------
+             *   UPDATE SUBCOURSE DROPDOWN
+             * ------------------------------ */
+            if (filterSubcourseChoices) filterSubcourseChoices.destroy();
+            let sub = $('#subcourse_id').empty().append(`<option value="">-- All --</option>`);
+            res.subcourses.forEach(sc => {
+                sub.append(`<option value="${sc.id}">${sc.name}</option>`);
+            });
+            filterSubcourseChoices = new Choices('#subcourse_id');
+
+        }
+    );
+}
+
 
     $('#academic_year, #university_id, #subcourse_id').change(loadStudents);
     $('#load_students').click(loadStudents);
