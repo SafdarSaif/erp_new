@@ -304,9 +304,9 @@ class NotificationController extends Controller
             // 5️⃣ Dispatch emails to Redis queue
             $emails = array_unique($emails);
             foreach (array_unique($emails) as $email) {
-                    SendNotificationJob::dispatch($notification->id, $email)
-                        ->onQueue('notifications');
-                }
+                SendNotificationJob::dispatch($notification->id, $email)
+                    ->onQueue('notifications');
+            }
 
             DB::commit();
 

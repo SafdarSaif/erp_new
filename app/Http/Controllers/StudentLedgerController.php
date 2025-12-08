@@ -253,6 +253,79 @@ class StudentLedgerController extends Controller
     }
 
 
+    // public function getMiscellaneousBalance($studentId)
+    // {
+    //     $student = Student::findOrFail($studentId);
+
+    //     $miscFees = MiscellaneousFee::where('student_id', $studentId)->get();
+
+    //     $ledger = StudentLedger::where('student_id', $studentId)
+    //         ->where('transaction_type', 'credit')
+    //         ->get();
+
+    //     $miscBalances = [];
+
+    //     foreach ($miscFees as $misc) {
+
+    //         $paid = $ledger
+    //             ->where('miscellaneous_id', $misc->id)
+    //             ->sum('amount');
+
+    //         $balance = $misc->amount - $paid;
+
+    //         $miscBalances[] = [
+    //             'misc_name' => $misc->head,   // ✅ FIXED
+    //             'misc_id'   => $misc->id,
+    //             'total_fee' => $misc->amount,
+    //             'paid'      => $paid,
+    //             'balance'   => $balance,
+    //         ];
+    //         // dd($miscBalances);
+    //     }
+
+    //     // return response()->json($miscBalances);
+    //     return response()->json([
+    //         'misc_balances' => $miscBalances
+    //     ]);
+    // }
+
+    public function getMiscellaneousBalance($studentId)
+{
+    $student = Student::findOrFail($studentId);
+
+    $miscFees = MiscellaneousFee::where('student_id', $studentId)->get();
+
+    $ledger = StudentLedger::where('student_id', $studentId)
+        ->where('transaction_type', 'credit')
+        ->get();
+
+    $miscBalances = [];
+
+    foreach ($miscFees as $misc) {
+
+        $paid = $ledger
+            ->where('miscellaneous_id', $misc->id)
+            ->sum('amount');
+
+        $balance = $misc->amount - $paid;
+
+        $miscBalances[] = [
+            'name'      => $misc->head,   // FIXED correctly
+            'misc_id'   => $misc->id,
+            'total_fee' => $misc->amount,
+            'paid'      => $paid,
+            'balance'   => $balance,
+        ];
+    }
+
+    return response()->json([
+        'misc_balances' => $miscBalances
+    ]);
+}
+
+
+
+
 
 
 

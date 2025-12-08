@@ -575,6 +575,34 @@ class MenuSeeder extends Seeder
                 "is_active" => "1",
                 "is_searchable" => "0",
             ],
+
+            [
+                "id" => 48,
+                "added_by" => null,
+                "name" => "Notifications",
+                "parent_id" => null,
+                "is_parent" => "0",
+                "url" => "/notifications",
+                "icon" => null,
+                "position" => 15,
+                "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
+            [
+                "id" => 47,
+                "added_by" => null,
+                "name" => "Notification Header",
+                "parent_id" => 48,
+                "is_parent" => "0",
+                "url" => "/settings/notificationheader",
+                "icon" => null,
+                "position" => 13,
+                "permission" => null,
+                "is_active" => "1",
+                "is_searchable" => "0",
+            ],
+
         ];
 
         foreach ($menus as $menu) {

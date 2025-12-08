@@ -31,7 +31,7 @@
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Created By</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                         </table>
@@ -75,24 +75,24 @@
     }
 },
             { data: 'creator_name', name: 'creator_name' },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
+            // { data: 'action', name: 'action', orderable: false, searchable: false }
         ],
         columnDefs: [
-            {
-                targets: -1,
-                render: function(data, type, full) {
-                    return `<div class="hstack gap-2 fs-15">
-                                <button class="btn btn-sm btn-light-primary" onclick="edit('/notifications/${full.id}/edit', 'modal-lg')">
-                                    <i class="ri-pencil-line"></i>
-                                </button>
-                                <button class="btn btn-sm btn-light-danger delete-item" onclick="destry('/notifications/delete${full.id}', 'notifications-table')">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
+            // {
+            //     targets: -1,
+            //     render: function(data, type, full) {
+            //         return `<div class="hstack gap-2 fs-15">
+            //                     <button class="btn btn-sm btn-light-primary" onclick="edit('/notifications/${full.id}/edit', 'modal-lg')">
+            //                         <i class="ri-pencil-line"></i>
+            //                     </button>
+            //                     <button class="btn btn-sm btn-light-danger delete-item" onclick="destry('/notifications/delete${full.id}', 'notifications-table')">
+            //                         <i class="ri-delete-bin-line"></i>
+            //                     </button>
 
 
-                            </div>`;
-                }
-            }
+            //                 </div>`;
+            //     }
+            // }
         ],
         order: [[1, 'desc']],
         responsive: true,

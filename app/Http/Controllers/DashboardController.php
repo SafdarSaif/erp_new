@@ -105,7 +105,7 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->pluck('total', 'month')
             ->toArray();
-            // dd($rows);
+        // dd($rows);
 
         $rows1 = Voucher::selectRaw('MONTH(date) as month, SUM(amount) as total')
             ->whereYear('date', now()->year)
@@ -114,7 +114,7 @@ class DashboardController extends Controller
             ->pluck('total', 'month')
             ->toArray();
 
-            // dd($rows1);
+        // dd($rows1);
 
         $months = [];
 

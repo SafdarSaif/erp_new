@@ -401,6 +401,8 @@ Route::middleware([
         Route::get('/student/{id}/semester-balance', [StudentLedgerController::class, 'getSemesterBalance'])
             ->name('student.semester.balance');
 
+Route::get('/student/miscellaneous/balance/{studentId}',[StudentLedgerController::class, 'getMiscellaneousBalance'])->name('student.miscellaneous.balance');
+
         Route::get('/student/payment/{id}/edit', [StudentLedgerController::class, 'editPayment'])->name('student.editPayment');
         Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
             ->name('student.updatePayment');
