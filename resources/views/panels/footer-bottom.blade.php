@@ -317,7 +317,82 @@ $(document).on('shown.bs.modal', function () {
 
 
 <script>
-$(document).on("click", ".generateID", function () {
+let studentChoices = null;
+let academicYearChoices = null;
+let filterUniversityChoices = null;
+let filterSubcourseChoices = null;
+let userChoices = null;
+
+$(document).on('shown.bs.modal', function () {
+
+    /** --------------------------
+     *  STUDENT MULTISELECT
+     * -------------------------- */
+    if (document.querySelector('#student_ids')) {
+        if (studentChoices) studentChoices.destroy();
+        studentChoices = new Choices('#student_ids', {
+            removeItemButton: true,
+            searchEnabled: true,
+            placeholder: true
+        });
+    }
+
+    /** --------------------------
+     *  USER MULTISELECT
+     * -------------------------- */
+    if (document.querySelector('#user_ids')) {
+        if (userChoices) userChoices.destroy();
+        userChoices = new Choices('#user_ids', {
+            removeItemButton: true,
+            searchEnabled: true,
+            placeholder: true
+        });
+    }
+
+
+
+
+    /** --------------------------
+     *  ACADEMIC YEAR FILTER
+     * -------------------------- */
+    if (document.querySelector('#academic_year')) {
+        if (academicYearChoices) academicYearChoices.destroy();
+        academicYearChoices = new Choices('#academic_year', {
+            searchEnabled: true,
+            removeItemButton: false
+        });
+    }
+
+    /** --------------------------
+     *  UNIVERSITY FILTER
+     * -------------------------- */
+    if (document.querySelector('#university_id')) {
+        if (filterUniversityChoices) filterUniversityChoices.destroy();
+        filterUniversityChoices = new Choices('#university_id', {
+            searchEnabled: true,
+            removeItemButton: false
+        });
+    }
+
+    /** --------------------------
+     *  SUBCOURSE FILTER
+     * -------------------------- */
+    if (document.querySelector('#subcourse_id')) {
+        if (filterSubcourseChoices) filterSubcourseChoices.destroy();
+        filterSubcourseChoices = new Choices('#subcourse_id', {
+            searchEnabled: true,
+            removeItemButton: false
+        });
+    }
+
+});
+</script>
+
+
+
+
+<script>
+    $(document).on("click", ".generateID", function () {
     let id = $(this).data("id");
     let btn = $(this);
 
@@ -325,7 +400,7 @@ $(document).on("click", ".generateID", function () {
 
     $.post(`/students/generate-id/${id}`, {_token: "{{ csrf_token() }}"}, function(response){
         if(response.status){
-            btn.parent().html(response.unique_id); // replace button with generated ID
+            btn.parent().html(response.unique_id);
             $('#student-table').DataTable().ajax.reload(null, false);
         } else {
             btn.html("Generate").prop("disabled", false);

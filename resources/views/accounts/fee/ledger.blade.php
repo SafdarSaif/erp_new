@@ -13,6 +13,13 @@
             <a href="{{ url()->previous() }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
+            <a href="{{ route('receipt.all', ['student_id' => $student->id]) }}" class="btn btn-primary"
+                data-bs-toggle="tooltip" title="Download All Receipts">
+                Download All Receipts
+            </a>
+
+
+
         </div>
 
         <!-- 🔹 Student Info -->
@@ -90,6 +97,7 @@
                                     <th>Amount (₹)</th>
                                     <th>Discount (₹)</th>
                                     <th>Balance (₹)</th>
+                                    <th>Recipt</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,7 +126,7 @@
                                     </td>
                                     <td>
                                         <input type="number" class="form-control text-center" name="discount[]"
-                                            value="{{$discount}}" step="0.01" >
+                                            value="{{$discount}}" step="0.01">
                                     </td>
                                     <td>
                                         <span class="fw-bold text-danger">₹{{ number_format($balance, 2) }}</span>
@@ -135,6 +143,18 @@
                                                     }}</span>
                                                 @endif
                                     </td> --}}
+
+                                    <td>
+                                        <a href="{{ route('receipt.semester', [
+        'student_id' => $student->id,       // pass actual student ID
+    'semester' => $sem['semester']
+]) }}" class="btn btn-sm btn-success" target="_blank">
+                                            <i class="ri-download-2-line"></i>
+                                        </a>
+
+
+
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

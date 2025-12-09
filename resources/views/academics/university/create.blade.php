@@ -1,12 +1,13 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Add  University</h3>
+        <h3 class="mb-2 text-primary">Add University</h3>
         <p class="text-muted">Fill in the university details below</p>
     </div>
 
-    <form id="university-form" action="{{ route('university.store') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+    <form id="university-form" action="{{ route('university.store') }}" method="POST" class="row g-3"
+        enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="id" id="university_id">
+    
 
         <!-- University Name -->
         <div class="col-md-6">
@@ -14,7 +15,7 @@
             <input type="text" name="name" id="name" class="form-control" placeholder="Enter university name" required>
         </div>
 
-  <!-- Prefix -->
+        <!-- Prefix -->
         <div class="col-md-3">
             <label for="prefix" class="form-label">Prefix</label>
             <input type="text" name="prefix" id="prefix" class="form-control" maxlength="10" placeholder="e.g., HM">
@@ -46,7 +47,7 @@
 </div>
 
 <script>
-$(function() {
+    $(function() {
     $("#university-form").submit(function(e) {
         e.preventDefault();
         $(':input[type="submit"]').prop('disabled', true);

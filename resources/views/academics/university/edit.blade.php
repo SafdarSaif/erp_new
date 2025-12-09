@@ -6,7 +6,7 @@
 
     <form id="university-form" action="{{ route('university.update', $university->id) }}" method="POST" class="row g-3" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="id" id="university_id" value="{{ $university->id ?? '' }}">
+        <input type="hidden" name="id" id="" value="{{ $university->id ?? '' }}">
 
         <!-- University Name -->
         <div class="col-md-6">

@@ -177,7 +177,14 @@ class RolePermissionSeeder extends Seeder
             'approve payment',
 
             'create document',
-            'edit document'
+            'edit document',
+
+            // Notification Header permissions
+            'view notificationheader',
+            'create notificationheader',
+            'edit notificationheader',
+            'delete notificationheader',
+            
 
         ];
 
