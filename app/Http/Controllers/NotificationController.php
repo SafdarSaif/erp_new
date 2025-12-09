@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
 use App\Models\Academics\University;
-use App\Models\Academics\Subcourse;
+use App\Models\Academics\SubCourse;
 use App\Models\NotificationTarget;
 use App\Models\Student;
 use App\Mail\SendNotificationMail;
@@ -52,7 +52,7 @@ class NotificationController extends Controller
         $users = User::get();
         $years = \App\Models\Settings\AcademicYear::all();
         $universities = \App\Models\Academics\University::all();
-        $subcourses = \App\Models\Academics\Subcourse::all();
+        $subcourses = \App\Models\Academics\SubCourse::all();
 
         return view('notification.index', compact('headers', 'users', 'years', 'universities', 'subcourses'));
     }
@@ -143,7 +143,7 @@ class NotificationController extends Controller
         $users = User::get();
         $years = \App\Models\Settings\AcademicYear::all();
         $universities = \App\Models\Academics\University::all();
-        $subcourses = \App\Models\Academics\Subcourse::all();
+        $subcourses = \App\Models\Academics\SubCourse::all();
 
         return view('notification.create', compact('headers', 'users', 'years', 'universities', 'subcourses'));
     }
