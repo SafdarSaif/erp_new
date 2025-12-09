@@ -74,8 +74,8 @@ Route::middleware([
 
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Route::get('/panels/tenants', [SwitchPanelController::class, 'index'])->name('panels.tenants');
-    // Route::get('/switch-panel/{tenant}', [SwitchPanelController::class, 'switchPanel'])->name('switch.panel');
+    Route::get('/panels/tenants', [SwitchPanelController::class, 'index'])->name('panels.tenants');
+    Route::get('/switch-panel/{tenant}', [SwitchPanelController::class, 'switchPanel'])->name('switch.panel');
 
 
     Route::get('menu', function () {
