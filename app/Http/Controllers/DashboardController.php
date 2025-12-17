@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $activeCourses          = Course::where('status', true)->count();
         $totalSubCourses        = SubCourse::count();
         $totalSubjects          = Subject::count();
-        $totalRevenue           = StudentLedger::sum('amount');
+        $totalRevenue           = StudentLedger::where('payment_status','approve')->sum('amount');
         $monthlyRevenue         = $this->getMonthlyRevenue();
         $monthlyUniversityFees  = $this->getMonthlyUniversityFees();
         $revenueGrowth          = $this->getRevenueGrowth();
