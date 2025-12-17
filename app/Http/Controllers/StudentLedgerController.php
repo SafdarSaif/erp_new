@@ -72,6 +72,7 @@ class StudentLedgerController extends Controller
                 $paid = $ledgerEntries
                     ->where('student_fee_id', $fee->id)
                     ->where('transaction_type', 'credit')
+                    ->where('payment_status', 'approve')
                     ->sum('amount');
                 $balance = $fee->amount - $paid - $fee->discount;
 
@@ -105,6 +106,7 @@ class StudentLedgerController extends Controller
         // --- Total Paid including Miscellaneous Fees ---
         $totalPaid = $ledgerEntries
             ->where('transaction_type', 'credit')
+            ->where('payment_status', 'approve')
             ->sum('amount'); // ✅ includes semester + miscellaneous payments
 
         // Fetch invoices (if linked to ledger)
@@ -119,6 +121,7 @@ class StudentLedgerController extends Controller
             $paid = $ledgerEntries
                 ->where('miscellaneous_id', $misc->id)
                 ->where('transaction_type', 'credit')
+                ->where('payment_status', 'approve')
                 ->sum('amount');
 
             $balance = $misc->amount - $paid;
@@ -290,38 +293,38 @@ class StudentLedgerController extends Controller
     // }
 
     public function getMiscellaneousBalance($studentId)
-{
-    $student = Student::findOrFail($studentId);
+    {
+        $student = Student::findOrFail($studentId);
 
-    $miscFees = MiscellaneousFee::where('student_id', $studentId)->get();
+        $miscFees = MiscellaneousFee::where('student_id', $studentId)->get();
 
-    $ledger = StudentLedger::where('student_id', $studentId)
-        ->where('transaction_type', 'credit')
-        ->get();
+        $ledger = StudentLedger::where('student_id', $studentId)
+            ->where('transaction_type', 'credit')
+            ->get();
 
-    $miscBalances = [];
+        $miscBalances = [];
 
-    foreach ($miscFees as $misc) {
+        foreach ($miscFees as $misc) {
 
-        $paid = $ledger
-            ->where('miscellaneous_id', $misc->id)
-            ->sum('amount');
+            $paid = $ledger
+                ->where('miscellaneous_id', $misc->id)
+                ->sum('amount');
 
-        $balance = $misc->amount - $paid;
+            $balance = $misc->amount - $paid;
 
-        $miscBalances[] = [
-            'name'      => $misc->head,   // FIXED correctly
-            'misc_id'   => $misc->id,
-            'total_fee' => $misc->amount,
-            'paid'      => $paid,
-            'balance'   => $balance,
-        ];
+            $miscBalances[] = [
+                'name'      => $misc->head,   // FIXED correctly
+                'misc_id'   => $misc->id,
+                'total_fee' => $misc->amount,
+                'paid'      => $paid,
+                'balance'   => $balance,
+            ];
+        }
+
+        return response()->json([
+            'misc_balances' => $miscBalances
+        ]);
     }
-
-    return response()->json([
-        'misc_balances' => $miscBalances
-    ]);
-}
 
 
 
@@ -759,6 +762,41 @@ class StudentLedgerController extends Controller
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Payment updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function viewPaymentStatus($id)
+    {
+        $payment = StudentLedger::with('student.feeStructures')->findOrFail($id);
+        $student = $payment->student;
+        $feeStructures = $student->feeStructures; 
+
+        return view('accounts.ledger.payment_status', compact('payment', 'student', 'feeStructures'));
+    }
+
+    public function updatePaymentStatus(Request $request)
+    {
+        $request->validate([
+            'payment_id'       => 'required|exists:student_ledgers,id',
+            'student_id'       => 'required|exists:students,id',
+            'payment_status'   => 'required|in:approve,reject',
+        ]);
+
+        try {
+            $studentLedger = StudentLedger::findOrFail($request->payment_id);
+            $studentLedger->update([
+                'payment_status' => $request->payment_status,
+            ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Payment approve status updated successfully.'
             ]);
         } catch (\Exception $e) {
             return response()->json([

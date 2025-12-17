@@ -39,6 +39,7 @@ use App\Http\Controllers\RoleReportingController;
 use App\Http\Controllers\Accounts\FeeReceiptController;
 use App\Http\Controllers\Settings\NotificationHeaderController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SwitchPanelController;
 use Illuminate\Support\Facades\Mail;
 
 /*
@@ -193,8 +194,8 @@ Route::middleware([
         Route::put('document/update/{id}', [DocumentsController::class, 'update'])->name('documents.update');
         Route::delete('document/delete/{id}', [DocumentsController::class, 'destroy'])->name('documents.delete');
         Route::get('document/status/{id}', [DocumentsController::class, 'status'])->name('documents.status');
-// Notification Headers
-         Route::get('notificationheader', [NotificationHeaderController::class, 'index'])->name('notificationheader.index');
+        // Notification Headers
+        Route::get('notificationheader', [NotificationHeaderController::class, 'index'])->name('notificationheader.index');
         Route::get('notificationheader/create', [NotificationHeaderController::class, 'create'])->name('notificationheader.create');
         Route::post('notificationheader/store', [NotificationHeaderController::class, 'store'])->name('notificationheader.store');
         Route::get('notificationheader/edit/{id}', [NotificationHeaderController::class, 'edit'])->name('notificationheader.edit');
@@ -214,10 +215,7 @@ Route::middleware([
         Route::get('/status/{id}', [NotificationController::class, 'status'])->name('notifications.status');
 
         Route::post('/fetch-students', [NotificationController::class, 'fetchStudents'])
-    ->name('notifications.fetchStudents');
-
-
-
+            ->name('notifications.fetchStudents');
     });
 
 
@@ -402,11 +400,15 @@ Route::middleware([
         Route::get('/student/{id}/semester-balance', [StudentLedgerController::class, 'getSemesterBalance'])
             ->name('student.semester.balance');
 
-Route::get('/student/miscellaneous/balance/{studentId}',[StudentLedgerController::class, 'getMiscellaneousBalance'])->name('student.miscellaneous.balance');
+        Route::get('/student/miscellaneous/balance/{studentId}', [StudentLedgerController::class, 'getMiscellaneousBalance'])->name('student.miscellaneous.balance');
 
         Route::get('/student/payment/{id}/edit', [StudentLedgerController::class, 'editPayment'])->name('student.editPayment');
         Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
             ->name('student.updatePayment');
+
+        Route::get('/student/payment/{id}/viewPaymentStatus', [StudentLedgerController::class, 'viewPaymentStatus'])->name('student.viewPaymentStatus');
+        Route::post('/student/payment/{id}/updatePaymentStatus', [StudentLedgerController::class, 'updatePaymentStatus'])->name('student.updatePaymentStatus');
+
 
         Route::get('miscellaneous/{student_id}', [MiscellaneousFeeController::class, 'create'])->name('accounts.miscellaneous');
         Route::post('miscellaneous/store', [MiscellaneousFeeController::class, 'store'])->name('accounts.saveMiscellaneous');
