@@ -151,17 +151,21 @@
                                         <h6 class="mb-0 fs-13">Total Revenue</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        ₹{{ number_format(\App\Models\StudentLedger::where('payment_status','approve')->sum('amount')) }}
+                                        ₹{{
+                                        number_format(\App\Models\StudentLedger::where('payment_status','approve')->sum('amount'))
+                                        }}
                                     </h4>
                                     <p class="text-muted mb-0 fs-12">All time collection</p>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
                                     @php
-                                    $monthlyRevenue = \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
+                                    $monthlyRevenue =
+                                    \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
                                     'created_at',
                                     now()->month,
                                     )->sum('amount');
-                                    $lastMonthRevenue = \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
+                                    $lastMonthRevenue =
+                                    \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
                                     'created_at',
                                     now()->subMonth()->month,
                                     )->sum('amount');
