@@ -259,7 +259,7 @@ class ReportController extends Controller
         // Only when university is selected, get student IDs once
         $universityStudent = Student::where('university_id', $university)->pluck('id')->toArray();
 
-        $payments = StudentLedger::with('student');  // query builder
+        $payments = StudentLedger::where('payment_status','approve')->with('student');  // query builder
 
         if (!empty($mode)) {
             $payments = $payments->where('payment_mode', $mode);
@@ -701,6 +701,7 @@ class ReportController extends Controller
             $miscFees      = MiscellaneousFee::where('student_id', $student->id)->get();
             $ledgerEntries = StudentLedger::where('student_id', $student->id)
                 ->where('transaction_type', 'credit')
+                ->where('payment_status', 'approve')
                 ->get();
 
             $totalFee = $feeStructures->sum('amount');

@@ -151,17 +151,17 @@
                                         <h6 class="mb-0 fs-13">Total Revenue</h6>
                                     </div>
                                     <h4 class="fw-semibold fs-5 mb-0">
-                                        ₹{{ number_format(\App\Models\StudentLedger::sum('amount')) }}
+                                        ₹{{ number_format(\App\Models\StudentLedger::where('payment_status','approve')->sum('amount')) }}
                                     </h4>
                                     <p class="text-muted mb-0 fs-12">All time collection</p>
                                 </div>
                                 <div class="flex-shrink-0 text-end">
                                     @php
-                                    $monthlyRevenue = \App\Models\StudentLedger::whereMonth(
+                                    $monthlyRevenue = \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
                                     'created_at',
                                     now()->month,
                                     )->sum('amount');
-                                    $lastMonthRevenue = \App\Models\StudentLedger::whereMonth(
+                                    $lastMonthRevenue = \App\Models\StudentLedger::where('payment_status','approve')->whereMonth(
                                     'created_at',
                                     now()->subMonth()->month,
                                     )->sum('amount');
@@ -600,7 +600,7 @@
             @php
                 // Monthly revenue fallback
                 if (!isset($monthlyRevenue) || !is_array($monthlyRevenue)) {
-                    $rows = \App\Models\StudentLedger::selectRaw('MONTH(created_at) as month, SUM(amount) as total')->whereYear('created_at', now()->year)->groupBy('month')->pluck('total', 'month')->toArray();
+                    $rows = \App\Models\StudentLedger::selectRaw('MONTH(created_at) as month, SUM(amount) as total')->where('payment_status','approve')->whereYear('created_at', now()->year)->groupBy('month')->pluck('total', 'month')->toArray();
                     $tmp = [];
                     for ($m = 1; $m <= 12; $m++) {
                         $tmp[] = isset($rows[$m]) ? (float) $rows[$m] : 0;

@@ -107,6 +107,7 @@
                                 $paid = $ledgerEntries
                                 ->where('student_fee_id', $sem['id'] ?? 0)
                                 ->where('transaction_type', 'credit')
+                                ->where('payment_status', 'approve')
                                 ->sum('amount');
                                 // $discount = isset($sem['discount'])??0;
                                 $discount = $sem['discount'] ?? 0;
@@ -289,6 +290,7 @@
                             <th>UTR / Txn ID</th>
                             <th>Date</th>
                             <th>Remarks</th>
+                            <th>Approve Status</th>
                             <th>Action</th> {{-- ✅ Added --}}
                         </tr>
                     </thead>
@@ -324,10 +326,28 @@
                             <td>{{ $entry->utr_no ?? '-' }}</td>
                             <td>{{ $entry->created_at->format('d M Y') }}</td>
                             <td>{{ $entry->remarks ?? '-' }}</td>
+                            <td>{{ ucfirst($entry->payment_status) ?? '-' }}
+
+                            <!-- Approve Button -->
+                             @php
+                              $user = auth()->user();
+                             @endphp
+                            @if ($user && $user->can('approve payment') && isset($entry->payment_status) && $entry->payment_status == 'pending')
+                                    <button class="btn btn-sm btn-info"
+                                        onclick="add('{{ route('student.viewPaymentStatus', ['id' => $entry->id]) }}', 'modal-lg')"
+                                        data-bs-toggle="tooltip" title="Edit Payment status">
+                                        <i class="ri-edit-2-line"></i>
+                                    </button>
+                            @endif
+
+                            </td>
 
                             <td>
                                 <!-- ✅ Action Buttons -->
                                 <div class="d-flex justify-content-center gap-2">
+                                    
+                                
+
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-warning"
                                         onclick="add('{{ route('student.editPayment', ['id' => $entry->id]) }}', 'modal-lg')"

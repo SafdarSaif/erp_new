@@ -406,6 +406,10 @@ Route::middleware([
         Route::post('/student/payment/{id}/updatePayment', [StudentLedgerController::class, 'updatePayment'])
             ->name('student.updatePayment');
 
+        Route::get('/student/payment/{id}/viewPaymentStatus', [StudentLedgerController::class, 'viewPaymentStatus'])->name('student.viewPaymentStatus');
+        Route::post('/student/payment/{id}/updatePaymentStatus', [StudentLedgerController::class, 'updatePaymentStatus'])->name('student.updatePaymentStatus');
+
+
         Route::get('miscellaneous/{student_id}', [MiscellaneousFeeController::class, 'create'])->name('accounts.miscellaneous');
         Route::post('miscellaneous/store', [MiscellaneousFeeController::class, 'store'])->name('accounts.saveMiscellaneous');
         Route::post('miscellaneous/update', [MiscellaneousFeeController::class, 'update'])->name('accounts.updateMiscellaneous');

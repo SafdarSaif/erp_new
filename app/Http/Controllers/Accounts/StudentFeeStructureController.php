@@ -68,6 +68,7 @@ class StudentFeeStructureController extends Controller
     {
         if ($request->ajax()) {
             $ledgers = StudentLedger::with(['student', 'feeStructure'])
+                ->where('payment_status', 'approve')
                 ->orderBy('id', 'desc')
                 ->get();
 
