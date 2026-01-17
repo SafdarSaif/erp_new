@@ -34,28 +34,103 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
+    // public function studentReport()
+    // {
+    //     try {
+    //         if (request()->ajax()) {
+    //             // Load related department and course type
+    //             $data = Report::all();
+    //             dd($data);
+
+    //             return DataTables::of($data)
+    //                 ->addIndexColumn()
+    //                 ->editColumn('created_at', function ($report) {
+    //                     return Carbon::parse($report->created_at)->format('Y-m-d');
+    //                 })
+    //                 ->make(true);
+    //         }
+    //         return view('reports.student');
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
     public function studentReport()
     {
         try {
             if (request()->ajax()) {
-                // Load related department and course type
+
                 $data = Report::all();
 
                 return DataTables::of($data)
                     ->addIndexColumn()
-                    ->editColumn('created_at', function ($report) {
-                        return Carbon::parse($report->created_at)->format('Y-m-d');
+
+                    // Decode filter JSON
+                    ->editColumn('filter', function ($report) {
+                        if (!$report->filter) {
+                            return '-';
+                        }
+
+                        $filter = json_decode($report->filter, true);
+
+                        if (json_last_error() !== JSON_ERROR_NONE) {
+                            return 'Invalid JSON';
+                        }
+
+                        // Format nicely for table
+                        return collect($filter)->map(function ($value, $key) {
+                            return ucfirst(str_replace('_', ' ', $key)) . ': ' . $value;
+                        })->implode('<br>');
                     })
+
+                    ->editColumn('created_at', function ($report) {
+                        return \Carbon\Carbon::parse($report->created_at)->format('Y-m-d');
+                    })
+
+                    ->editColumn('filter', function ($report) {
+
+                        if (!$report->filter) {
+                            return '-';
+                        }
+
+                        $filter = json_decode($report->filter, true);
+                        if (!is_array($filter)) {
+                            return 'Invalid data';
+                        }
+
+                        $html = '<div class="filter-wrapper">
+                        <div class="filter-content">';
+
+                        foreach ($filter as $key => $value) {
+                            $label = ucfirst(str_replace('_', ' ', $key));
+                            $html .= "<div><strong>{$label}:</strong> {$value}</div>";
+                        }
+
+                        $html .= '</div>
+                        <a href="javascript:void(0)" class="filter-toggle">View more</a>
+                        </div>';
+
+                        return $html;
+                    })
+                    ->rawColumns(['filter'])
+
+
                     ->make(true);
             }
+
             return view('reports.student');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
             ]);
         }
     }
+
 
     public function createStudentReport()
     {
@@ -243,6 +318,135 @@ class ReportController extends Controller
         }
     }
 
+    //     public function viewStudentReport(Request $request, $id)
+    // {
+    //     try {
+    //         $report = Report::findOrFail($id);
+    //         $filter = json_decode($report->filter, true);
+
+    //         $studentQuery = Student::query();
+
+    //         // Apply saved report filters
+    //         foreach ($filter as $column => $value) {
+    //             if ($value === null || $value === '') continue;
+
+    //             switch ($column) {
+    //                 case 'full_name':
+    //                 case 'mobile':
+    //                 case 'semester':
+    //                 case 'gender':
+    //                 case 'total_fee':
+    //                 case 'email':
+    //                     $studentQuery->where($column, $value);
+    //                     break;
+
+    //                 case 'academic_year':
+    //                     $studentQuery->whereHas('academicYear', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'university':
+    //                     $studentQuery->whereHas('university', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'course_type':
+    //                     $studentQuery->whereHas('courseType', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'course':
+    //                     $studentQuery->whereHas('course', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'sub_course':
+    //                     $studentQuery->whereHas('subCourse', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'mode':
+    //                     $studentQuery->whereHas('mode', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'course_mode':
+    //                     $studentQuery->whereHas('courseMode', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'language':
+    //                     $studentQuery->whereHas('language', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'blood_group':
+    //                     $studentQuery->whereHas('bloodGroup', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'religion':
+    //                     $studentQuery->whereHas('religion', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'category':
+    //                     $studentQuery->whereHas('category', fn($q) => $q->where('name', $value));
+    //                     break;
+
+    //                 case 'status':
+    //                     $statusMap = ['Active' => 1, 'Inactive' => 0, 'Completed' => 2, 'Dropped Out' => 0];
+    //                     if (isset($statusMap[$value])) {
+    //                         $studentQuery->where('status', $statusMap[$value]);
+    //                     }
+    //                     break;
+    //             }
+    //         }
+
+    //         if ($request->ajax()) {
+    //             return DataTables::of($studentQuery)
+    //                 ->addIndexColumn()
+    //                 ->addColumn('academic_year', fn($row) => $row->academicYear?->name ?? '-')
+    //                 ->addColumn('university', fn($row) => $row->university?->name ?? '-')
+    //                 ->addColumn('course_type', fn($row) => $row->courseType?->name ?? '-')
+    //                 ->addColumn('course', fn($row) => $row->course?->name ?? '-')
+    //                 ->addColumn('sub_course', fn($row) => $row->subCourse?->name ?? '-')
+    //                 ->addColumn('mode', fn($row) => $row->mode?->name ?? '-')
+    //                 ->addColumn('course_mode', fn($row) => $row->courseMode?->name ?? '-')
+    //                 ->addColumn('language', fn($row) => $row->language?->name ?? '-')
+    //                 ->addColumn('blood_group', fn($row) => $row->bloodGroup?->name ?? '-')
+    //                 ->addColumn('religion', fn($row) => $row->religion?->name ?? '-')
+    //                 ->addColumn('category', fn($row) => $row->category?->name ?? '-')
+    //                 ->editColumn('status', function ($row) {
+    //                     return match ($row->status) {
+    //                         0 => '<span class="badge bg-danger">Dropped Out</span>',
+    //                         1 => '<span class="badge bg-primary">Active</span>',
+    //                         2 => '<span class="badge bg-success">Completed</span>',
+    //                         default => '<span class="badge bg-warning">Inactive</span>',
+    //                     };
+    //                 })
+    //                 ->filter(function ($query) use ($request) {
+    //                     // Here you can add additional DataTables column filters
+    //                 })
+    //                 ->rawColumns(['status'])
+    //                 ->make(true);
+    //         }
+
+    //         return view('reports.student_list', [
+    //             'academicYears' => AcademicYear::all(),
+    //             'universities' => University::all(),
+    //             'courseTypes' => CourseType::all(),
+    //             'courses' => Course::all(),
+    //             'subCourses' => SubCourse::all(),
+    //             'modes' => AdmissionMode::all(),
+    //             'courseModes' => CourseMode::all(),
+    //             'languages' => Language::all(),
+    //             'bloodGroups' => BloodGroup::all(),
+    //             'religions' => Religion::all(),
+    //             'categories' => Category::all(),
+    //             'id' => $id
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
+
     public function incomeReport()
     {
         $universities = University::all();
@@ -259,7 +463,7 @@ class ReportController extends Controller
         // Only when university is selected, get student IDs once
         $universityStudent = Student::where('university_id', $university)->pluck('id')->toArray();
 
-        $payments = StudentLedger::where('payment_status','approve')->with('student');  // query builder
+        $payments = StudentLedger::where('payment_status', 'approve')->with('student');  // query builder
 
         if (!empty($mode)) {
             $payments = $payments->where('payment_mode', $mode);

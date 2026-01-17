@@ -1,6 +1,12 @@
 @extends('layouts.main')
 @section('content')
 
+
+<style>
+
+
+</style>
+
 <main class="app-wrapper">
     <div class="app-container">
         <div class="hstack flex-wrap gap-3 mb-5">
@@ -61,7 +67,7 @@
           $(node).removeClass('btn-secondary');
         }
       } : '';
-   
+
       var canEdit = "true";
       var table = $('#academic-year-table').DataTable({
         ajax: "{{ route('reports.students') }}",
@@ -71,12 +77,16 @@
           {
             data: 'name'
           },
-          {
-            data: 'filter',
-            render:function(data,type,row){
-              return data.substr(0,150)+'...'
-            }
-          },
+        //   {
+        //     data: 'filter',
+        //     render:function(data,type,row){
+        //       return data.substr(0,150)+'...'
+        //     }
+        //   },
+        {
+  data: 'filter'
+},
+
           {
             data: 'created_at'
           },
@@ -96,7 +106,7 @@
             render: function(data, type, full, meta) {
               var $name = full['name'],
                 $output = '<div class="d-flex flex-column"><a href="" class="text-body text-truncate"><span class="fw-medium">' +
-                $name 
+                $name
               return $output;
             }
           },
@@ -171,6 +181,21 @@
     });
 </script>
 
+<script>
+$(document).on('click', '.filter-toggle', function () {
+    const wrapper = $(this).closest('.filter-wrapper');
+
+    wrapper.toggleClass('expanded');
+
+    if (wrapper.hasClass('expanded')) {
+        $(this).text('View less');
+    } else {
+        $(this).text('View more');
+    }
+});
+</script>
+
+
 
 <style>
     .dataTables_wrapper .dataTables_length,
@@ -181,5 +206,35 @@
     table.dataTable tbody tr.selected {
         background-color: rgba(13, 110, 253, 0.1);
     }
+
+
+
+
+        .filter-wrapper {
+    max-width: 420px;
+    font-size: 13px;
+}
+
+.filter-content {
+    max-height: 60px; /* collapsed height */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.filter-wrapper.expanded .filter-content {
+    max-height: 500px; /* expanded height */
+}
+
+.filter-toggle {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #0d6efd;
+    cursor: pointer;
+}
+
+.filter-toggle:hover {
+    text-decoration: underline;
+}
 </style>
 @endsection
